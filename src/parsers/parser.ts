@@ -317,9 +317,10 @@ export class Parser {
 		const propertiesChildren: Variable[] = [];
 
 		// get user defined nodes
+		let userDefNodes;
 		if (this.reader.getRegisteredTypes().has(type)
 			|| this.reader.getRegisteredTypes().has("*")) {
-			const userDefNodes = await this.reader.getUserDefNodes(variable, rootVariable);
+			userDefNodes = await this.reader.getUserDefNodes(variable, rootVariable);
 			if (userDefNodes) {
 				for (let userDefNode of userDefNodes) {
 					if (this.reader.filterVariable(userDefNode)) {
@@ -329,7 +330,9 @@ export class Parser {
 					nodesChildren.push(userDefNode);
 				}
 			}
-		} else if (variable.variablesReference > 0 && level < Parser.MAX_LEVEL) {
+		}
+		
+		if (!userDefNodes && variable.variablesReference > 0 && level < Parser.MAX_LEVEL) {
 
 			let children: Variable[] = await this.reader.getVariables(variable.variablesReference);
 			// if the variable has a string representation defined it will yield one child without name and type
