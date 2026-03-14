@@ -21,6 +21,9 @@ and jGRASP: https://www.jgrasp.org/
 - Ctrl+Shift+P and select Visual DSA: Start session
 
 ## Development
+- Get vis-network via npm: https://www.npmjs.com/package/vis-network
+- Or download from https://unpkg.com/vis-network/standalone/umd/vis-network.min.js
+- Copy vis-network.min.js under webview/assets/js
 - Open root folder in VS Code
 - `npm install`
 - `npm run watch` or `npm run compile`
@@ -57,4 +60,6 @@ vsce publish
 For more info see: https://code.visualstudio.com/api/working-with-extensions/publishing-extension
 
 ## License:
-MIT License
+Visual DSA is released under MIT License.  
+Code includes other projects with their own license:  
+vis-network MIT License https://github.com/visjs/vis-network  
