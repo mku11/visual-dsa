@@ -774,9 +774,9 @@ function updateSourceLines(source) {
     let sourceLinesText = "";
     for (let i = 0; i < source.lines.length; i++) {
         if (i >= source.start && i <= source.end) {
-            sourceLinesText += "<span class='highlight-text'>" + source.lines[i] + "</span><br>";
+            sourceLinesText += "<span class='highlight-text'>" + source.lines[i] + "</span>";
         } else {
-            sourceLinesText += "<span>" + source.lines[i] + "</span><br>";
+            sourceLinesText += "<span>" + source.lines[i] + "</span>";
         }
     }
     sourceLines.innerHTML = "<pre>" + sourceLinesText + "</pre>";
