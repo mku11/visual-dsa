@@ -1,0 +1,463 @@
+html {
+	box-sizing: border-box;
+	font-size: 13px;
+}
+
+*,
+*:before,
+*:after {
+	box-sizing: inherit;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul {
+	margin: 0;
+	padding: 0;
+	font-weight: normal;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+:root {
+	--container-padding: 20px;
+	--input-padding-vertical: 6px;
+	--input-padding-horizontal: 4px;
+	--input-margin-vertical: 4px;
+	--input-margin-horizontal: 0;
+}
+
+body {
+	padding: 0 var(--container-padding);
+	color: var(--vscode-foreground);
+	font-size: var(--vscode-font-size);
+	font-weight: var(--vscode-font-weight);
+	background-color: var(--vscode-editor-background);
+	margin: 0;
+	height: 100%;
+	overflow: hidden;
+}
+
+ol,
+ul {
+	padding-left: var(--container-padding);
+}
+
+body>*,
+form>* {
+	margin-block-start: var(--input-margin-vertical);
+	margin-block-end: var(--input-margin-vertical);
+}
+
+*:focus {
+	outline-color: var(--vscode-focusBorder) !important;
+}
+
+a {
+	color: var(--vscode-textLink-foreground);
+}
+
+a:hover,
+a:active {
+	color: var(--vscode-textLink-activeForeground);
+}
+
+code {
+	font-size: var(--vscode-editor-font-size);
+}
+
+input:not([type='checkbox']),
+textarea {
+	display: block;
+	width: 100%;
+	padding: var(--input-padding-vertical) var(--input-padding-horizontal);
+	color: var(--vscode-input-foreground);
+	outline-color: var(--vscode-input-border);
+	background-color: var(--vscode-input-background);
+}
+
+input::placeholder,
+textarea::placeholder {
+	color: var(--vscode-input-placeholderForeground);
+}
+
+.var-options {
+	display: flex;
+}
+
+.var-option {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	padding-right: 4px;
+}
+
+.var-select {
+	min-width: 120px;
+}
+
+.menu {
+	display: flex;
+}
+
+button[name="remove-variable"] {
+	color: white;
+	background-color: rgb(107, 65, 207);
+	width: 24px;
+	height: 24px;
+}
+
+
+button[name="add-variable"] {
+	color: white;
+	background-color: rgb(107, 65, 207);
+	width: 24px;
+	height: 24px;
+}
+
+button[name="remove-edges"] {
+	color: white;
+	background-color: rgb(107, 65, 207);
+	width: 24px;
+	height: 24px;
+}
+
+button[name="remove-nodes"] {
+	color: white;
+	background-color: rgb(107, 65, 207);
+	width: 24px;
+	height: 24px;
+}
+
+button[name="remove-properties"] {
+	color: white;
+	background-color: rgb(107, 65, 207);
+	width: 24px;
+	height: 24px;
+}
+
+button[name="remove-markers-x"] {
+	color: white;
+	background-color: rgb(107, 65, 207);
+	width: 24px;
+	height: 24px;
+}
+
+button[name="remove-markers-y"] {
+	color: white;
+	background-color: rgb(107, 65, 207);
+	width: 24px;
+	height: 24px;
+}
+
+.var-option-remove {
+	align-content: center;
+}
+
+.variables-header-add {
+	align-content: center;
+}
+
+.nodes-header-remove {
+	align-content: center;
+}
+
+.edges-header-remove {
+	align-content: center;
+}
+
+.properties-header-remove {
+	align-content: center;
+}
+
+.markers-x-header-remove {
+	align-content: center;
+}
+
+.markers-y-header-remove {
+	align-content: center;
+}
+
+.var-option-nodes {
+	max-height: 80px;
+}
+
+.controls {
+	padding: 4px;
+}
+
+#control-buttons {
+	display: flex;
+}
+
+#control-buttons button {
+	width: 32px;
+	height: 32px;
+}
+
+#source-container {
+	width: 100%;
+}
+
+#source {
+	width: 100%;
+	resize: none;
+}
+
+#delay-container {
+	display: flex;
+	flex-direction: row;
+	padding: 4px;
+}
+
+#delay-label {
+	color: aliceblue;
+	padding: 4px;
+	width: 100%;
+	align-content: center;
+}
+
+#delay {
+	max-width: 120px;
+	float: right;
+	border-width: 2px;
+	margin: 4px;
+	color: aliceblue;
+}
+
+.highlight-text {
+	background-color: gray;
+}
+
+#left-frame {
+	background-color: #41485d;
+	overflow-y: auto;
+	float: left;
+	min-width: 240px;
+	max-width: 400px;
+	padding: 4px;
+}
+
+#right-frame {
+	float: right;
+}
+
+#variables-container {
+	overflow: auto;
+	max-height: 200px;
+}
+
+#variables-header {
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+	align-content: center;
+}
+
+#nodes-header {
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+	align-content: center;
+}
+
+#edges-header {
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+	align-content: center;
+}
+
+
+#properties-header {
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+	align-content: center;
+}
+
+#markers-x-header {
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+	align-content: center;
+}
+
+#markers-y-header {
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+	align-content: center;
+}
+
+#object-header {
+	text-align: center;
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+}
+
+#object-name-container {
+	display: flex;
+	flex-direction: row;
+	padding: 6px;
+	color: aliceblue;
+}
+
+#object-name-label {
+	width: 100%;
+}
+
+
+#object-name {
+	width: 100%;
+	float: right;
+}
+
+#object-type-container {
+	display: flex;
+	flex-direction: row;
+	padding: 6px;
+	color: aliceblue;
+}
+
+#object-type-label {
+	width: 100%;
+}
+
+#object-type {
+	width: 100%;
+	float: right;
+}
+
+#attributes-header {
+	text-align: center;
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+}
+
+.attribute-label {
+	color: aliceblue;
+	padding: 2px;
+}
+
+.variable-input {
+	color: aliceblue !important;
+}
+
+#variables-header-container {
+	display: flex;
+}
+
+#nodes-header-container {
+	padding-top: 4px;
+	display: flex;
+}
+
+#edges-header-container {
+	padding-top: 4px;
+	display: flex;
+}
+
+#properties-header-container {
+	padding-top: 4px;
+	display: flex;
+}
+
+.var-option-markers-x {
+	display: flex;
+}
+
+.var-option-markers-y {
+	display: flex;
+}
+
+.markers-x-select-container {
+	padding-right: 6px;
+}
+
+.markers-y-select-container {
+	padding-right: 6px;
+}
+
+.markers-x-remove {
+	align-content: center;
+}
+
+.markers-y-remove {
+	align-content: center;
+}
+
+#markers-x-header-container {
+	padding-top: 4px;
+}
+
+#markers-y-header-container {
+	padding-top: 4px;
+}
+
+#controls-container {
+	justify-content: center;
+	display: flex;
+	padding: 4px;
+}
+
+#panel {
+	display: flex;
+}
+
+#right-frame {
+	padding: 4px;
+	width: 100%;
+}
+
+body {
+	font-family: monospace !important;
+}
+
+#smooth-edges-container {
+	display: flex;
+}
+
+#smooth-edges-label {
+	width: 100%;
+}
+
+#physics-container {
+	display: flex;
+}
+
+#physics-label {
+	width: 100%;
+}
+
+#progress-bar {
+	width: 100%;
+	height: 2px;
+	accent-color: #6990c4 !important;
+	visibility: hidden;
+}
+
+.var-options-container {
+	overflow-y: auto;
+	height: 400px;
+}

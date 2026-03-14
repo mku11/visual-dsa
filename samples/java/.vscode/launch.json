@@ -1,0 +1,71 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "java",
+			"name": "LinkedLists",
+			"request": "launch",
+			"mainClass": "app.LinkedLists"
+		},
+		{
+			"type": "java",
+			"name": "DoublyLinkedLists",
+			"request": "launch",
+			"mainClass": "app.DoublyLinkedLists"
+		},
+		{
+			"type": "java",
+			"name": "Graphs",
+			"request": "launch",
+			"mainClass": "app.Graphs"
+		},
+		{
+			"type": "java",
+			"name": "GraphMapNodes",
+			"request": "launch",
+			"mainClass": "app.GraphMapNodes"
+		},
+		{
+			"type": "java",
+			"name": "GraphsPrimitivesEdges",
+			"request": "launch",
+			"mainClass": "app.GraphsPrimitivesEdges"
+		},
+		{
+			"type": "java",
+			"name": "Arrays",
+			"request": "launch",
+			"mainClass": "app.Arrays"
+		},
+		{
+			"type": "java",
+			"name": "Lists",
+			"request": "launch",
+			"mainClass": "app.Lists"
+		},
+		{
+			"type": "java",
+			"name": "Hashes",
+			"request": "launch",
+			"mainClass": "app.Hashes"
+		},
+		{
+			"type": "java",
+			"name": "Primitives",
+			"request": "launch",
+			"mainClass": "app.Primitives"
+		},
+		{
+			"type": "java",
+			"name": "Queues",
+			"request": "launch",
+			"mainClass": "app.Queues"
+		},
+		{
+			"type": "java",
+			"name": "Trees",
+			"request": "launch",
+			"mainClass": "app.Trees"
+		}
+	]
+}

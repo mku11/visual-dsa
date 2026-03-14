@@ -1,0 +1,107 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Arrays",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\Arrays.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "DoublyLinkedLists",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\DoublyLinkedLists.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Lists",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\Lists.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Hashes",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\Hashes.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "LinkedLists",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\LinkedLists.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Primitives",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\Primitives.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Queues",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\Queues.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Trees",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\Trees.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Graphs",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\Graphs.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "GraphMapNodes",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\GraphMapNodes.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "GraphsPrimitivesEdges",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\GraphsPrimitivesEdges.ts"
+        }
+    ]
+}

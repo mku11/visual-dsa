@@ -1,0 +1,613 @@
+/*
+MIT License
+
+Copyright (c) 2026 Max Kas
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+import { VarNode, Node, Edge } from "../parsers/parser";
+
+export class Formatter {
+	static readonly MAX_STR_LEN = 60;
+	static graphLayouts = new Set<string>(["graph", "tree", "linkedlist"]);
+	static edgeColors = ["#6466f3", "#f35e5e", "#ecad4d", "#55f050"];
+	varNodePosX = 0;
+	varNodePosY = 0;
+
+
+	convert(varNodes: VarNode[],
+		selectedLayouts: Map<string, string>,
+		selectedOrientations: Map<string, string>): VisData {
+		const nodes: Map<string, VisNode> = new Map<string, VisNode>();
+		const edges: Map<string, VisEdge> = new Map<string, VisEdge>();
+		const visited: Set<string> = new Set<string>();
+		this.varNodePosX = 0;
+
+		let idx = 0;
+		const colors: Map<string, string> = new Map<string, string>();
+		for (const varNode of varNodes) {
+			colors.set(varNode.id, Formatter.edgeColors[idx++]);
+		}
+
+		for (const varNode of varNodes) {
+			console.log("convert: " + varNode.id);
+			this.convertNodesEdges(varNode,
+				varNode,
+				nodes, edges,
+				selectedLayouts,
+				selectedOrientations,
+				visited, 0, colors);
+		}
+
+		const visData: VisData = new VisData(
+			Array.from(nodes.values()),
+			Array.from(edges.values()));
+		return visData;
+	}
+
+	convertNodesEdges(
+		node: VarNode | Node,
+		root: VarNode | Node,
+		nodes: Map<string, VisNode>,
+		edges: Map<string, VisEdge>,
+		layouts: Map<string, string>,
+		orientations: Map<string, string>,
+		visited: Set<string>,
+		level = 0,
+		colors: Map<string, string>,) {
+		if (!node) {
+			return;
+		}
+		const layout = layouts.get(node.type!) ?? "graph";
+		const orientation = orientations.get(node.type!) ?? "horizontal";
+		let visNode: VisNode | undefined = undefined;
+		if (visited.has(node.id)) {
+			return;
+		} else if (node.id && nodes.has(node.id)) {
+			visNode = nodes.get(node.id);
+			if (visNode && visNode.level < level) {
+				visNode.level = level;
+			}
+		} else {
+			visNode = new VisNode(node.id, this.getLabel(node,
+				layout, orientation));
+			visNode.level = level;
+			if (node instanceof VarNode) {
+				visNode.group = 'VarNode';
+				visNode.x = this.varNodePosX;
+				this.varNodePosX += 100;
+				visNode.y = 0;
+			} else if (node instanceof Node) {
+				visNode.group = 'Node';
+			}
+			nodes.set(node.id, visNode);
+		}
+		visited.add(node.id);
+		if (level > 0 && (!layout || !Formatter.graphLayouts.has(layout))) {
+			return;
+		}
+
+		let children: Map<string, Node> = new Map<string, Node>();
+		if (node instanceof VarNode && node.value instanceof Node) {
+			children.set("", node.value);
+		} else if (node instanceof Node) {
+			children = node.children;
+		}
+		for (const [childName, child] of children) {
+			this.convertNodesEdges(child,
+				root,
+				nodes, edges,
+				layouts, orientations,
+				visited, level + 1, colors);
+			const edgeId: string = node.id + "->" + child.id;
+			const revEdgeId: string = child.id + "->" + node.id;
+			if (!edges.has(edgeId)) {
+				const visEdge: VisEdge = this.createEdge(edgeId, childName, node, child);
+				const revVisEdge = edges.get(revEdgeId);
+				if (revVisEdge) {
+					revVisEdge.smooth = new SmoothEdge("curvedCW", 0.2);
+					visEdge.smooth = new SmoothEdge("curvedCW", 0.2);
+				}
+				visEdge.arrows = new Arrows();
+				if (node instanceof Node) {
+					const edge: Edge | undefined = node.childrenEdgeValues.get(child.id);
+					if (edge) {
+						visEdge.label = this.getEdgeLabel(node, child);
+						visEdge.color = this.getEdgeColor(node, child, colors.get(edge.root)!);
+					} else {
+						visEdge.color = this.getEdgeColor(node, child, colors.get(root.id) ?? "");
+					}
+				} else {
+					visEdge.color = this.getEdgeColor(node, child, colors.get(root.id) ?? "");
+				}
+				edges.set(edgeId, visEdge);
+			}
+		}
+	}
+
+	getEdgeLabel(node: Node, child: Node): string {
+		if (!(node instanceof VarNode) && node.type && node.type in this.getHashTypes()) {
+			return "";
+		}
+		const edge: Edge | undefined = node.childrenEdgeValues.get(child.id)!;
+		let label = edge.value;
+		if (label.startsWith("\"") && label.endsWith("\"")) {
+			label = label.substring(1, label.length - 1);
+		}
+		return label;
+	}
+
+	public getHashTypes() {
+		return new Set();
+	}
+
+	createEdge(edgeId: string, childName: string, node: VarNode | Node, child: Node): VisEdge {
+		if (!(node instanceof VarNode) && node.type && node.type in this.getHashTypes()) {
+			return new VisEdge(edgeId, "", node.id, child.id);
+		}
+		return new VisEdge(edgeId, "", node.id, child.id);
+	}
+
+	getEdgeColor(node: VarNode | Node, child: Node, color: string): Color | undefined {
+		if (!(node instanceof VarNode) && node.type && node.type in this.getHashTypes()) {
+			const color = new Color('#2d2d30');
+			color.opacity = 0.0;
+			return color;
+		}
+		const colorObj = new Color(color);
+		return colorObj;
+	}
+
+	getLabel(node: VarNode | Node,
+		layout: string | undefined,
+		orientation: string | undefined): string {
+		let label = node.id;
+		if (node.type) {
+			label += "\n";
+			label += "Type: " + this.wrapString(node.type);
+		}
+		if (node.value && !(node.value instanceof Node)) {
+			label += "\n";
+			label += "------\n";
+			label += "Value:\n";
+			label += this.getLabelValue(node, layout, orientation);
+		}
+
+		if (node instanceof Node) {
+			// child property values
+			let props = "";
+			for (const [, child] of node.properties) {
+				props += "\n";
+				props += child.name ? child.name : "Unknown";
+				props += " : " + (child.type ? child.type : "Unknown");
+				props += " = " + this.truncate(child.value ? child.value : "");
+				if (child.strRepr) {
+					// if it's multiline we display in a new line
+					if (child.strRepr.includes("\n")) {
+						props += "\n";
+						props += child.strRepr;
+					} else {
+						props += " (" + child.strRepr + ")";
+					}
+				}
+			}
+
+			if (props.length > 0) {
+				label += "\n";
+				label += "------\n";
+				label += "Properties:";
+				label += props;
+			}
+		}
+		return label;
+	}
+
+	wrapString(text: string): string {
+		let newText = "";
+		let last = 0;
+		while (text.substring(last).length > Formatter.MAX_STR_LEN) {
+			newText += text.substring(last, last + Formatter.MAX_STR_LEN) + "\n";
+			last += Formatter.MAX_STR_LEN;
+		}
+		newText += text.substring(last);
+		return newText;
+	}
+
+	getLabelValue(node: VarNode | Node,
+		layout?: string, orientation?: string): string {
+		const value: string | object = node.value;
+		const markersx = node.markersx;
+		const markersy = node instanceof Node ? node.markersy : undefined;
+
+		if (typeof (value) === 'string') {
+			return this.formatString(value);
+		} else if (layout === 'array2D') {
+			return this.formatArray2D(value as string[][], markersx, markersy);
+		} else if (layout === 'array') {
+			return this.formatArray(value as string[], orientation, markersx);
+		} else if (layout === 'queue') {
+			return this.formatArray(value as string[], "horizontal", markersx);
+		} else if (layout === 'map') {
+			return this.formatMap(value as string[][]);
+		} else if (layout === 'set') {
+			return this.formatArray(value as string[], orientation, markersx);
+		} else if (layout === 'stack') {
+			return this.formatArray(value as string[], "vertical", markersx, true);
+		}
+		return "";
+	}
+
+	truncate(text: string): string {
+		if (text.length > Formatter.MAX_STR_LEN) {
+			return text.substring(0, Formatter.MAX_STR_LEN) + "...";
+		}
+		return text;
+	}
+
+	formatString(text: string): string {
+		let newText = "";
+		let pad = 0;
+		for (const line of text.split("\n")) {
+			if (line.length > Formatter.MAX_STR_LEN) {
+				pad = Formatter.MAX_STR_LEN + 3;
+			} else {
+				pad = Math.max(line.length, pad);
+			}
+		}
+
+		for (let line of text.split("\n")) {
+			if (line.length > Formatter.MAX_STR_LEN) {
+				line = line.substring(0, Formatter.MAX_STR_LEN) + "...";
+			}
+			line = line.padEnd(pad);
+			newText += line + "\n";
+		}
+		return newText;
+	}
+
+	// TODO: add orientation
+	formatArray(arr: string[],
+		orientation?: string,
+		markers?: Array<[string, string]>,
+		reverse?: boolean
+	): string {
+		let arrRepr = "";
+		let arrPadRepr = String(arr.length).length;
+		const arrPadHeaderRepr = String(arr.length).length;
+		const indexes = new Map<number, string>();
+		if (markers) {
+			for (const [marker, value] of markers) {
+				const ind = parseInt(value);
+				if (isNaN(ind) || ind < 0 || ind >= arr.length)
+					continue;
+				let markersText: string = indexes.get(ind) || "";
+				if (markersText.length > 0)
+					markersText += " ";
+				markersText += marker;
+				indexes.set(ind, markersText);
+			}
+		}
+		for (let idx = 0; idx < arr.length; idx++) {
+			let len = String(arr[idx]).length;
+			if (indexes.has(idx)) {
+				len += String(indexes.get(idx)).length + 1;
+			}
+			arrPadRepr = Math.max(len, arrPadRepr);
+		}
+		let idx = 0;
+		if (orientation === 'horizontal') {
+			for (let idx = 0; idx < arr.length; idx++) {
+				let header = String(idx);
+				if (indexes.has(idx) && indexes.get(idx)) {
+					header = indexes.get(idx) + " " + header;
+				}
+				if (!reverse) {
+					arrRepr += ' ';
+					arrRepr += header.padStart(arrPadRepr);
+				} else {
+					arrRepr = ' ' + arrRepr;
+					arrRepr = header.padStart(arrPadRepr) + arrRepr;
+				}
+			}
+			if (!reverse) {
+				arrRepr += "\n";
+			} else {
+				arrRepr = "\n" + arrRepr;
+			}
+
+			// underline
+			// eslint-disable-next-line @typescript-eslint/prefer-for-of
+			for (let idx = 0; idx < arr.length; idx++) {
+				if (!reverse) {
+					arrRepr += '-';
+					arrRepr += '-'.padStart(arrPadRepr, '-');
+				} else {
+					arrRepr = '-' + arrRepr;
+					arrRepr = '-'.padStart(arrPadRepr, '-') + arrRepr;
+				}
+			}
+			if (!reverse) {
+				arrRepr += "\n";
+			} else {
+				arrRepr = "\n" + arrRepr;
+			}
+		}
+		idx = 0;
+		for (const elRepr of arr) {
+			if (arrRepr.length > 0) {
+				if (orientation === 'horizontal') {
+					if (!reverse) {
+						arrRepr += '|';
+					} else {
+						arrRepr = '|' + arrRepr;
+					}
+				} else if (orientation === 'vertical') {
+					if (!reverse) {
+						arrRepr += '\n';
+						arrRepr += String(idx).padStart(arrPadHeaderRepr) + ": ";
+					} else {
+						arrRepr = '\n' + arrRepr;
+						arrRepr = String(idx).padStart(arrPadHeaderRepr) + ": " + arrRepr;
+					}
+				}
+			}
+			arrRepr += String(elRepr).padStart(arrPadRepr);
+			idx++;
+		}
+		return arrRepr;
+	}
+
+	formatArray2D(arr2D: string[][],
+		markersx?: Array<[string, string]>,
+		markersy?: Array<[string, string]>
+	): string {
+		let arr2DRepr = "";
+		let arr2DRepr2 = "";
+		let maxLength = 0;
+		let arr2DPadRepr = 0;
+		let arr2DPadHeaderVertRepr = String(arr2D.length).length;
+
+		const indexesX = new Map<number, string>();
+		const indexesY = new Map<number, string>();
+		if (markersx) {
+			for (const [marker, value] of markersx) {
+				const ind = parseInt(value);
+				if (isNaN(ind) || ind < 0 || ind >= arr2D.length)
+					continue;
+				let markersText: string = indexesX.get(ind) || "";
+				if (markersText.length > 0)
+					markersText += " ";
+				markersText += marker;
+				indexesX.set(ind, markersText);
+			}
+		}
+
+		if (markersy) {
+			for (const [marker, value] of markersy) {
+				const ind = parseInt(value);
+				if (isNaN(ind) || ind < 0)
+					continue;
+				let markersText: string = indexesY.get(ind) || "";
+				if (markersText.length > 0)
+					markersText += " ";
+				markersText += marker;
+				indexesY.set(ind, markersText);
+			}
+		}
+
+		for (let idx = 0; idx < arr2D.length; idx++) {
+			const elRepr = arr2D[idx];
+			if (!elRepr) {
+				continue;
+			}
+			maxLength = Math.max(maxLength, elRepr.length);
+			for (let idx2 = 0; idx2 < elRepr.length; idx2++) {
+				const elRepr2 = arr2D[idx][idx2];
+				let len = String(idx2).length;
+				const indxs = indexesX.get(idx2);
+				if (indxs) {
+					len += indxs.length + 1;
+				}
+				arr2DPadRepr = Math.max(arr2DPadRepr, len);
+				arr2DPadRepr = Math.max(arr2DPadRepr, elRepr2.length);
+
+				let len2 = String(idx2).length;
+				if (indexesY.has(idx2)) {
+					len2 += String(indexesY.get(idx2)).length + 1;
+				}
+				arr2DPadHeaderVertRepr = Math.max(arr2DPadHeaderVertRepr, len2);
+			}
+			arr2DPadRepr = Math.max(arr2DPadRepr, String(elRepr.length).length);
+		}
+		for (let arr2DIdx = -1; arr2DIdx < arr2D.length; arr2DIdx++) {
+			arr2DRepr2 = "";
+			for (let arr2DIdx2 = -1; arr2DIdx2 < maxLength; arr2DIdx2++) {
+				if (arr2DIdx == -1 && arr2DIdx2 == -1) {
+					arr2DRepr2 += ' '.padStart(arr2DPadHeaderVertRepr);
+				} else if (arr2DIdx == -1) {
+					let header = String(arr2DIdx2);
+					if (indexesX.has(arr2DIdx2) && indexesX.get(arr2DIdx2)) {
+						header = indexesX.get(arr2DIdx2) + " " + header;
+					}
+					arr2DRepr2 += header.padStart(arr2DPadRepr);
+				} else if (arr2DIdx2 == -1) {
+					let header = String(arr2DIdx);
+					if (indexesY.has(arr2DIdx) && indexesY.get(arr2DIdx)) {
+						header = indexesY.get(arr2DIdx) + " " + header;
+					}
+					arr2DRepr2 += header.padStart(arr2DPadHeaderVertRepr);
+				} else {
+					let value = new String();
+					if (arr2DIdx < arr2D.length && arr2D[arr2DIdx] != null
+						&& arr2DIdx2 < arr2D[arr2DIdx].length) {
+						value = String(arr2D[arr2DIdx][arr2DIdx2]);
+					}
+					arr2DRepr2 += String(value).padStart(arr2DPadRepr);
+				}
+				if (arr2DIdx == -1) {
+					arr2DRepr2 += ' ';
+				} else {
+					arr2DRepr2 += '|';
+				}
+			}
+			if (arr2DRepr.length > 0) {
+				arr2DRepr += "\n";
+			}
+			if (arr2DIdx == -1) {
+				arr2DRepr2 += "\n";
+				arr2DRepr2 += " ";
+				for (let arr2DIdx2 = 0; arr2DIdx2 <= maxLength; arr2DIdx2++) {
+					if (arr2DIdx2 == 0) {
+						arr2DRepr2 += ' '.padStart(arr2DPadHeaderVertRepr, ' ');
+					} else {
+						arr2DRepr2 += '-';
+						arr2DRepr2 += '-'.padStart(arr2DPadRepr, '-');
+					}
+				}
+			}
+			arr2DRepr += arr2DRepr2;
+		}
+		return arr2DRepr;
+	}
+
+	formatMap(arr: string[][]): string {
+		let arrRepr = "";
+		let kPadRepr = 0;
+		let vPadRepr = 0;
+		for (const [k, v] of arr) {
+			kPadRepr = Math.max(String(k).length, kPadRepr);
+			vPadRepr = Math.max(String(v).length, vPadRepr);
+		}
+
+		for (const [k, v] of arr) {
+			if (arrRepr.length > 0) {
+				arrRepr += '\n';
+			}
+			arrRepr += String(k).padStart(kPadRepr) + ":"
+				+ String(v).padStart(vPadRepr);
+		}
+		return arrRepr;
+	}
+}
+
+export class VisData {
+	public nodes: VisNode[] = [];
+	public edges: VisEdge[] = [];
+	public source: string[] = [];
+	constructor(
+		nodes: VisNode[],
+		edges: VisEdge[]) {
+		this.nodes = nodes;
+		this.edges = edges;
+	}
+}
+
+export class VisDiffData {
+	public newNodes: VisNode[] = [];
+	public updateNodes: VisNode[] = [];
+	public removeNodes: VisNode[] = [];
+	public newEdges: VisEdge[] = [];
+	public updateEdges: VisEdge[] = [];
+	public removeEdges: VisEdge[] = [];
+	public source: string[] = [];
+}
+
+export class VisNode {
+	public id: string;
+	public label: string;
+	public labelDiff: Diff[] = [];
+	public group: string | undefined = undefined;
+	public x: number | undefined = undefined;
+	public y: number | undefined = undefined;
+	public level = 0;
+	constructor(id: string,
+		label: string, group = undefined) {
+		this.id = id;
+		this.label = label;
+		this.group = group;
+	}
+}
+
+export class Diff {
+	public start = 0;
+	public end = 0;
+	constructor(start: number, end: number) {
+		this.start = start;
+		this.end = end;
+	}
+}
+
+export class SmoothEdge {
+	public type: string;
+	public roundness: number;
+	constructor(type: string, roundness: number) {
+		this.type = type;
+		this.roundness = roundness;
+	}
+}
+
+export class VisEdge {
+	public id: string;
+	public label: string;
+	public from: string;
+	public to: string;
+	public color: Color | undefined = undefined;
+	public arrows: Arrows | undefined = undefined;
+	public smooth: SmoothEdge | false = false;
+
+	constructor(id: string,
+		label: string,
+		from: string,
+		to: string,
+		arrows?: Arrows,
+		color?: Color) {
+		this.id = id;
+		this.label = label;
+		this.from = from;
+		this.to = to;
+		this.arrows = arrows;
+		this.color = color;
+	}
+}
+
+export class Arrows {
+	to = {
+		enabled: true,
+		type: 'arrow'
+	};
+}
+
+export class Color {
+	color: string | undefined = undefined;
+	highlight: string | undefined = undefined;
+	hover: string | undefined = undefined;
+	opacity: number | undefined = undefined;
+
+	constructor(color?: string,
+		highlight?: string,
+		hover?: string,
+		opacity?: number) {
+		this.color = color;
+		this.highlight = highlight;
+		this.hover = hover;
+		this.opacity = opacity;
+	}
+}
+
