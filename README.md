@@ -3,10 +3,20 @@ Extension for Visualing Data Structures and Algorithms.
 Inspired by VS Code Debug Visualizer: https://github.com/hediet/vscode-debug-visualizer  
 and jGRASP: https://www.jgrasp.org/  
 
+![alt text](https://github.com/mku11/visual-dsa/blob/main/screenshots/screenshot_graph.png)
+
 ## Features
-- Data Structures supported: Graphs, Trees, LinkedLists, Arrays, Lists, Maps, Sets
-- Code Step Next/Back
-- Auto Step with delay
+- Language support: Java, C#, TS/JS, Python.
+- Graphical layouts supported for: Graphs, Trees, Linked Lists, Lists, Arrays (2D), Queue, Stack, Maps, Sets.
+- Layouts applied per Object Type.
+- Default (auto-suggested) layout assignments.
+- Support for multiple variables/expressions.
+- Graph layouts support user selection of children nodes, edges, and properties from objects attributes.
+- Array layouts support markers for x and y axis.
+- Hooks for extracting children nodes, and edges (ie: Extractor.getNodes() and getEdges()).
+- Network graph history with code back stepping.
+- GUI option for vis-network physics (enable/disable).
+- Auto Step with delay.
 
 ## Supported Languages
 - Java
