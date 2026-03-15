@@ -236,9 +236,10 @@ export class JavaReader extends Reader {
 
 		try {
 			const name = variable.evaluateName;
+			const type = variable.type.replaceAll("$", ".");
 			let expr = `{
 				StringBuilder arrRepr = new StringBuilder();
-				${variable.type} varRepr = ((${variable.type}) new java.util.Optional(${name}).get());
+				${type} varRepr = ((${type}) new java.util.Optional(${name}).get());
 				for(Object elRepr : varRepr) {
 					arrRepr.append(String.valueOf(elRepr));
 					arrRepr.append("|-|");
@@ -260,7 +261,7 @@ export class JavaReader extends Reader {
 			return arr;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
-				console.error("Error: Array Repr of " + variable + ": " + ex.message);
+				console.error("getListRepr Error: Array Repr of " + variable + ": " + ex.message);
 			} else {
 				console.error(ex);
 			}
@@ -273,9 +274,10 @@ export class JavaReader extends Reader {
 
 		try {
 			const name = variable.evaluateName;
+			const type = variable.type.replaceAll("$", ".");
 			let expr = `{
 				StringBuilder arrRepr = new StringBuilder();
-				${variable.type} varRepr = ((${variable.type}) new java.util.Optional(${name}).get());
+				${type} varRepr = ((${type}) new java.util.Optional(${name}).get());
 				for(int idxRepr = 0; idxRepr < varRepr.length; idxRepr++) {
 					arrRepr.append(String.valueOf(varRepr[idxRepr]));
 					arrRepr.append("|-|");
@@ -297,7 +299,7 @@ export class JavaReader extends Reader {
 			return arr;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
-				console.error("Error: Array Repr of " + variable + ": " + ex.message);
+				console.error("getArrRepr Error: Array Repr of " + variable + ": " + ex.message);
 			} else {
 				console.error(ex);
 			}
@@ -320,9 +322,10 @@ export class JavaReader extends Reader {
 			const name = variable.evaluateName;
 			// workaround: DAP complains about types when variable is a member of 
 			// an object ie: this.arr so we box into an optional to type cast
+			const type = variable.type.replaceAll("$", ".");
 			let expr = `{
 				StringBuilder arr2DRepr = new StringBuilder();
-				${variable.type} varRepr = ((${variable.type}) new java.util.Optional(${name}).get());
+				${type} varRepr = ((${type}) new java.util.Optional(${name}).get());
 				for(int idxRepr = 0; idxRepr < varRepr.length; idxRepr++) {
 					if(varRepr[idxRepr] != null) {
 						for(int idx2Repr = 0; idx2Repr < varRepr[idxRepr].length; idx2Repr++) {
@@ -368,9 +371,10 @@ export class JavaReader extends Reader {
 			const name = variable.evaluateName;
 			// workaround: DAP complains about types when variable is a member of 
 			// an object ie: this.arr so we box into an optional to type cast
+			const type = variable.type.replaceAll("$", ".");
 			let expr = `{
 				StringBuilder arr2DRepr = new StringBuilder();
-				${variable.type} varRepr = ((${variable.type}) new java.util.Optional(${name}).get());
+				${type} varRepr = ((${type}) new java.util.Optional(${name}).get());
 				for(Object rowRepr : varRepr) {
 					if(elRepr != null) {
 						for(Object elRepr : rowRepr) {
@@ -413,9 +417,10 @@ export class JavaReader extends Reader {
 	public async getQueueRepr(variable: Variable): Promise<string[] | undefined> {
 		try {
 			const name = variable.evaluateName;
+			const type = variable.type.replaceAll("$", ".");
 			const expr = `
 			java.util.List<String> queueListRepr = new java.util.ArrayList<>();
-            ${variable.type}<Object> queueCloneRepr = new ${variable.type}<>(${name});
+            ${type}<Object> queueCloneRepr = new ${type}<>(${name});
             while(queueCloneRepr.size() > 0) {
                 queueListRepr.add(String.valueOf(queueCloneRepr.remove()));
         	}
@@ -483,9 +488,10 @@ return mapRepr.toString();
 	public async getQueueNodes(variable: Variable): Promise<Variable[] | undefined> {
 		try {
 			const name = variable.evaluateName;
+			const type = variable.type.replaceAll("$", ".");
 			const expr = `
 			java.util.List<Object> queueListRepr = new java.util.ArrayList<>();
-            ${variable.type}<Object> queueCloneRepr = new ${variable.type}<>(${name});
+            ${type}<Object> queueCloneRepr = new ${type}<>(${name});
             while(queueCloneRepr.size() > 0) {
                 queueListRepr.add(queueCloneRepr.remove());
         	}
@@ -557,7 +563,7 @@ return mapRepr.toString();
 			return content;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
-				console.error("Error: getCurrentNodeId  of " + variable + ": " + ex.message);
+				console.error("Error: getNodeId  of " + variable + ": " + ex.message);
 			} else {
 				console.error(ex);
 			}
