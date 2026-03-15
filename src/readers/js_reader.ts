@@ -497,13 +497,57 @@ mapRepr;
 
 	public async getNodeType(variable: Variable): Promise<string> {
 		let type = variable.type;
-		//FIXME: add 3d arrays
+
 		if (variable.type === 'Array' && variable.value.includes("Array")) {
-			type += "[][]";
+			const is3D = await this.isArray3D(variable);
+			if (is3D) {
+				type += "[][][]";
+			} else {
+				type += "[][]";
+			}
 		} else if (variable.value.startsWith("Array")) {
 			type += "[]";
 		}
 		return type;
+	}
+
+	async isArray3D(variable: Variable): Promise<boolean> {
+		try {
+			const name = variable.evaluateName;
+			// workaround: DAP complains about types when variable is a member of 
+			// an object ie: this.arr so we box into an optional to type cast
+			let expr = `{
+				let varRepr = ${name};
+				let found = false;
+				for(let idxRepr = 0; idxRepr < varRepr.length; idxRepr++) {
+					if(varRepr[idxRepr]) {
+						for(let idx2Repr = 0; idx2Repr < varRepr[idxRepr].length; idx2Repr++) {
+							if(varRepr[idxRepr][idx2Repr] instanceof Array) {
+								found = true;
+								break;
+							}
+						}
+					}
+					if(found)
+						break;
+				}
+				found;
+				}`;
+			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
+				expression: expr,
+				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
+				context: 'repl',
+			});
+			return arrRepr.result === "true";
+		} catch (ex: Error | unknown) {
+			if (ex instanceof Error) {
+				console.error("getArrayRepr Error: Array Repr of " + variable + ": " + ex.message);
+			} else {
+				console.error(ex);
+			}
+		}
+		return false;
 	}
 
 	public getDefaultLayout(type: string, value: string): string | undefined {
