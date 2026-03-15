@@ -614,11 +614,6 @@ function formatMarkers(ctx) {
         const position = network.getPosition(node.id);
         const lines = node.label.split("\n");
         const totalHeight = height * lines.length;
-        let totalWidth = 0;
-        for (const line of lines) {
-            const width = ctx.measureText(line).width;
-            totalWidth = Math.max(width, width);
-        }
 
         let lineNum = 0;
         let chars = 0;
@@ -682,24 +677,20 @@ function formatBarsLayout(ctx, selectedLayout) {
         const position = network.getPosition(node.id);
         const lines = node.label.split("\n");
         const totalHeight = height * lines.length;
-        let totalWidth = 0;
-        for (const line of lines) {
-            const width = ctx.measureText(line).width;
-            totalWidth = Math.max(width, width);
-        }
 
         let chars = 0;
         let idx = 0;
         const bars = node.bars;
         let maxBar = Math.max(...bars);
         const maxBarWidth = ctx.measureText('    ').width;
-        const barWidth = Math.min(maxBarWidth, totalWidth / bars.length * 2 / 3);
+        const barSpace = ctx.measureText(lines[lines.length - 1]).width / bars.length;
+        const barWidth = Math.min(maxBarWidth, barSpace * 2 / 3);
         for (const bar of bars) {
             const relValue = bar / maxBar;
+            let offset = idx * barSpace - barSpace * bars.length / 2 + (barSpace - barWidth);
             ctx.fillStyle = 'red';
             ctx.fillRect(
-                position.x - totalWidth / 2 + idx / 10 * totalWidth
-                + totalWidth / bars.length - barWidth,
+                position.x + offset,
                 position.y - totalHeight / 2 + vertMargin + 4 * height
                 + 9 * height * (1 - bar / maxBar),
                 barWidth,
