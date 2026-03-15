@@ -26,10 +26,13 @@ import { VarNode, Node, Edge } from "../parsers/parser";
 
 export class Formatter {
 	static readonly MAX_STR_LEN = 60;
+	static readonly BARS_ROWS = 10;
 	static graphLayouts = new Set<string>(["graph", "tree", "linkedlist"]);
+	static barLayouts = new Set<string>(["bars"]);
 	static edgeColors = ["#6466f3", "#f35e5e", "#ecad4d", "#55f050"];
 	varNodePosX = 0;
 	varNodePosY = 0;
+
 
 
 	convert(varNodes: VarNode[],
@@ -88,6 +91,9 @@ export class Formatter {
 		} else {
 			visNode = new VisNode(node.id, this.getLabel(node,
 				layout, orientation));
+			if(Formatter.barLayouts.has(layout) && node instanceof Node) {
+				visNode.bars = (node.value as []).map(x=>parseInt(x));
+			}
 			visNode.level = level;
 			if (node instanceof VarNode) {
 				visNode.group = 'VarNode';
@@ -250,8 +256,18 @@ export class Formatter {
 			return this.formatArray(value as string[], orientation, markersx);
 		} else if (layout === 'stack') {
 			return this.formatArray(value as string[], "vertical", markersx, true);
+		} else if (layout === 'bars') {
+			return this.formatBars(value as string[], markersx);
 		}
 		return "";
+	}
+	formatBars(value: string[], markersx: [string, string][] | undefined): string {
+		let barsRepr = "";
+		for (let i = 0; i < Formatter.BARS_ROWS; i++) {
+			barsRepr += "\n";
+		}
+		const arrRepr = this.formatArray(value, "horizontal", markersx);
+		return barsRepr += arrRepr;
 	}
 
 	truncate(text: string): string {
@@ -533,6 +549,7 @@ export class VisNode {
 	public id: string;
 	public label: string;
 	public labelDiff: Diff[] = [];
+	public bars: number[] = [];
 	public group: string | undefined = undefined;
 	public x: number | undefined = undefined;
 	public y: number | undefined = undefined;

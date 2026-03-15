@@ -33,13 +33,16 @@ var nodesLayouts = new Set([
     "graph", "tree", "linkedlist"
 ]);
 var arrayLayouts = new Set([
-	"array"
+    "array"
 ]);
-
 var array2DLayouts = new Set([
     "array2D"
 ]);
+var barsLayouts = new Set([
+    "bars"
+]);
 
+const BARS_ROWS = 10;
 var nodeColor = '#ccd4f3';
 var varNodeColor = '#e8ccf0';
 var vscode;
@@ -222,6 +225,7 @@ function setupVariableListeners() {
         propertiesSelect.visibility = nodesLayouts.has(layoutSelect.value) ? "visible" : "collapse";
         markersx.visibility = arrayLayouts.has(layoutSelect.value) ? "visible" : "collapse";
         markersy.visibility = array2DLayouts.has(layoutSelect.value) ? "visible" : "collapse";
+        markersx.visibility = barsLayouts.has(layoutSelect.value) ? "visible" : "collapse";
     });
 
 
@@ -432,7 +436,7 @@ function createGraph(data, source, selectedLayout) {
     createNetworkOptions(selectedLayout);
     createNetwork(data);
     saveNetwork(data, source, selectedLayout);
-    setupNetworkListeners();
+    setupNetworkListeners(selectedLayout);
 }
 
 function updateGraph(data, source, selectedLayout) {
@@ -536,7 +540,7 @@ function updateNetwork(data) {
     }
 }
 
-function setupNetworkListeners() {
+function setupNetworkListeners(selectedLayout) {
     network.on('dragEnd', function (e) {
         // store new position
         console.log(e);
@@ -583,9 +587,8 @@ function setupNetworkListeners() {
     });
 
     network.on('afterDrawing', (ctx) => {
-        // format text with diffs
-        // TODO: add markers
-        formatLabels(ctx);
+        formatMarkers(ctx);
+        formatBarsLayout(ctx, selectedLayout);
     });
 
     network.on("zoom", (ctx) => {
@@ -599,7 +602,7 @@ function setupNetworkListeners() {
     });
 }
 
-function formatLabels(ctx) {
+function formatMarkers(ctx) {
     const height = parseInt(ctx.font.split(" ")[0]);
     const vertMargin = 7;
     ctx.textAlign = 'center';
@@ -654,6 +657,55 @@ function formatLabels(ctx) {
             }
             lineNum++;
             chars += line.length + 1;
+        }
+    }
+}
+
+
+function formatBarsLayout(ctx, selectedLayout) {
+    let height = 0;
+    for (const part of ctx.font.split(" ")) {
+        const fontHeight = parseInt(part);
+        if (!isNaN(fontHeight)) {
+            height = fontHeight;
+            break;
+        }
+    }
+    const vertMargin = 7;
+    ctx.textAlign = 'center';
+
+    for (const [nodeId, node] of Object.entries(panelState.networkData.nodes)) {
+        if (node.bars.length == 0) {
+            continue;
+        }
+        console.log("format bars", node.id);
+        const position = network.getPosition(node.id);
+        const lines = node.label.split("\n");
+        const totalHeight = height * lines.length;
+        let totalWidth = 0;
+        for (const line of lines) {
+            const width = ctx.measureText(line).width;
+            totalWidth = Math.max(width, width);
+        }
+
+        let chars = 0;
+        let idx = 0;
+        const bars = node.bars;
+        let maxBar = Math.max(...bars);
+        const maxBarWidth = ctx.measureText('    ').width;
+        const barWidth = Math.min(maxBarWidth, totalWidth / bars.length * 2 / 3);
+        for (const bar of bars) {
+            const relValue = bar / maxBar;
+            ctx.fillStyle = 'red';
+            ctx.fillRect(
+                position.x - totalWidth / 2 + idx / 10 * totalWidth
+                + totalWidth / bars.length - barWidth,
+                position.y - totalHeight / 2 + vertMargin + 4 * height
+                + 9 * height * (1 - bar / maxBar),
+                barWidth,
+                9 * height * bar / maxBar
+            );
+            idx++;
         }
     }
 }

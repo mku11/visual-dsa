@@ -40,6 +40,7 @@ export class Parser {
 	private queueLayouts: Set<string> = new Set<string>(["queue"]);
 	private setLayouts: Set<string> = new Set<string>(["set"]);
 	private mapLayouts: Set<string> = new Set<string>(["map"]);
+	private barsLayouts: Set<string> = new Set<string>(["bars"]);
 	constructor(reader: Reader) {
 		this.reader = reader;
 	}
@@ -282,7 +283,7 @@ export class Parser {
 
 		// add array representation if applicable
 		if (this.arrayLayouts.has(layout) || this.stackLayouts.has(layout)
-			|| this.setLayouts.has(layout)) {
+			|| this.setLayouts.has(layout) || this.barsLayouts.has(layout)) {
 			const arrayRepr = await this.reader.getArrayRepr(variable);
 			if (arrayRepr) {
 				node.value = arrayRepr;
