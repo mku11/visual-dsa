@@ -91,8 +91,8 @@ export class Formatter {
 		} else {
 			visNode = new VisNode(node.id, this.getLabel(node,
 				layout, orientation));
-			if(Formatter.barLayouts.has(layout) && node instanceof Node) {
-				visNode.bars = (node.value as []).map(x=>parseInt(x));
+			if (Formatter.barLayouts.has(layout) && node instanceof Node) {
+				visNode.bars = (node.value as []).map(x => parseInt(x));
 			}
 			visNode.level = level;
 			if (node instanceof VarNode) {
@@ -443,14 +443,14 @@ export class Formatter {
 				}
 				arr2DPadRepr = Math.max(arr2DPadRepr, len);
 				arr2DPadRepr = Math.max(arr2DPadRepr, elRepr2.length);
-
-				let len2 = String(idx2).length;
-				if (indexesY.has(idx2)) {
-					len2 += String(indexesY.get(idx2)).length + 1;
-				}
-				arr2DPadHeaderVertRepr = Math.max(arr2DPadHeaderVertRepr, len2);
 			}
 			arr2DPadRepr = Math.max(arr2DPadRepr, String(elRepr.length).length);
+
+			let len2 = String(idx).length;
+			if (indexesY.has(idx)) {
+				len2 += String(indexesY.get(idx)).length + 1;
+			}
+			arr2DPadHeaderVertRepr = Math.max(arr2DPadHeaderVertRepr, len2);
 		}
 		for (let arr2DIdx = -1; arr2DIdx < arr2D.length; arr2DIdx++) {
 			arr2DRepr2 = "";
