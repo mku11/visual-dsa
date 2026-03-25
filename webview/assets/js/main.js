@@ -248,9 +248,31 @@ function setupVariableListeners() {
             Array.from(propertiesSelect.selectedOptions).map((x) => x.value));
     });
 
+    markersxOptions.addEventListener("change", (e) => {
+        parts = new Set(markersx.value.split(","));
+        if(parts.has(markersxOptions.value))
+            return;
+        if(markersx.value.length > 0)
+            markersx.value += ","
+        markersx.value += markersxOptions.value;
+        sendOptionChanged('selectedMarkersx', selectedObjectType,
+            markersx.value.split(","));
+    });
+
     markersx.addEventListener("change", (e) => {
         sendOptionChanged('selectedMarkersx', selectedObjectType,
             markersx.value.split(","));
+    });
+
+    markersxOptions.addEventListener("change", (e) => {
+        parts = new Set(markersy.value.split(","));
+        if(parts.has(markersyOptions.value))
+            return;
+        if(markersy.value.length > 0)
+            markersy.value += ","
+        markersy.value += markersyOptions.value;
+        sendOptionChanged('selectedMarkersy', selectedObjectType,
+            markersy.value.split(","));
     });
 
     markersy.addEventListener("change", (e) => {
@@ -317,12 +339,22 @@ function setupVarOptions(varOptions) {
     }
     let variableInput = varOptions.getElementsByClassName("variable-input")[0];
     variableInput.value = "";
+
+    resizeInputSelect(variable, variableInput);
+
+    let removeVariable = varOptions.getElementsByClassName("remove-variable")[0];
+
+    // variable listeners
     variableInput.addEventListener("change", (e) => {
         sendOptionChanged('selectedVariables', '',
             Array.from(varsOptions.getElementsByClassName("variable-input")).map((x) => x.value));
     });
+    variable.addEventListener("change", (e) => {
+        variableInput.value = variable.value;
+        sendOptionChanged('selectedVariables', '',
+            Array.from(varsOptions.getElementsByClassName("variable-input")).map((x) => x.value));
+    });
 
-    let removeVariable = varOptions.getElementsByClassName("remove-variable")[0];
     removeVariable.onclick = (e) => {
         if (varsOptions.children.length > 1) {
             varsOptions.removeChild(varOptions);
@@ -332,6 +364,18 @@ function setupVarOptions(varOptions) {
             variableInput.value = "";
         }
     }
+}
+
+function resizeInputSelect(variable, variableInput) {
+    // workaround since input with datalist does not work well
+    // see: https://github.com/microsoft/vscode/issues/129999
+    // Note: this will not fix the markers selects because they're 
+    // inside an overflow (scrollable)
+    let reqWidth = variable.parentElement.clientWidth - 4;
+    let reqHeight = variable.parentElement.clientHeight;
+    variable.style.width = reqWidth + "px";
+    variableInput.style.width = (reqWidth - 16) + "px";
+    variable.style.height = reqHeight + "px";
 }
 
 function updateVarOptions(data) {
@@ -394,6 +438,7 @@ function updateParams(data) {
             }
             var option = document.createElement('option');
             option.value = variableName;
+            option.innerText = variableName;
             variable.appendChild(option);
         }
         variable.selectedIndex = selectedIndex;
@@ -405,6 +450,7 @@ function updateParams(data) {
         }
         var option = document.createElement('option');
         option.value = variableName;
+        option.innerText = variableName;
         markersxOptions.appendChild(option);
     }
 
@@ -414,6 +460,7 @@ function updateParams(data) {
         }
         var option = document.createElement('option');
         option.value = variableName;
+        option.innerText = variableName;
         markersyOptions.appendChild(option);
     }
 }

@@ -63,11 +63,10 @@
 				</div>
 				<div id="vars-options" class="vars-options">
 					<div class="var-options">
-						<div class="var-option var-option-variable">
-							<input list="variable" name="variable-input" class="var-select variable-input">
-							<!-- datalist drop down position is incorrect see https://github.com/microsoft/vscode/issues/129999 -->
-							<datalist id="variable" name="variable" class="variable">
-							</datalist>
+						<div class="var-option-variable">
+							<input type="text" name="variable-input" class="var-select variable-input">
+							<select name="variable" class="variable">
+							</select>
 						</div>
 						<div class="var-option-remove">
 							<button name="remove-variable" class="dsa-button remove-variable" title="Remove Variable"
@@ -157,14 +156,13 @@
 						</div>
 						<div class="var-option-markers-x">
 							<div class="markers-x-select-container">
-								<input id="markers-x-input" list="markers-x-options" name="markers-x-input"
+								<input type="text" id="markers-x-input" name="markers-x-input"
 									class="var-select markers-x-input">
-								<!-- datalist drop down position is incorrect see https://github.com/microsoft/vscode/issues/129999 -->
-								<datalist id="markers-x-options" name="markers-x" class="markers-x">
-								</datalist>
+								<select id="markers-x-options" name="markers-x" class="markers-x">
+								</select>
 							</div>
 							<div class="markers-x-remove">
-								<button id="remove-markers-x" class="dsa-button remove-markers-x"
+								<button id="remove-markers-x" name="remove-markers-x" class="dsa-button remove-markers-x"
 									title="Remove Markers x-axis" onclick="this.blur();">
 									x
 								</button>
@@ -177,14 +175,13 @@
 						</div>
 						<div class="var-option-markers-y">
 							<div class="markers-y-select-container">
-								<input id="markers-y-input" list="markers-y-options" name="markers-y-input"
+								<input type="text" id="markers-y-input" name="markers-y-input"
 									class="var-select markers-y-input">
-								<!-- datalist drop down position is incorrect see https://github.com/microsoft/vscode/issues/129999 -->
-								<datalist id="markers-y-options" name="markers-y" class="markers-y">
-								</datalist>
+								<select id="markers-y-options" name="markers-y" class="markers-y">
+								</select>
 							</div>
 							<div class="markers-y-remove">
-								<button id="remove-markers-y" class="dsa-button remove-markers-y"
+								<button id="remove-markers-y" name="remove-markers-y" class="dsa-button remove-markers-y"
 									title="Remove Markers y-axis" onclick="this.blur();">
 									x
 								</button>
