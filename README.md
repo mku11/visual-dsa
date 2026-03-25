@@ -13,6 +13,7 @@ and jGRASP: https://www.jgrasp.org/
 - Support for multiple variables/expressions.
 - Graph layouts support user selection of children nodes, edges, and properties from objects attributes.
 - Array layouts support markers for x and y axis.
+- Automatic listing of local variables
 - Hooks for extracting children nodes, and edges (ie: Extractor.getNodes() and getEdges()).
 - Network graph history with code back stepping.
 - GUI option for vis-network physics (enable/disable).
