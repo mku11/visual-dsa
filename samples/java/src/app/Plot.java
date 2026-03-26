@@ -64,7 +64,7 @@ class Extractor {
             List<List<Integer>> obj,
             Object root) {
         if (!(obj instanceof List))
-            return new ArrayList<>();
+            return null;
 
         if (!(obj.get(0) instanceof List) || obj.get(0).size() != 2) {            
             return null;
