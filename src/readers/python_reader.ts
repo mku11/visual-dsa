@@ -106,11 +106,6 @@ export class PythonReader extends Reader {
 		try {
 			const edgeValues: string[] = [];
 			let exprName = variable.evaluateName;
-			// workaround 
-			if (exprName.includes('.get(%s)')) {
-				const index = exprName.indexOf('.get(%s)');
-				exprName = exprName.substring(0, index) + ").get(" + variable.name + ")";
-			}
 			const type = variable.type.replaceAll("$", ".");
 			let expr = `'|-|'.join(map(str, ${exprName}.${property}))`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
@@ -141,25 +136,23 @@ export class PythonReader extends Reader {
 	): Promise<Variable[] | undefined> {
 		try {
 			let expr = variable.evaluateName;
-			// workaround 
-			if (expr.includes('.get(%s)')) {
-				const index = expr.indexOf('.get(%s)');
-				expr = expr.substring(0, index) + ").get(" + variable.name + ")";
-			}
 			expr = "Extractor.get_nodes(" + expr + "," + rootVariable.name + ")";
-			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
+			const nodesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			if (edgesListVar.type.endsWith('Exception')) {
-				throw new Error(edgesListVar.result);
+			if (nodesListVar.type.endsWith('Exception')) {
+				throw new Error(nodesListVar.result);
 			}
-			if (edgesListVar.variablesReference == 0) {
+			if(nodesListVar.result === 'None') {
+				return undefined;
+			}
+			if (nodesListVar.variablesReference == 0) {
 				return [];
 			}
 			const nodes: Variable[] = [];
-			const children = await this.getVariables(edgesListVar.variablesReference);
+			const children = await this.getVariables(nodesListVar.variablesReference);
 			let idx = 0;
 			for (const child of children) {
 				if (isNaN(parseInt(child.name))) {
@@ -185,11 +178,6 @@ export class PythonReader extends Reader {
 	): Promise<Variable[] | undefined> {
 		try {
 			let expr = variable.evaluateName;
-			// workaround 
-			if (expr.includes('.get(%s)')) {
-				const index = expr.indexOf('.get(%s)');
-				expr = expr.substring(0, index) + ").get(" + variable.name + ")";
-			}
 			expr = "Extractor.get_edges(" + expr + "," + rootVariable.name + ")";
 			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
@@ -198,6 +186,9 @@ export class PythonReader extends Reader {
 			});
 			if (edgesListVar.type.endsWith('Exception')) {
 				throw new Error(edgesListVar.result);
+			}
+			if(edgesListVar.result === 'None') {
+				return undefined;
 			}
 			if (edgesListVar.variablesReference == 0) {
 				return [];
@@ -217,8 +208,60 @@ export class PythonReader extends Reader {
 			return edges;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
-				// this.trackErrors(ex, type, "userDefEdges");
+				// this.trackErrors(ex, type, "getUserDefEdges");
 				console.error("getUserDefEdges Error: " + variable.evaluateName + ": " + ex.message);
+			} else {
+				console.error(ex);
+			}
+		}
+	}
+
+	
+	public async getUserDefPlot(variable: Variable,
+		rootVariable: Variable,
+		layout: string
+	): Promise<number[][] | undefined> {
+		try {
+			let expr = variable.evaluateName;
+			const method = layout === "plotpoints" ? "get_plot_points" : "get_plot_lines";
+			expr = "Extractor." + method + "(" + expr + "," + rootVariable.name + ")";
+			const plotListVar = await debug.activeDebugSession?.customRequest("evaluate", {
+				expression: expr,
+				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
+				context: 'repl',
+			});
+			if (plotListVar.type.endsWith('Exception')) {
+				throw new Error(plotListVar.result);
+			}
+			if(plotListVar.result === 'None') {
+				return undefined;
+			}
+			if (plotListVar.variablesReference == 0) {
+				return [];
+			}
+			const children = await this.getVariables(plotListVar.variablesReference);
+			const els: number[][] = [];
+			let idx = 0;
+			for (const child of children) {
+				if (isNaN(parseInt(child.name))) {
+					continue;
+				}
+				let gels: number[] = [];
+				let gchildren = await this.getVariables(child.variablesReference);
+				for (const gchild of gchildren) {
+					if (isNaN(parseInt(gchild.name))) {
+						continue;
+					}
+					gels.push(parseInt(gchild.value));
+				}
+				els.push(gels);
+				idx++;
+			}
+			return els;
+		} catch (ex: Error | unknown) {
+			if (ex instanceof Error) {
+				// this.trackErrors(ex, type, "getUserDefPlot");
+				console.error("getUserDefPlot Error: " + variable.evaluateName + ": " + ex.message);
 			} else {
 				console.error(ex);
 			}
@@ -239,7 +282,7 @@ export class PythonReader extends Reader {
 			const content = arrRepr.result.substring(1, arrRepr.result.length - 1);
 			const arr2D: string[][] = [];
 			const lines = content.split('\\n');
-			for (let i = 0; i < lines.length - 1; i++) {
+			for (let i = 0; i < lines.length; i++) {
 				const row: string[] = [];
 				const parts = lines[i].split("|-|");
 				for (let j = 0; j < parts.length; j++) {

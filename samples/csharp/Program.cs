@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Demo
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Test");
-            Arrays.RunMain(args);
+            // We need to register Linq for visual-dsa to work, any linq method will do
+            System.Linq.Enumerable.Select(["RegisterLinq"], x => x);
+
+            // Arrays.RunMain(args);
             // Lists.RunMain(args);
             // Graphs.RunMain(args);
             // Trees.RunMain(args);
@@ -16,8 +20,9 @@ namespace Demo
             // Primitives.RunMain(args);
             // GraphMapNodes.RunMain(args);
             // GraphsPrimitivesEdges.RunMain(args);
-            // DoublyLinkedLists.RunMain(args);
+            DoublyLinkedLists.RunMain(args);
             // Queues.RunMain(args);
+            // Plot.RunMain(args);
         }
     }
 }

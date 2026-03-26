@@ -27,8 +27,11 @@ import { VarNode, Node, Edge } from "../parsers/parser";
 export class Formatter {
 	static readonly MAX_STR_LEN = 60;
 	static readonly BARS_ROWS = 10;
+	static readonly PLOT_ROWS = 20;
+	static readonly PLOT_COLS = 40;
 	static graphLayouts = new Set<string>(["graph", "tree", "linkedlist"]);
 	static barLayouts = new Set<string>(["bars"]);
+	static plotLayouts = new Set<string>(["plotpoints", "plotlines"]);
 	static edgeColors = ["#6466f3", "#f35e5e", "#ecad4d", "#55f050"];
 	varNodePosX = 0;
 	varNodePosY = 0;
@@ -93,6 +96,16 @@ export class Formatter {
 				layout, orientation));
 			if (Formatter.barLayouts.has(layout) && node instanceof Node) {
 				visNode.bars = (node.value as []).map(x => parseInt(x));
+			} else if (Formatter.plotLayouts.has(layout) && node instanceof Node) {
+				if (node.value instanceof Array && node.value.length > 0) {
+					let ls: string[] = (node.value as []);
+					if (layout === 'plotlines') // list of lines: [[x1,y1,x2,y2],[],...]
+						visNode.lines = (node.value as [][]).map(el =>
+							el.slice(0, 4).map(c => parseInt(c)));
+					else  // list of points: [[x1,y1],[],...]
+						visNode.points = (node.value as [][]).map(el =>
+							el.slice(0, 2).map(c => parseInt(c)));
+				}
 			}
 			visNode.level = level;
 			if (node instanceof VarNode) {
@@ -258,9 +271,12 @@ export class Formatter {
 			return this.formatArray(value as string[], "vertical", markersx, true);
 		} else if (layout === 'bars') {
 			return this.formatBars(value as string[], markersx);
+		} else if (layout && Formatter.plotLayouts.has(layout)) {
+			return this.formatPlot();
 		}
 		return "";
 	}
+
 	formatBars(value: string[], markersx: [string, string][] | undefined): string {
 		let barsRepr = "";
 		for (let i = 0; i < Formatter.BARS_ROWS; i++) {
@@ -268,6 +284,14 @@ export class Formatter {
 		}
 		const arrRepr = this.formatArray(value, "horizontal", markersx);
 		return barsRepr += arrRepr;
+	}
+
+	formatPlot(): string {
+		let plotRepr = "";
+		for (let i = 0; i < Formatter.PLOT_ROWS; i++) {
+			plotRepr += " ".repeat(Formatter.PLOT_COLS) + "\n";
+		}
+		return plotRepr;
 	}
 
 	truncate(text: string): string {
@@ -550,6 +574,8 @@ export class VisNode {
 	public label: string;
 	public labelDiff: Diff[] = [];
 	public bars: number[] = [];
+	public points: number[][] = [];
+	public lines: number[][] = [];
 	public group: string | undefined = undefined;
 	public x: number | undefined = undefined;
 	public y: number | undefined = undefined;

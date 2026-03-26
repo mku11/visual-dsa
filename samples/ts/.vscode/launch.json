@@ -102,6 +102,15 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\src\\GraphsPrimitivesEdges.ts"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Plot",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\src\\Plot.ts"
         }
     ]
 }

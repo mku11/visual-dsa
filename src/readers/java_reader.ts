@@ -121,18 +121,21 @@ export class JavaReader extends Reader {
 			const type = variable.type.replaceAll("$", ".");
 
 			expr = "Extractor.getNodes((" + type + ")" + expr + "," + rootVariable.name + ")";
-			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
+			const nodesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			if (edgesListVar.type.endsWith('Exception')) {
-				throw new Error(edgesListVar.result);
+			if (nodesListVar.type.endsWith('Exception')) {
+				throw new Error(nodesListVar.result);
 			}
-			if (edgesListVar.variablesReference == 0) {
+			if(nodesListVar.result === 'null') {
+				return undefined;
+			}
+			if (nodesListVar.variablesReference == 0) {
 				return [];
 			}
-			return await this.getVariables(edgesListVar.variablesReference);
+			return await this.getVariables(nodesListVar.variablesReference);
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
 				// this.trackErrors(ex, type, "userDefEdges");
@@ -163,6 +166,9 @@ export class JavaReader extends Reader {
 			if (edgesListVar.type.endsWith('Exception')) {
 				throw new Error(edgesListVar.result);
 			}
+			if(edgesListVar.result === 'null') {
+				return undefined;
+			}
 			if (edgesListVar.variablesReference == 0) {
 				return [];
 			}
@@ -175,7 +181,57 @@ export class JavaReader extends Reader {
 				console.error(ex);
 			}
 		}
-
+	}
+	
+	public async getUserDefPlot(variable: Variable,
+		rootVariable: Variable,
+		layout: string
+	): Promise<number[][] | undefined> {
+		try {
+			let expr = variable.evaluateName;
+			const method = layout === "plotpoints" ? "getPlotPoints" : "getPlotLines";
+			expr = "Extractor." + method + "(" + expr + "," + rootVariable.name + ")";
+			const plotListVar = await debug.activeDebugSession?.customRequest("evaluate", {
+				expression: expr,
+				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
+				context: 'repl',
+			});
+			if (plotListVar.type.endsWith('Exception')) {
+				throw new Error(plotListVar.result);
+			}
+			if(plotListVar.result === 'null') {
+				return undefined;
+			}
+			if (plotListVar.variablesReference == 0) {
+				return [];
+			}
+			const children = await this.getVariables(plotListVar.variablesReference);
+			const els: number[][] = [];
+			let idx = 0;
+			for (const child of children) {
+				if (isNaN(parseInt(child.name))) {
+					continue;
+				}
+				let gels: number[] = [];
+				let gchildren = await this.getVariables(child.variablesReference);
+				for (const gchild of gchildren) {
+					if (isNaN(parseInt(gchild.name))) {
+						continue;
+					}
+					gels.push(parseInt(gchild.value));
+				}
+				els.push(gels);
+				idx++;
+			}
+			return els;
+		} catch (ex: Error | unknown) {
+			if (ex instanceof Error) {
+				// this.trackErrors(ex, type, "getUserDefPlot");
+				console.error("getUserDefPlot Error: " + variable.evaluateName + ": " + ex.message);
+			} else {
+				console.error(ex);
+			}
+		}
 	}
 
 	public async getEdgeValues(variable: Variable, property: string): Promise<string[] | undefined> {
@@ -376,8 +432,8 @@ export class JavaReader extends Reader {
 				StringBuilder arr2DRepr = new StringBuilder();
 				${type} varRepr = ((${type}) new java.util.Optional(${name}).get());
 				for(Object rowRepr : varRepr) {
-					if(elRepr != null) {
-						for(Object elRepr : rowRepr) {
+					if(rowRepr != null) {
+						for(Object elRepr : (List) rowRepr) {
 							arr2DRepr.append(String.valueOf(elRepr));
 							arr2DRepr.append("|-|");
 						}
@@ -406,7 +462,7 @@ export class JavaReader extends Reader {
 			return arr2D;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
-				console.error("getArrayRepr Error: Array Repr of " + variable + ": " + ex.message);
+				console.error("getList2DRepr Error: Array Repr of " + variable + ": " + ex.message);
 			} else {
 				console.error(ex);
 			}

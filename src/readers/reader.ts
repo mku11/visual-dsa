@@ -114,6 +114,8 @@ export class Reader {
 			if (regTypes.variablesReference > 0) {
 				const regTypeValues = await this.getVariables(regTypes.variablesReference, "indexed");
 				for (const regTypeValue of regTypeValues) {
+					if(this.filterVariable(regTypeValue))
+						continue;
 					let type = regTypeValue.value;
 					if (type.startsWith("\"") && type.endsWith("\"")) {
 						type = type.substring(1, type.length - 1);
@@ -294,6 +296,12 @@ export class Reader {
 
 	public async getUserDefEdges(variable: Variable, rootVariable: Variable
 	): Promise<Variable[] | undefined> {
+		return undefined;
+	}
+
+	public async getUserDefPlot(variable: Variable, rootVariable: Variable, 
+		layout: string):
+		Promise<number[][] | undefined> {
 		return undefined;
 	}
 

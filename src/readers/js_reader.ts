@@ -34,12 +34,6 @@ export class JsReader extends Reader {
 
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
 		let exprName = variable.evaluateName;
-		// workaround 
-		if (exprName.includes('.get(%s)')) {
-			const index = exprName.indexOf('.get(%s)');
-			exprName = exprName.substring(0, index) + ").get(" + variable.name + ")";
-		}
-
 		// extractor toString
 		if (this.registeredTypes.has(variable.type)) {
 			try {
@@ -108,25 +102,23 @@ export class JsReader extends Reader {
 	): Promise<Variable[] | undefined> {
 		try {
 			let expr = variable.evaluateName;
-			// workaround 
-			if (expr.includes('.get(%s)')) {
-				const index = expr.indexOf('.get(%s)');
-				expr = expr.substring(0, index) + ").get(" + variable.name + ")";
-			}
 			expr = "Extractor.getNodes(" + expr + "," + rootVariable.name + ")";
-			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
+			const nodesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			if (edgesListVar.type.endsWith('Exception')) {
-				throw new Error(edgesListVar.result);
+			if (nodesListVar.type.endsWith('Exception')) {
+				throw new Error(nodesListVar.result);
 			}
-			if (edgesListVar.variablesReference == 0) {
+			if(nodesListVar.result === 'null') {
+				return undefined;
+			}
+			if (nodesListVar.variablesReference == 0) {
 				return [];
 			}
 			const nodes: Variable[] = [];
-			const children = await this.getVariables(edgesListVar.variablesReference);
+			const children = await this.getVariables(nodesListVar.variablesReference);
 			let idx = 0;
 			for (const child of children) {
 				if (isNaN(parseInt(child.name))) {
@@ -152,11 +144,6 @@ export class JsReader extends Reader {
 	): Promise<Variable[] | undefined> {
 		try {
 			let expr = variable.evaluateName;
-			// workaround 
-			if (expr.includes('.get(%s)')) {
-				const index = expr.indexOf('.get(%s)');
-				expr = expr.substring(0, index) + ").get(" + variable.name + ")";
-			}
 			expr = "Extractor.getEdges(" + expr + "," + rootVariable.name + ")";
 			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
@@ -165,6 +152,9 @@ export class JsReader extends Reader {
 			});
 			if (edgesListVar.type.endsWith('Exception')) {
 				throw new Error(edgesListVar.result);
+			}
+			if(edgesListVar.result === 'null') {
+				return undefined;
 			}
 			if (edgesListVar.variablesReference == 0) {
 				return [];
@@ -192,15 +182,61 @@ export class JsReader extends Reader {
 		}
 	}
 
+	public async getUserDefPlot(variable: Variable,
+		rootVariable: Variable,
+		layout: string
+	): Promise<number[][] | undefined> {
+		try {
+			let expr = variable.evaluateName;
+			const method = layout === "plotpoints" ? "getPlotPoints" : "getPlotLines";
+			expr = "Extractor." + method + "(" + expr + "," + rootVariable.name + ")";
+			const plotListVar = await debug.activeDebugSession?.customRequest("evaluate", {
+				expression: expr,
+				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
+				context: 'repl',
+			});
+			if (plotListVar.type.endsWith('Exception')) {
+				throw new Error(plotListVar.result);
+			}
+			if(plotListVar.result === 'null') {
+				return undefined;
+			}
+			if (plotListVar.variablesReference == 0) {
+				return [];
+			}
+			const children = await this.getVariables(plotListVar.variablesReference);
+			const els: number[][] = [];
+			let idx = 0;
+			for (const child of children) {
+				if (isNaN(parseInt(child.name))) {
+					continue;
+				}
+				let gels: number[] = [];
+				let gchildren = await this.getVariables(child.variablesReference);
+				for (const gchild of gchildren) {
+					if (isNaN(parseInt(gchild.name))) {
+						continue;
+					}
+					gels.push(parseInt(gchild.value));
+				}
+				els.push(gels);
+				idx++;
+			}
+			return els;
+		} catch (ex: Error | unknown) {
+			if (ex instanceof Error) {
+				// this.trackErrors(ex, type, "getUserDefPlot");
+				console.error("getUserDefPlot Error: " + variable.evaluateName + ": " + ex.message);
+			} else {
+				console.error(ex);
+			}
+		}
+	}
+
 	public async getEdgeValues(variable: Variable, property: string): Promise<string[] | undefined> {
 		try {
 			const edgeValues: string[] = [];
 			let exprName = variable.evaluateName;
-			// workaround 
-			if (exprName.includes('.get(%s)')) {
-				const index = exprName.indexOf('.get(%s)');
-				exprName = exprName.substring(0, index) + ").get(" + variable.name + ")";
-			}
 			const type = variable.type.replaceAll("$", ".");
 			let expr = `{
 			let edgeRepr = "";
@@ -505,7 +541,7 @@ mapRepr;
 			} else {
 				type += "[][]";
 			}
-		} else if (variable.value.startsWith("Array")) {
+		} else if (type === "Array" || variable.value.startsWith("Array")) {
 			type += "[]";
 		}
 		return type;

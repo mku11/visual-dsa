@@ -41,6 +41,7 @@ export class Parser {
 	private setLayouts: Set<string> = new Set<string>(["set"]);
 	private mapLayouts: Set<string> = new Set<string>(["map"]);
 	private barsLayouts: Set<string> = new Set<string>(["bars"]);
+	private plotLayouts: Set<string> = new Set<string>(["plotpoints", "plotlines"]);
 	constructor(reader: Reader) {
 		this.reader = reader;
 	}
@@ -292,8 +293,15 @@ export class Parser {
 			if (markersx) {
 				node.markersx = markersx;
 			}
-		} else if (this.array2DLayouts.has(layout)) {
-			const arrayRepr = await this.reader.getArray2DRepr(variable);
+		} else if (this.array2DLayouts.has(layout) || this.plotLayouts.has(layout)) {
+			let arrayRepr;
+			if (this.plotLayouts.has(layout) && (this.reader.getRegisteredTypes().has(type)
+				|| this.reader.getRegisteredTypes().has("*"))) {
+				arrayRepr = await this.reader.getUserDefPlot(variable, rootVariable, layout);
+			}
+			if (!arrayRepr) {
+				arrayRepr = await this.reader.getArray2DRepr(variable);
+			}
 			if (arrayRepr) {
 				node.value = arrayRepr;
 			}
@@ -332,7 +340,7 @@ export class Parser {
 				}
 			}
 		}
-		
+
 		if (!userDefNodes && variable.variablesReference > 0 && level < Parser.MAX_LEVEL) {
 
 			let children: Variable[] = await this.reader.getVariables(variable.variablesReference);

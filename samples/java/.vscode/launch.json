@@ -66,6 +66,12 @@
 			"name": "Trees",
 			"request": "launch",
 			"mainClass": "app.Trees"
+		},
+		{
+			"type": "java",
+			"name": "Plot",
+			"request": "launch",
+			"mainClass": "app.Plot"
 		}
 	]
 }

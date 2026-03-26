@@ -41,6 +41,9 @@ var array2DLayouts = new Set([
 var barsLayouts = new Set([
     "bars"
 ]);
+var plotLayouts = new Set([
+    "plotpoints", "plotlines"
+]);
 
 const BARS_ROWS = 10;
 var nodeColor = '#ccd4f3';
@@ -250,9 +253,9 @@ function setupVariableListeners() {
 
     markersxOptions.addEventListener("change", (e) => {
         parts = new Set(markersx.value.split(","));
-        if(parts.has(markersxOptions.value))
+        if (parts.has(markersxOptions.value))
             return;
-        if(markersx.value.length > 0)
+        if (markersx.value.length > 0)
             markersx.value += ","
         markersx.value += markersxOptions.value;
         sendOptionChanged('selectedMarkersx', selectedObjectType,
@@ -266,9 +269,9 @@ function setupVariableListeners() {
 
     markersxOptions.addEventListener("change", (e) => {
         parts = new Set(markersy.value.split(","));
-        if(parts.has(markersyOptions.value))
+        if (parts.has(markersyOptions.value))
             return;
-        if(markersy.value.length > 0)
+        if (markersy.value.length > 0)
             markersy.value += ","
         markersy.value += markersyOptions.value;
         sendOptionChanged('selectedMarkersy', selectedObjectType,
@@ -636,6 +639,7 @@ function setupNetworkListeners(selectedLayout) {
     network.on('afterDrawing', (ctx) => {
         formatMarkers(ctx);
         formatBarsLayout(ctx, selectedLayout);
+        formatPlotLayout(ctx, selectedLayout);
     });
 
     network.on("zoom", (ctx) => {
@@ -703,7 +707,6 @@ function formatMarkers(ctx) {
     }
 }
 
-
 function formatBarsLayout(ctx, selectedLayout) {
     let height = 0;
     for (const part of ctx.font.split(" ")) {
@@ -735,7 +738,7 @@ function formatBarsLayout(ctx, selectedLayout) {
         for (const bar of bars) {
             const relValue = bar / maxBar;
             let offset = idx * barSpace - barSpace * bars.length / 2 + (barSpace - barWidth);
-            ctx.fillStyle = 'red';
+            ctx.fillStyle = 'blue';
             ctx.fillRect(
                 position.x + offset,
                 position.y - totalHeight / 2 + vertMargin + 4 * height
@@ -744,6 +747,102 @@ function formatBarsLayout(ctx, selectedLayout) {
                 9 * height * bar / maxBar
             );
             idx++;
+        }
+    }
+}
+
+function formatPlotLayout(ctx, selectedLayout) {
+    let height = 0;
+    for (const part of ctx.font.split(" ")) {
+        const fontHeight = parseInt(part);
+        if (!isNaN(fontHeight)) {
+            height = fontHeight;
+            break;
+        }
+    }
+    const vertMargin = 7;
+    ctx.textAlign = 'center';
+
+    for (const [nodeId, node] of Object.entries(panelState.networkData.nodes)) {
+        if (node.points.length == 0 && node.lines.length == 0)
+            continue;
+
+        console.log("format plot:", node.id);
+        const position = network.getPosition(node.id);
+        const lines = node.label.split("\n");
+        const totalHeight = height * lines.length + vertMargin;
+        const gridMargin = 6;
+        const gridHeight = totalHeight - (4 * height + vertMargin) - 2 * gridMargin;
+        let gridWidth = 0;
+        for (const line of lines) {
+            gridWidth = Math.max(gridWidth, ctx.measureText(line).width);
+        }
+        gridWidth -= 2 * gridMargin;
+
+        ctx.fillStyle = 'blue';
+        ctx.strokeStyle = 'blue';
+        const els = node.points.length > 0 ? node.points : node.lines;
+        let minx = Math.min(...els.map(el => el.length == 2 ? el[0] : Math.min(el[0], el[2])));
+        let maxx = Math.max(...els.map(el => el.length == 2 ? el[0] : Math.max(el[0], el[2])));
+        let miny = Math.min(...els.map(el => el.length == 2 ? el[1] : Math.min(el[1], el[3])));
+        let maxy = Math.max(...els.map(el => el.length == 2 ? el[1] : Math.max(el[1], el[3])));
+
+        minx = -Math.max(Math.abs(minx), Math.abs(maxx));
+        maxx = Math.max(Math.abs(minx), Math.abs(maxx));
+        miny = -Math.max(Math.abs(miny), Math.abs(maxy));
+        maxy = Math.max(Math.abs(miny), Math.abs(maxy));
+
+        let xunit = gridWidth / (maxx - minx);
+        let yunit = gridHeight / (maxy - miny);
+
+        let trdx = (x) => x * xunit; // translate dist
+        let trpx = (x) => position.x + trdx(x); // translate x position
+        let trdy = (y) => y * yunit; // translate y dist
+        let trpy = (y, scale = false) => position.y
+            + (4 * height + vertMargin) / 2
+            - trdy(y); // translate y position
+
+        // draw x axis
+        ctx.fillRect(
+            trpx(minx),
+            trpy(0),
+            trdx(maxx - minx),
+            2
+        );
+
+        // draw y axis
+        ctx.fillRect(
+            trpx(0),
+            trpy(maxy),
+            2,
+            trdy(maxy - miny)
+        );
+
+        for (const el of els) {
+            // first point
+            [x1, y1] = el.slice(0, 2)
+            ctx.beginPath();
+            ctx.arc(trpx(x1) + 1, trpy(y1) + 1, 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.textAlign = x1 > 0 ? 'right' : 'left';
+            const textMargin = x1 > 0 ? -6 : 6;
+            ctx.fillText(x1 + "," + y1, textMargin + trpx(x1), trpy(y1));
+            if (el.length == 4) {
+                // second point
+                [x2, y2] = el.slice(2)
+                ctx.beginPath();
+                ctx.arc(trpx(x2) + 1, trpy(y2) + 1, 2, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.textAlign = x2 > 0 ? 'right' : 'left';
+                const textMargin = x2 > 0 ? -6 : 6;
+                ctx.fillText(x2 + "," + y2, textMargin + trpx(x2), trpy(y2));
+
+                // draw line
+                ctx.beginPath();
+                ctx.lineTo(trpx(x1) + 1, trpy(y1) + 1);
+                ctx.lineTo(trpx(x2) + 1, trpy(y2) + 1);
+                ctx.stroke();
+            }
         }
     }
 }
