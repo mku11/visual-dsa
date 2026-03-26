@@ -8,7 +8,7 @@ public class DoublyLinkedLists
     {
         // custom linkedlist
         DoublyLinkedList<string> linkedList = new DoublyLinkedList<string>();
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 7; i++)
         {
             linkedList.Append(i.ToString());
         }
