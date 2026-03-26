@@ -56,8 +56,6 @@ public class Arrays {
         arr3D[0][2][2] = 2;
         arr3D[0][2][3] = 3;
 
-        int x = 3;
-        
         // z = 1
         arr3D[1] = new int[5][];
         arr3D[1][0] = new int[3];

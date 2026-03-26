@@ -8,9 +8,6 @@ class GraphsPrimitivesEdges {
         gmap.set("3", ["3"]);
         gmap.set("4", ["4"]);
         gmap.set("5", ["5"]);
-
-        const a = Extractor.getNodes(Extractor.getNodes(gmap, gmap)[0], gmap);
-        console.log(a);
     }
 }
 

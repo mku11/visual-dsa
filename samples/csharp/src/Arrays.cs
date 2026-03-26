@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 public class Arrays {
     char[][] arrChar2D;
@@ -70,5 +68,8 @@ public class Arrays {
         arr3D[1][1][1] = 1;
         arr3D[1][2][2] = 2;
         arr3D[1][2][3] = 3;
+
+        Console.WriteLine("done");
+
     }
 }

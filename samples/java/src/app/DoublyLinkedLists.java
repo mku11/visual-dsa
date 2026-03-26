@@ -32,6 +32,7 @@ public class DoublyLinkedLists {
             return head;
         }
 
+        @SuppressWarnings("unused")
         public Node<T> getTail() {
             return tail;
         }
@@ -65,6 +66,7 @@ public class DoublyLinkedLists {
             return next;
         }
 
+        @SuppressWarnings("unused")
         public Node<T> getPrev() {
             return prev;
         }

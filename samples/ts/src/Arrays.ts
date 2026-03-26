@@ -10,7 +10,7 @@ class Arrays {
         arrString[1] = "one";
         arrString[2] = "two";
 
-        // // array
+        // array
         const arrInt: Array<number> = new Array<number>(5);
         arrInt[1] = 1;
         arrInt[2] = 212;
@@ -19,7 +19,7 @@ class Arrays {
         arrInteger[1] = 1;
         arrInteger[2] = 212;
 
-        // // // 2d array
+        // 2d array
         const arr2D: Array<Array<number>> = new Array<Array<number>>(15);
         arr2D[0] = new Array(3);
         arr2D[1] = new Array(4);
@@ -30,7 +30,7 @@ class Arrays {
         arr2D[2][2] = 2;
         arr2D[2][3] = 3; 
 
-        // // // 2d char array
+        // 2d char array
         this.arrChar2D = new Array(5);
         this.arrChar2D[0] = new Array(3);
         this.arrChar2D[1] = new Array(4);

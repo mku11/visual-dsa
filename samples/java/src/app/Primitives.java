@@ -5,8 +5,11 @@ public class Primitives {
         int x = 1;
         x = 2;
         x = 3;
+        System.out.println("x:" + x);
+
         Integer x1 = 1;
         x1 = 2;
         x1 = 3;
+        System.out.println("x1: " + x1);
     }
 }

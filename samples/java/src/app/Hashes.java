@@ -6,9 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 public class Hashes {
-    private int x = 4;
-    private int y = 4;
-    
     public static void main(String[] args) {
         new Hashes().test();
     }

@@ -48,11 +48,12 @@ public class Graphs {
                 q.add(child);
                 v.add(child);
             }
-            if(size == 0) {
+            if (size == 0) {
                 steps++;
                 size = q.size();
             }
         }
+        System.out.println("step: " + steps);
     }
 
     static class Graph<T> {
