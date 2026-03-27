@@ -121,7 +121,7 @@ export class Parser {
 			const childrenVars = await this.reader.getVariables(variable.variablesReference, "named");
 			if (childrenVars) {
 				for (let childVar of childrenVars) {
-					if (!isNaN(parseInt(childVar.name))) {
+					if (this.reader.isIndexed(childVar)) {
 						continue;
 					}
 					if (this.reader.filterVariable(childVar)) {
@@ -170,7 +170,7 @@ export class Parser {
 				continue;
 			}
 			if (child.type && child.type.length > 0) {
-				if (isNaN(parseInt(child.name))) {
+				if (!this.reader.isIndexed(child)) {
 					this.addNodes(variable, child.name);
 				}
 				await this.updateTypes(child, rootVariable, level + 1, visited);
@@ -181,7 +181,7 @@ export class Parser {
 			}
 		}
 	}
-
+	
 	addNodes(variable: Variable, name: string) {
 		if (!this.nodes.has(variable.type)) {
 			this.nodes.set(variable.type, new Set<string>());

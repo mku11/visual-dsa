@@ -382,6 +382,10 @@ export class Reader {
 	public hasChildren(ch: Variable): boolean {
 		return false;
 	}
+	
+	public isIndexed(variable: Variable): boolean {
+		return !isNaN(parseInt(variable.name));
+	}
 }
 
 export interface Scope {

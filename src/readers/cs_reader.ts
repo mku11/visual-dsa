@@ -542,4 +542,15 @@ export class CsReader extends Reader {
 	public hasChildren(ch: Variable): boolean {
 		return ch.value.includes("Count = ");
 	}
+
+	public isIndexed(variable: Variable): boolean {
+		const parts = variable.name.split(" ");
+		if(parts.length >= 2 && parts[0].startsWith("[")
+			 && parts[0].endsWith("]")) {
+			if (!isNaN(parseInt(parts[0].substring(1,parts[0].length-1)))){
+				return true;
+			}
+		}
+		return super.isIndexed(variable);
+	}
 }
