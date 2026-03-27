@@ -114,7 +114,7 @@ export class Reader {
 			if (regTypes.variablesReference > 0) {
 				const regTypeValues = await this.getVariables(regTypes.variablesReference, "indexed");
 				for (const regTypeValue of regTypeValues) {
-					if(this.filterVariable(regTypeValue))
+					if (this.filterVariable(regTypeValue))
 						continue;
 					let type = regTypeValue.value;
 					if (type.startsWith("\"") && type.endsWith("\"")) {
@@ -134,9 +134,9 @@ export class Reader {
 
 	async getMarkersValues(markers: string[]): Promise<Array<[string, string]>> {
 		const markersValues: Array<[string, string]> = [];
-		for(const marker of markers) {
+		for (const marker of markers) {
 			const variable = await this.getVariable(marker);
-			if(variable && variable.value) {
+			if (variable && variable.value) {
 				markersValues.push([marker, variable.value]);
 			}
 		}
@@ -299,7 +299,7 @@ export class Reader {
 		return undefined;
 	}
 
-	public async getUserDefPlot(variable: Variable, rootVariable: Variable, 
+	public async getUserDefPlot(variable: Variable, rootVariable: Variable,
 		layout: string):
 		Promise<number[][] | undefined> {
 		return undefined;
@@ -313,6 +313,25 @@ export class Reader {
 	public async getArray2DRepr(variable: Variable):
 		Promise<string[][] | undefined> {
 		return undefined;
+	}
+
+	public async getArray3DRepr(variable: Variable):
+		Promise<string[][][] | undefined> {
+		const childrenVars = await this.getVariables(variable.variablesReference);
+		const children: string[][][] = [];
+		let idx = 0;
+		for (const childVar of childrenVars) {
+			if (!this.isIndexed(childVar, variable)) {
+				continue;
+			}
+			if (this.filterVariable(childVar)) {
+				continue;
+			}
+			const array2Drepr = await this.getArray2DRepr(childVar);
+			if (array2Drepr)
+				children.push(array2Drepr);
+		}
+		return children;
 	}
 
 	public async getQueueRepr(variable: Variable): Promise<string[] | undefined> {
@@ -382,8 +401,8 @@ export class Reader {
 	public hasChildren(ch: Variable): boolean {
 		return false;
 	}
-	
-	public isIndexed(variable: Variable): boolean {
+
+	public isIndexed(variable: Variable, parent: Variable): boolean {
 		return !isNaN(parseInt(variable.name));
 	}
 }

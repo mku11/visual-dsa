@@ -38,6 +38,9 @@ var arrayLayouts = new Set([
 var array2DLayouts = new Set([
     "array2D"
 ]);
+var array3DLayouts = new Set([
+    "array3D"
+]);
 var barsLayouts = new Set([
     "bars"
 ]);
@@ -96,13 +99,16 @@ function init() {
     this.propertiesSelect = document.getElementById("properties");
     this.markersx = document.getElementById("markers-x-input");
     this.markersy = document.getElementById("markers-y-input");
+    this.markersz = document.getElementById("markers-z-input");
     this.markersxOptions = document.getElementById("markers-x-options");
     this.markersyOptions = document.getElementById("markers-y-options");
+    this.markerszOptions = document.getElementById("markers-y-options");
     this.removeNodes = document.getElementById("remove-nodes");
     this.removeEdges = document.getElementById("remove-edges");
     this.removeProperties = document.getElementById("remove-properties");
     this.removeMarkersx = document.getElementById("remove-markers-x");
     this.removeMarkersy = document.getElementById("remove-markers-y");
+    this.removeMarkersz = document.getElementById("remove-markers-z");
     this.elementName = document.getElementById("object-name");
     this.elementType = document.getElementById("object-type");
     this.progressBar = document.getElementById("progress-bar");
@@ -228,6 +234,7 @@ function setupVariableListeners() {
         propertiesSelect.visibility = nodesLayouts.has(layoutSelect.value) ? "visible" : "collapse";
         markersx.visibility = arrayLayouts.has(layoutSelect.value) ? "visible" : "collapse";
         markersy.visibility = array2DLayouts.has(layoutSelect.value) ? "visible" : "collapse";
+        markersz.visibility = array3DLayouts.has(layoutSelect.value) ? "visible" : "collapse";
         markersx.visibility = barsLayouts.has(layoutSelect.value) ? "visible" : "collapse";
     });
 
@@ -267,7 +274,7 @@ function setupVariableListeners() {
             markersx.value.split(","));
     });
 
-    markersxOptions.addEventListener("change", (e) => {
+    markersyOptions.addEventListener("change", (e) => {
         parts = new Set(markersy.value.split(","));
         if (parts.has(markersyOptions.value))
             return;
@@ -281,6 +288,22 @@ function setupVariableListeners() {
     markersy.addEventListener("change", (e) => {
         sendOptionChanged('selectedMarkersy', selectedObjectType,
             markersy.value.split(","));
+    });
+
+    markerszOptions.addEventListener("change", (e) => {
+        parts = new Set(markersz.value.split(","));
+        if (parts.has(markerszOptions.value))
+            return;
+        if (markersz.value.length > 0)
+            markersz.value += ","
+        markersz.value += markerszOptions.value;
+        sendOptionChanged('selectedMarkersz', selectedObjectType,
+            markersz.value.split(","));
+    });
+
+    markersz.addEventListener("change", (e) => {
+        sendOptionChanged('selectedMarkersz', selectedObjectType,
+            markersz.value.split(","));
     });
 
     removeNodes.addEventListener("click", (e) => {
@@ -309,6 +332,11 @@ function setupVariableListeners() {
     removeMarkersy.addEventListener("click", (e) => {
         markersy.value = "";
         sendOptionChanged('selectedMarkersy', selectedObjectType, []);
+    });
+
+    removeMarkersz.addEventListener("click", (e) => {
+        markersz.value = "";
+        sendOptionChanged('selectedMarkersz', selectedObjectType, []);
     });
 }
 

@@ -36,6 +36,7 @@ export class Parser {
 	private properties: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private arrayLayouts: Set<string> = new Set<string>(["array"]);
 	private array2DLayouts: Set<string> = new Set<string>(["array2D"]);
+	private array3DLayouts: Set<string> = new Set<string>(["array3D"]);
 	private stackLayouts: Set<string> = new Set<string>(["stack"]);
 	private queueLayouts: Set<string> = new Set<string>(["queue"]);
 	private setLayouts: Set<string> = new Set<string>(["set"]);
@@ -57,6 +58,7 @@ export class Parser {
 		filtersProperties: Map<string, Set<string>>,
 		markersx: Map<string, Set<string>>,
 		markersy: Map<string, Set<string>>,
+		markersz: Map<string, Set<string>>,
 		layouts: Map<string, string>,
 		orientations: Map<string, string>
 	): Promise<VarNode | undefined> {
@@ -64,7 +66,7 @@ export class Parser {
 		const graph = await this.getGraph(variable, variable,
 			0, visited,
 			filtersNodes, filtersEdges, filtersProperties,
-			markersx, markersy,
+			markersx, markersy, markersz,
 			layouts, orientations);
 		if (graph instanceof VarNode) {
 			return graph;
@@ -121,7 +123,7 @@ export class Parser {
 			const childrenVars = await this.reader.getVariables(variable.variablesReference, "named");
 			if (childrenVars) {
 				for (let childVar of childrenVars) {
-					if (this.reader.isIndexed(childVar)) {
+					if (this.reader.isIndexed(childVar, variable)) {
 						continue;
 					}
 					if (this.reader.filterVariable(childVar)) {
@@ -170,7 +172,7 @@ export class Parser {
 				continue;
 			}
 			if (child.type && child.type.length > 0) {
-				if (!this.reader.isIndexed(child)) {
+				if (!this.reader.isIndexed(child, variable)) {
 					this.addNodes(variable, child.name);
 				}
 				await this.updateTypes(child, rootVariable, level + 1, visited);
@@ -181,7 +183,7 @@ export class Parser {
 			}
 		}
 	}
-	
+
 	addNodes(variable: Variable, name: string) {
 		if (!this.nodes.has(variable.type)) {
 			this.nodes.set(variable.type, new Set<string>());
@@ -216,6 +218,7 @@ export class Parser {
 		filtersProperties: Map<string, Set<string>>,
 		markersx: Map<string, Set<string>>,
 		markersy: Map<string, Set<string>>,
+		markersz: Map<string, Set<string>>,
 		layouts: Map<string, string>,
 		orientations: Map<string, string>
 	): Promise<VarNode | Node | undefined> {
@@ -247,6 +250,7 @@ export class Parser {
 		const filterProperties = filtersProperties.get(type) ?? new Set();
 		const useMarkersx = markersx.get(type) ?? new Set();
 		const useMarkersy = markersy.get(type) ?? new Set();
+		const useMarkersz = markersz.get(type) ?? new Set();
 		const layout = layouts.get(type) ?? "graph";
 
 		// check if this is the variable node
@@ -312,6 +316,23 @@ export class Parser {
 			const markersy = await this.reader.getMarkersValues(Array.from(useMarkersy));
 			if (markersy) {
 				node.markersy = markersy;
+			}
+		} else if (this.array3DLayouts.has(layout)) {
+			let arrayRepr = await this.reader.getArray3DRepr(variable);
+			if (arrayRepr) {
+				node.value = arrayRepr;
+			}
+			const markersx = await this.reader.getMarkersValues(Array.from(useMarkersx));
+			if (markersx) {
+				node.markersx = markersx;
+			}
+			const markersy = await this.reader.getMarkersValues(Array.from(useMarkersy));
+			if (markersy) {
+				node.markersy = markersy;
+			}
+			const markersz = await this.reader.getMarkersValues(Array.from(useMarkersz));
+			if (markersz) {
+				node.markersz = markersz;
 			}
 		} else if (this.mapLayouts.has(layout)) {
 			const arrayRepr = await this.reader.getMapRepr(variable);
@@ -391,6 +412,7 @@ export class Parser {
 					filtersProperties,
 					markersx,
 					markersy,
+					markersz,
 					layouts, orientations);
 			if (childNode instanceof Node && node instanceof Node) {
 				node.children.set(childNode.id, childNode);
@@ -512,7 +534,8 @@ export class Node {
 	public childrenEdgeValues: Map<string, Edge> = new Map<string, Edge>();
 	public markersx?: Array<[string, string]>; // markers for x-axis
 	public markersy?: Array<[string, string]>; // markers for y-axis
-	public markerLabelPos: Array<[number,number]> = []; // markers label positions
+	public markersz?: Array<[string, string]>; // markers for y-axis
+	public markerLabelPos: Array<[number, number]> = []; // markers label positions
 	constructor(id: string, type: string | undefined, value: string | object) {
 		this.id = id;
 		this.type = type;
@@ -540,7 +563,7 @@ export class VarNode {
 	public type: string | undefined = undefined; // data type
 	public value: string | object; // data value
 	public markersx?: Array<[string, string]>; // markers for x-axis
-	public markerLabelPos: Array<[number,number]> = []; // markers label positions
+	public markerLabelPos: Array<[number, number]> = []; // markers label positions
 	constructor(id: string, type: string | undefined, value: string | Node) {
 		this.id = id;
 		this.type = type;

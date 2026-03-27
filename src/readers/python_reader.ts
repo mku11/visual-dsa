@@ -273,7 +273,7 @@ export class PythonReader extends Reader {
 			const name = variable.evaluateName;
 			// workaround: DAP complains about types when variable is a member of 
 			// an object ie: this.arr so we box into an optional to type cast
-			const expr = `chr(10).join(map(lambda elRepr: '|-|'.join(map(str, elRepr if elRepr else [])), ${name} if ${name} else []))`;
+			const expr = `chr(10).join(map(lambda elRepr: '|-|'.join(map(str, elRepr if elRepr is not None else [])), ${name} if ${name} is not None else []))`;
 			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
@@ -498,7 +498,7 @@ export class PythonReader extends Reader {
 
 	public getDefaultLayout(type: string, value: string): string | undefined {
 		if (type.endsWith('[][][]')) {
-			return "graph";
+			return "array3D";
 		} else if (type.endsWith('[][]')) {
 			return "array2D";
 		} else if (type.endsWith('[]')) {
@@ -528,5 +528,37 @@ export class PythonReader extends Reader {
 
 	public getRegisterMethod() {
 		return "Extractor.register_types()";
+	}
+
+	public isIndexed(variable: Variable, parent: Variable): boolean {
+		const parts = variable.name.split(" ");
+		if (parts.length >= 2 && parts[0].startsWith("[")
+			&& parts[0].endsWith("]")) {
+			const val = parts[0].substring(1, parts[0].length - 1)
+			const valParts = val.split(":");
+			if (valParts.length == 1 && !isNaN(parseInt(valParts[0]))) {
+				// val in integral
+				return true;
+			} else if (valParts.length == 2
+				&& !isNaN(parseInt(valParts[0]))
+				&& !isNaN(parseInt(valParts[1]))) {
+				// val in brackets is a range ie subarray of ndarray 
+				return true;
+			}
+		}
+		return super.isIndexed(variable, parent);
+	}
+
+	public async getArray3DRepr(variable: Variable):
+		Promise<string[][][] | undefined> {
+		// for python numpy ndarray we need to convert to list 
+		// to properly extract the subarrays
+		if (variable.type === 'ndarray') {
+			const listVariable = await this.getVariable("list(" + variable.evaluateName + ")")
+			if (listVariable) {
+				return await super.getArray3DRepr(listVariable)
+			}
+		}
+		return await super.getArray3DRepr(variable);
 	}
 }

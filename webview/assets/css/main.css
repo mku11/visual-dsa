@@ -177,6 +177,14 @@ button[name="remove-markers-y"] {
 	height: 24px;
 }
 
+
+button[name="remove-markers-z"] {
+	color: white;
+	background-color: rgb(107, 65, 207);
+	width: 24px;
+	height: 24px;
+}
+
 .var-option-remove {
 	align-content: center;
 }
@@ -202,6 +210,10 @@ button[name="remove-markers-y"] {
 }
 
 .markers-y-header-remove {
+	align-content: center;
+}
+
+.markers-z-header-remove {
 	align-content: center;
 }
 
@@ -323,6 +335,14 @@ button[name="remove-markers-y"] {
 	align-content: center;
 }
 
+#markers-z-header {
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+	align-content: center;
+}
+
 #object-header {
 	text-align: center;
 	padding: 6px;
@@ -404,6 +424,10 @@ button[name="remove-markers-y"] {
 	display: flex;
 }
 
+.var-option-markers-z {
+	display: flex;
+}
+
 .markers-x-select-container {
 	display: flex;
 	width: 100%;
@@ -412,6 +436,14 @@ button[name="remove-markers-y"] {
 }
 
 .markers-y-select-container {
+	display: flex;
+	width: 100%;
+	height: 32px;
+	padding-right: 6px;
+}
+
+
+.markers-z-select-container {
 	display: flex;
 	width: 100%;
 	height: 32px;
@@ -444,11 +476,29 @@ button[name="remove-markers-y"] {
 	align-content: center;
 }
 
+
+.markers-z-input {
+	z-index: 2;
+}
+
+#markers-z-options {
+	width: 16px;
+	z-index: 0;
+}
+
+.markers-z-remove {
+	align-content: center;
+}
+
 #markers-x-header-container {
 	padding-top: 4px;
 }
 
 #markers-y-header-container {
+	padding-top: 4px;
+}
+
+#markers-z-header-container {
 	padding-top: 4px;
 }
 

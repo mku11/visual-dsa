@@ -511,7 +511,7 @@ export class CsReader extends Reader {
 
 	public getDefaultLayout(type: string, value: string): string | undefined {
 		if (type.endsWith('[][][]')) {
-			return "graph";
+			return "array3D";
 		} else if (type.endsWith('[][]')) {
 			return "array2D";
 		} else if (type.endsWith('[]')) {
@@ -543,7 +543,7 @@ export class CsReader extends Reader {
 		return ch.value.includes("Count = ");
 	}
 
-	public isIndexed(variable: Variable): boolean {
+	public isIndexed(variable: Variable, parent: Variable): boolean {
 		const parts = variable.name.split(" ");
 		if(parts.length >= 2 && parts[0].startsWith("[")
 			 && parts[0].endsWith("]")) {
@@ -551,6 +551,6 @@ export class CsReader extends Reader {
 				return true;
 			}
 		}
-		return super.isIndexed(variable);
+		return super.isIndexed(variable, parent);
 	}
 }

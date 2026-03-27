@@ -433,7 +433,7 @@ export class JavaReader extends Reader {
 				${type} varRepr = ((${type}) new java.util.Optional(${name}).get());
 				for(Object rowRepr : varRepr) {
 					if(rowRepr != null) {
-						for(Object elRepr : (List) rowRepr) {
+						for(Object elRepr : (java.util.List) rowRepr) {
 							arr2DRepr.append(String.valueOf(elRepr));
 							arr2DRepr.append("|-|");
 						}
@@ -658,7 +658,7 @@ return mapRepr.toString();
 
 	public getDefaultLayout(type: string, value: string): string | undefined {
 		if (type.endsWith('[][][]')) {
-			return "graph";
+			return "array3D";
 		} else if (type.endsWith('[][]')) {
 			return "array2D";
 		} else if (type.endsWith('[]')) {

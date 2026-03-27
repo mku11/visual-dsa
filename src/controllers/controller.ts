@@ -55,6 +55,7 @@ export class Controller {
 	private selectedProperties: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private selectedMarkersx: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private selectedMarkersy: Map<string, Set<string>> = new Map<string, Set<string>>();
+	private selectedMarkersz: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private selectedLayout: Map<string, string> = new Map<string, string>();
 	private selectedOrientation: Map<string, string> = new Map<string, string>();
 
@@ -188,6 +189,7 @@ export class Controller {
 		this.selectedProperties = new Map<string, Set<string>>();
 		this.selectedMarkersx = new Map<string, Set<string>>();
 		this.selectedMarkersy = new Map<string, Set<string>>();
+		this.selectedMarkersz = new Map<string, Set<string>>();
 		this.selectedLayout = new Map<string, string>();
 		this.selectedOrientation = new Map<string, string>();
 		this.autoStepDelay = 1000;
@@ -213,6 +215,7 @@ export class Controller {
 						this.selectedProperties,
 						this.selectedMarkersx,
 						this.selectedMarkersy,
+						this.selectedMarkersz,
 						this.selectedLayout,
 						this.selectedOrientation
 					);
@@ -477,6 +480,12 @@ export class Controller {
 
 			case 'selectedMarkersy':
 				this.selectedMarkersy.set(message.source, new Set(message.data));
+				if (!this.busy) {
+					await this.refresh();
+				}
+				return;
+			case 'selectedMarkersz':
+				this.selectedMarkersz.set(message.source, new Set(message.data));
 				if (!this.busy) {
 					await this.refresh();
 				}

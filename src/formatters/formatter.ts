@@ -264,9 +264,12 @@ export class Formatter {
 		const value: string | object = node.value;
 		const markersx = node.markersx;
 		const markersy = node instanceof Node ? node.markersy : undefined;
+		const markersz = node instanceof Node ? node.markersz : undefined;
 
 		if (typeof (value) === 'string') {
 			return [[], this.formatString(value)];
+		} else if (layout === 'array3D') {
+			return this.formatArray3D(value as string[][][], markersx, markersy, markersz);
 		} else if (layout === 'array2D') {
 			return this.formatArray2D(value as string[][], markersx, markersy);
 		} else if (layout === 'array') {
@@ -284,7 +287,7 @@ export class Formatter {
 		} else if (layout && Formatter.plotLayouts.has(layout)) {
 			return [[], this.formatPlot()];
 		}
-		return [[],""];
+		return [[], ""];
 	}
 
 	formatBars(value: string[], markersx: [string, string][] | undefined): string {
@@ -421,7 +424,7 @@ export class Formatter {
 			}
 			const cell = String(elRepr).padStart(arrPadRepr);
 			if (indexes.has(idx)) {
-				markerPos.push([arrRepr.length, arrRepr.length+cell.length]);
+				markerPos.push([arrRepr.length, arrRepr.length + cell.length]);
 			}
 			arrRepr += cell;
 			idx++;
@@ -553,6 +556,50 @@ export class Formatter {
 			arr2DRepr += arr2DRepr2;
 		}
 		return [markerPos, arr2DRepr];
+	}
+
+	formatArray3D(arr3D: string[][][],
+		markersx?: Array<[string, string]>,
+		markersy?: Array<[string, string]>,
+		markersz?: Array<[string, string]>
+	): [Array<[number, number]>, string] {
+		let arr3DRepr = "";
+
+		// index the markers for easier lookup
+		const indexesZ = new Map<number, string>();
+		if (markersz) {
+			for (const [marker, value] of markersz) {
+				const ind = parseInt(value);
+				if (isNaN(ind) || ind < 0 || ind >= arr3D.length)
+					continue;
+				let markersText: string = indexesZ.get(ind) || "";
+				if (markersText.length > 0)
+					markersText += " ";
+				markersText += marker;
+				indexesZ.set(ind, markersText);
+			}
+		}
+
+		const markerPos: Array<[number, number]> = [];
+		for (let i = 0; i < arr3D.length; i++) {
+			// pass the indexes only if z dimension has a marker
+			const [markersPosXY, arr2DRepr] = this.formatArray2D(arr3D[i], indexesZ.has(i) ? markersx : [], indexesZ.has(i) ? markersy : []);
+			if (!arr2DRepr)
+				continue;
+			if (arr3DRepr.length > 0) {
+				arr3DRepr += "\n\n";	
+			}
+			if(indexesZ.has(i)) {
+				arr3DRepr += indexesZ.get(i) + " ";
+			}
+			arr3DRepr += "Z:" + i;
+			arr3DRepr += "\n";
+			for (const [start, end] of markersPosXY) {
+				markerPos.push([start + arr3DRepr.length, end + arr3DRepr.length]);
+			}
+			arr3DRepr += arr2DRepr;
+		}
+		return [markerPos, arr3DRepr];
 	}
 
 	formatMap(arr: string[][]): string {

@@ -588,7 +588,7 @@ mapRepr;
 
 	public getDefaultLayout(type: string, value: string): string | undefined {
 		if (type.endsWith('[][][]')) {
-			return "graph";
+			return "array3D";
 		} else if (type.endsWith('[][]')) {
 			return "array2D";
 		} else if (type.endsWith('[]')) {
