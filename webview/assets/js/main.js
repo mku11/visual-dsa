@@ -669,7 +669,14 @@ function formatLabels(ctx, diffType, color) {
         if (!diffs || diffs.length == 0) {
             continue;
         }
-        const position = network.getPosition(node.id);
+        let position;
+
+        try {
+            position = network.getPosition(node.id);
+        } catch (ex) {
+            console.error(ex);
+            continue;
+        }
         const lines = node.label.split("\n");
         const totalHeight = height * lines.length;
 
@@ -731,7 +738,13 @@ function formatBarsLayout(ctx, selectedLayout) {
             continue;
         }
         console.log("format bars", node.id);
-        const position = network.getPosition(node.id);
+        let position;
+        try {
+            position = network.getPosition(node.id);
+        } catch (ex) {
+            console.error(ex);
+            continue;
+        }
         const lines = node.label.split("\n");
         const totalHeight = height * lines.length;
 
@@ -775,7 +788,13 @@ function formatPlotLayout(ctx, selectedLayout) {
             continue;
 
         console.log("format plot:", node.id);
-        const position = network.getPosition(node.id);
+        let position;
+        try {
+            position = network.getPosition(node.id);
+        } catch (ex) {
+            console.error(ex);
+            continue;
+        }
         const lines = node.label.split("\n");
         const totalHeight = height * lines.length + vertMargin;
         const gridMargin = 6;
