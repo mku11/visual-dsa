@@ -63,7 +63,7 @@ var panelState = {
     paramsData: undefined,
     settings: {
         delay: 1000,
-        physics: true,
+        physics: false,
         smoothEdges: false,
     },
     source: {
