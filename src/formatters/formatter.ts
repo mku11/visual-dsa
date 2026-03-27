@@ -94,6 +94,10 @@ export class Formatter {
 		} else {
 			visNode = new VisNode(node.id, this.getLabel(node,
 				layout, orientation));
+			if (node.markerLabelPos) {
+				for (const [start, end] of node.markerLabelPos)
+					visNode.labelMarkers.push(new Diff(start, end));
+			}
 			if (Formatter.barLayouts.has(layout) && node instanceof Node) {
 				visNode.bars = (node.value as []).map(x => parseInt(x));
 			} else if (Formatter.plotLayouts.has(layout) && node instanceof Node) {
@@ -206,7 +210,13 @@ export class Formatter {
 			label += "\n";
 			label += "------\n";
 			label += "Value:\n";
-			label += this.getLabelValue(node, layout, orientation);
+			const [labelMarkers, lbl] = this.getLabelValue(node, layout, orientation);
+			if (labelMarkers) {
+				// add the markers for the label and the offset
+				for (const [x, y] of labelMarkers)
+					node.markerLabelPos.push([x + label.length, y + label.length]);
+			}
+			label += lbl;
 		}
 
 		if (node instanceof Node) {
@@ -250,13 +260,13 @@ export class Formatter {
 	}
 
 	getLabelValue(node: VarNode | Node,
-		layout?: string, orientation?: string): string {
+		layout?: string, orientation?: string): [Array<[number, number]>, string] {
 		const value: string | object = node.value;
 		const markersx = node.markersx;
 		const markersy = node instanceof Node ? node.markersy : undefined;
 
 		if (typeof (value) === 'string') {
-			return this.formatString(value);
+			return [[], this.formatString(value)];
 		} else if (layout === 'array2D') {
 			return this.formatArray2D(value as string[][], markersx, markersy);
 		} else if (layout === 'array') {
@@ -264,17 +274,17 @@ export class Formatter {
 		} else if (layout === 'queue') {
 			return this.formatArray(value as string[], "horizontal", markersx);
 		} else if (layout === 'map') {
-			return this.formatMap(value as string[][]);
+			return [[], this.formatMap(value as string[][])];
 		} else if (layout === 'set') {
 			return this.formatArray(value as string[], orientation, markersx);
 		} else if (layout === 'stack') {
 			return this.formatArray(value as string[], "vertical", markersx, true);
 		} else if (layout === 'bars') {
-			return this.formatBars(value as string[], markersx);
+			return [[], this.formatBars(value as string[], markersx)];
 		} else if (layout && Formatter.plotLayouts.has(layout)) {
-			return this.formatPlot();
+			return [[], this.formatPlot()];
 		}
-		return "";
+		return [[],""];
 	}
 
 	formatBars(value: string[], markersx: [string, string][] | undefined): string {
@@ -327,10 +337,11 @@ export class Formatter {
 		orientation?: string,
 		markers?: Array<[string, string]>,
 		reverse?: boolean
-	): string {
+	): [Array<[number, number]>, string] {
 		let arrRepr = "";
 		let arrPadRepr = String(arr.length).length;
 		const arrPadHeaderRepr = String(arr.length).length;
+		const markerPos = Array<[number, number]>();
 		const indexes = new Map<number, string>();
 		if (markers) {
 			for (const [marker, value] of markers) {
@@ -408,24 +419,29 @@ export class Formatter {
 					}
 				}
 			}
-			arrRepr += String(elRepr).padStart(arrPadRepr);
+			const cell = String(elRepr).padStart(arrPadRepr);
+			if (indexes.has(idx)) {
+				markerPos.push([arrRepr.length, arrRepr.length+cell.length]);
+			}
+			arrRepr += cell;
 			idx++;
 		}
-		return arrRepr;
+		return [markerPos, arrRepr];
 	}
 
 	formatArray2D(arr2D: string[][],
 		markersx?: Array<[string, string]>,
 		markersy?: Array<[string, string]>
-	): string {
+	): [Array<[number, number]>, string] {
 		let arr2DRepr = "";
 		let arr2DRepr2 = "";
 		let maxLength = 0;
 		let arr2DPadRepr = 0;
 		let arr2DPadHeaderVertRepr = String(arr2D.length).length;
-
+		const markerPos = Array<[number, number]>();
 		const indexesX = new Map<number, string>();
 		const indexesY = new Map<number, string>();
+
 		if (markersx) {
 			for (const [marker, value] of markersx) {
 				const ind = parseInt(value);
@@ -478,7 +494,14 @@ export class Formatter {
 		}
 		for (let arr2DIdx = -1; arr2DIdx < arr2D.length; arr2DIdx++) {
 			arr2DRepr2 = "";
+			if (arr2DRepr.length > 0) {
+				arr2DRepr += "\n";
+			}
 			for (let arr2DIdx2 = -1; arr2DIdx2 < maxLength; arr2DIdx2++) {
+				let marked: [number, number] = [0, 0];
+				if (indexesY.has(arr2DIdx) && indexesX.has(arr2DIdx2)) {
+					marked[0] = arr2DRepr.length + arr2DRepr2.length;
+				}
 				if (arr2DIdx == -1 && arr2DIdx2 == -1) {
 					arr2DRepr2 += ' '.padStart(arr2DPadHeaderVertRepr);
 				} else if (arr2DIdx == -1) {
@@ -501,15 +524,20 @@ export class Formatter {
 					}
 					arr2DRepr2 += String(value).padStart(arr2DPadRepr);
 				}
+
+				// end of marker
+				if (indexesY.has(arr2DIdx) && indexesX.has(arr2DIdx2)) {
+					marked[1] = arr2DRepr.length + arr2DRepr2.length;
+					markerPos.push(marked);
+				}
+
 				if (arr2DIdx == -1) {
 					arr2DRepr2 += ' ';
 				} else {
 					arr2DRepr2 += '|';
 				}
 			}
-			if (arr2DRepr.length > 0) {
-				arr2DRepr += "\n";
-			}
+
 			if (arr2DIdx == -1) {
 				arr2DRepr2 += "\n";
 				arr2DRepr2 += " ";
@@ -524,7 +552,7 @@ export class Formatter {
 			}
 			arr2DRepr += arr2DRepr2;
 		}
-		return arr2DRepr;
+		return [markerPos, arr2DRepr];
 	}
 
 	formatMap(arr: string[][]): string {
@@ -573,6 +601,7 @@ export class VisNode {
 	public id: string;
 	public label: string;
 	public labelDiff: Diff[] = [];
+	public labelMarkers: Diff[] = [];
 	public bars: number[] = [];
 	public points: number[][] = [];
 	public lines: number[][] = [];

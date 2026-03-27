@@ -637,7 +637,8 @@ function setupNetworkListeners(selectedLayout) {
     });
 
     network.on('afterDrawing', (ctx) => {
-        formatMarkers(ctx);
+        formatLabels(ctx, "labelMarkers", '#035bff');
+        formatLabels(ctx, "labelDiffs", '#e93b1c');
         formatBarsLayout(ctx, selectedLayout);
         formatPlotLayout(ctx, selectedLayout);
     });
@@ -653,13 +654,19 @@ function setupNetworkListeners(selectedLayout) {
     });
 }
 
-function formatMarkers(ctx) {
+function formatLabels(ctx, diffType, color) {
     const height = parseInt(ctx.font.split(" ")[0]);
     const vertMargin = 7;
     ctx.textAlign = 'center';
 
     for (const [nodeId, node] of Object.entries(panelState.networkData.nodes)) {
-        if (node.labelDiff.length == 0) {
+        let diffs;
+        if (diffType === "labelDiffs")
+            diffs = node.labelDiff;
+        else if (diffType === "labelMarkers")
+            diffs = node.labelMarkers;
+
+        if (!diffs || diffs.length == 0) {
             continue;
         }
         const position = network.getPosition(node.id);
@@ -669,7 +676,7 @@ function formatMarkers(ctx) {
         let lineNum = 0;
         let chars = 0;
         let idx = 0;
-        const diffs = node.labelDiff;
+
         for (const line of lines) {
             let hasDiff = false;
             while (idx < diffs.length && diffs[idx].start < chars - 1) {
@@ -695,8 +702,8 @@ function formatMarkers(ctx) {
                 ctx.fillText(coverLine,
                     position.x,
                     position.y + (lineNum) * height - totalHeight / 2 + vertMargin);
-
-                ctx.fillStyle = 'red';
+                ctx.fillStyle = color;
+                ctx.strokeStyle = color;
                 ctx.fillText(newLine,
                     position.x,
                     position.y + (lineNum) * height - totalHeight / 2 + vertMargin);

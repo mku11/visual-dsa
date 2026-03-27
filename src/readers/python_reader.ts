@@ -145,7 +145,7 @@ export class PythonReader extends Reader {
 			if (nodesListVar.type.endsWith('Exception')) {
 				throw new Error(nodesListVar.result);
 			}
-			if(nodesListVar.result === 'None') {
+			if (nodesListVar.result === 'None') {
 				return undefined;
 			}
 			if (nodesListVar.variablesReference == 0) {
@@ -187,7 +187,7 @@ export class PythonReader extends Reader {
 			if (edgesListVar.type.endsWith('Exception')) {
 				throw new Error(edgesListVar.result);
 			}
-			if(edgesListVar.result === 'None') {
+			if (edgesListVar.result === 'None') {
 				return undefined;
 			}
 			if (edgesListVar.variablesReference == 0) {
@@ -216,7 +216,7 @@ export class PythonReader extends Reader {
 		}
 	}
 
-	
+
 	public async getUserDefPlot(variable: Variable,
 		rootVariable: Variable,
 		layout: string
@@ -233,7 +233,7 @@ export class PythonReader extends Reader {
 			if (plotListVar.type.endsWith('Exception')) {
 				throw new Error(plotListVar.result);
 			}
-			if(plotListVar.result === 'None') {
+			if (plotListVar.result === 'None') {
 				return undefined;
 			}
 			if (plotListVar.variablesReference == 0) {
@@ -472,7 +472,9 @@ export class PythonReader extends Reader {
 
 	public async getNodeType(variable: Variable): Promise<string> {
 		let type = variable.type;
-		if (variable.type === "list") {
+		if (variable.type === "bytearray") {
+			type += "[]";
+		} else if (variable.type === "list") {
 			if (variable.value.startsWith("[[[")) {
 				type += "[][][]";
 			} else if (variable.value.startsWith("[[")) {
@@ -480,7 +482,7 @@ export class PythonReader extends Reader {
 			} else if (variable.value.startsWith("[")) {
 				type += "[]";
 			}
-		} else
+		} else {
 			if (variable.type === "ndarray") {
 				if (variable.value.startsWith("array([[[")) {
 					type += "[][][]";
@@ -490,6 +492,7 @@ export class PythonReader extends Reader {
 					type += "[]";
 				}
 			}
+		}
 		return type;
 	}
 

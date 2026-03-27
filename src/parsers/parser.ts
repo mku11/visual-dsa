@@ -512,6 +512,7 @@ export class Node {
 	public childrenEdgeValues: Map<string, Edge> = new Map<string, Edge>();
 	public markersx?: Array<[string, string]>; // markers for x-axis
 	public markersy?: Array<[string, string]>; // markers for y-axis
+	public markerLabelPos: Array<[number,number]> = []; // markers label positions
 	constructor(id: string, type: string | undefined, value: string | object) {
 		this.id = id;
 		this.type = type;
@@ -539,6 +540,7 @@ export class VarNode {
 	public type: string | undefined = undefined; // data type
 	public value: string | object; // data value
 	public markersx?: Array<[string, string]>; // markers for x-axis
+	public markerLabelPos: Array<[number,number]> = []; // markers label positions
 	constructor(id: string, type: string | undefined, value: string | Node) {
 		this.id = id;
 		this.type = type;
