@@ -2,10 +2,160 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "C#: Debug",
-			"type": "dotnet",
+			"name": "Arrays",
+			"type": "coreclr",
 			"request": "launch",
-			"projectPath": "${workspaceFolder}/demo.csproj"
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"Arrays"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
 		},
+		{
+			"name": "Lists",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"Lists"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "Graphs",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"Graphs"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "Trees",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"Trees"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "Hashes",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"Hashes"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "LinkedLists",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"LinkedLists"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "Primitives",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"Primitives"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "GraphMapNodes",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"GraphMapNodes"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "GraphsPrimitivesEdges",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"GraphsPrimitivesEdges"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "DoublyLinkedLists",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"DoublyLinkedLists"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "Queues",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"Queues"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		},
+		{
+			"name": "Plot",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "dotnet: build",
+			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
+			"args": [
+				"Plot"
+			],
+			"cwd": "${workspaceFolder}",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		}
 	]
 }
