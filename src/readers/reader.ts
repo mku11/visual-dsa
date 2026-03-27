@@ -31,6 +31,7 @@ export class Reader {
 	protected registered = false;
 	protected static instance?: Reader;
 	protected extractorMethod = this.getRegisterMethod();
+	protected static cachedSourceLines: Map<string, string[]> = new Map<string, string[]>();
 
 	constructor() {
 		Reader.instance = this;
@@ -85,11 +86,17 @@ export class Reader {
 	}
 
 	static async getSourceLines(stackTrace: StackTrace): Promise<string[]> {
-		let lines;
+		let lines: string[] | undefined;
 		const source = stackTrace?.stackFrames[0].source;
 		if (source && source.path) {
-			const content = Reader.instance?.getSource(source.path);
-			lines = content?.split("\n");
+			lines = Reader.cachedSourceLines.get(source.path);
+			if (lines)
+				return lines;
+			let content = Reader.instance?.getSource(source.path);
+			if (content) {
+				lines = content.split(new RegExp("\r\n|\n"));
+				Reader.cachedSourceLines.set(source.path, lines);
+			}
 		}
 		return lines ?? [];
 	}
