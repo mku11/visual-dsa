@@ -139,14 +139,51 @@ export class Reader {
 		this.registered = true;
 	}
 
-	async getMarkersValues(markers: string[]): Promise<Array<[string, string]>> {
-		const markersValues: Array<[string, string]> = [];
-		for (const marker of markers) {
-			const variable = await this.getVariable(marker);
-			if (variable && variable.value) {
-				markersValues.push([marker, variable.value]);
-			}
+	async getMarkersValues(markers: string): Promise<Array<Array<number>>> {
+		let markersValues: Array<Array<number>> = [];
+		const variable = await this.getVariable(markers);
+		if (!variable)
+			return markersValues;
+		if (variable?.variablesReference == 0) {
+			if (!isNaN(parseInt(variable.value)))
+				markersValues.push([parseInt(variable.value), 0, 0]);
+			return markersValues;
 		}
+		const children = await this.getVariables(variable.variablesReference);
+		const childrenList: Array<number> = [];
+		for (const child of children) {
+			if (this.filterVariable(child))
+				continue;
+			if (!this.isIndexed(child, variable)) {
+				continue;
+			}
+			if (child.variablesReference == 0) {
+				if (!isNaN(parseInt(child.value)))
+					childrenList.push(parseInt(child.value));
+			} else {
+				const gChildren = await this.getVariables(child.variablesReference);
+				const gChildrenList: Array<number> = [];
+				for (const gChild of gChildren) {
+					if (this.filterVariable(gChild))
+						continue;
+					if (!this.isIndexed(gChild, child)) {
+						continue;
+					}
+					if (isNaN(parseInt(gChild.value)))
+						continue;
+					gChildrenList.push(parseInt(gChild.value));
+					if (gChildrenList.length == 3)
+						break;
+				}
+				if (gChildrenList.length > 0) {
+					markersValues.push(gChildrenList.slice(0, 3));
+				}
+			}
+			if (childrenList.length == 3)
+				break;
+		}
+		if (childrenList.length > 0)
+			markersValues = [childrenList as [number, number, number]];
 		return markersValues;
 	}
 

@@ -56,9 +56,7 @@ export class Parser {
 		filtersNodes: Map<string, Set<string>>,
 		filtersEdges: Map<string, Set<string>>,
 		filtersProperties: Map<string, Set<string>>,
-		markersx: Map<string, Set<string>>,
-		markersy: Map<string, Set<string>>,
-		markersz: Map<string, Set<string>>,
+		markers: Map<string, string>,
 		layouts: Map<string, string>,
 		orientations: Map<string, string>
 	): Promise<VarNode | undefined> {
@@ -66,8 +64,7 @@ export class Parser {
 		const graph = await this.getGraph(variable, variable,
 			0, visited,
 			filtersNodes, filtersEdges, filtersProperties,
-			markersx, markersy, markersz,
-			layouts, orientations);
+			markers, layouts, orientations);
 		if (graph instanceof VarNode) {
 			return graph;
 		}
@@ -216,9 +213,7 @@ export class Parser {
 		filtersNodes: Map<string, Set<string>>,
 		filtersEdges: Map<string, Set<string>>,
 		filtersProperties: Map<string, Set<string>>,
-		markersx: Map<string, Set<string>>,
-		markersy: Map<string, Set<string>>,
-		markersz: Map<string, Set<string>>,
+		markers: Map<string, string>,
 		layouts: Map<string, string>,
 		orientations: Map<string, string>
 	): Promise<VarNode | Node | undefined> {
@@ -248,9 +243,7 @@ export class Parser {
 		const filterNodes = filtersNodes.get(type) ?? new Set();
 		const filterEdges = filtersEdges.get(type) ?? new Set();
 		const filterProperties = filtersProperties.get(type) ?? new Set();
-		const useMarkersx = markersx.get(type) ?? new Set();
-		const useMarkersy = markersy.get(type) ?? new Set();
-		const useMarkersz = markersz.get(type) ?? new Set();
+		const useMarkers = markers.get(type) ?? "";
 		const layout = layouts.get(type) ?? "graph";
 
 		// check if this is the variable node
@@ -264,9 +257,9 @@ export class Parser {
 				if (arrayRepr) {
 					varNode.value = arrayRepr;
 				}
-				const markersx = await this.reader.getMarkersValues(Array.from(useMarkersx));
-				if (markersx) {
-					varNode.markersx = markersx;
+				const markers = await this.reader.getMarkersValues(useMarkers);
+				if (markers) {
+					varNode.markers = markers;
 				}
 			}
 			if (variable.variablesReference == 0) {
@@ -293,9 +286,9 @@ export class Parser {
 			if (arrayRepr) {
 				node.value = arrayRepr;
 			}
-			const markersx = await this.reader.getMarkersValues(Array.from(useMarkersx));
-			if (markersx) {
-				node.markersx = markersx;
+			const markers = await this.reader.getMarkersValues(useMarkers);
+			if (markers) {
+				node.markers = markers;
 			}
 		} else if (this.array2DLayouts.has(layout) || this.plotLayouts.has(layout)) {
 			let arrayRepr;
@@ -309,30 +302,18 @@ export class Parser {
 			if (arrayRepr) {
 				node.value = arrayRepr;
 			}
-			const markersx = await this.reader.getMarkersValues(Array.from(useMarkersx));
-			if (markersx) {
-				node.markersx = markersx;
-			}
-			const markersy = await this.reader.getMarkersValues(Array.from(useMarkersy));
-			if (markersy) {
-				node.markersy = markersy;
+			const markers = await this.reader.getMarkersValues(useMarkers);
+			if (markers) {
+				node.markers = markers;
 			}
 		} else if (this.array3DLayouts.has(layout)) {
 			let arrayRepr = await this.reader.getArray3DRepr(variable);
 			if (arrayRepr) {
 				node.value = arrayRepr;
 			}
-			const markersx = await this.reader.getMarkersValues(Array.from(useMarkersx));
-			if (markersx) {
-				node.markersx = markersx;
-			}
-			const markersy = await this.reader.getMarkersValues(Array.from(useMarkersy));
-			if (markersy) {
-				node.markersy = markersy;
-			}
-			const markersz = await this.reader.getMarkersValues(Array.from(useMarkersz));
-			if (markersz) {
-				node.markersz = markersz;
+			const markers = await this.reader.getMarkersValues(useMarkers);
+			if (markers) {
+				node.markers = markers;
 			}
 		} else if (this.mapLayouts.has(layout)) {
 			const arrayRepr = await this.reader.getMapRepr(variable);
@@ -410,9 +391,7 @@ export class Parser {
 					filtersNodes,
 					filtersEdges,
 					filtersProperties,
-					markersx,
-					markersy,
-					markersz,
+					markers,
 					layouts, orientations);
 			if (childNode instanceof Node && node instanceof Node) {
 				node.children.set(childNode.id, childNode);
@@ -532,9 +511,7 @@ export class Node {
 	public properties: Map<string, Property> = new Map<string, Property>();
 	public children: Map<string, Node> = new Map<string, Node>();
 	public childrenEdgeValues: Map<string, Edge> = new Map<string, Edge>();
-	public markersx?: Array<[string, string]>; // markers for x-axis
-	public markersy?: Array<[string, string]>; // markers for y-axis
-	public markersz?: Array<[string, string]>; // markers for y-axis
+	public markers?: Array<Array<number>>; // markers for x,y,z axis
 	public markerLabelPos: Array<[number, number]> = []; // markers label positions
 	constructor(id: string, type: string | undefined, value: string | object) {
 		this.id = id;
@@ -562,7 +539,7 @@ export class VarNode {
 	public id: string; // unique id
 	public type: string | undefined = undefined; // data type
 	public value: string | object; // data value
-	public markersx?: Array<[string, string]>; // markers for x-axis
+	public markers?: Array<Array<number>>; // markers for x,y,z axis
 	public markerLabelPos: Array<[number, number]> = []; // markers label positions
 	constructor(id: string, type: string | undefined, value: string | Node) {
 		this.id = id;

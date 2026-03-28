@@ -163,22 +163,7 @@ button[name="remove-properties"] {
 	height: 24px;
 }
 
-button[name="remove-markers-x"] {
-	color: white;
-	background-color: rgb(107, 65, 207);
-	width: 24px;
-	height: 24px;
-}
-
-button[name="remove-markers-y"] {
-	color: white;
-	background-color: rgb(107, 65, 207);
-	width: 24px;
-	height: 24px;
-}
-
-
-button[name="remove-markers-z"] {
+button[name="remove-markers"] {
 	color: white;
 	background-color: rgb(107, 65, 207);
 	width: 24px;
@@ -205,15 +190,7 @@ button[name="remove-markers-z"] {
 	align-content: center;
 }
 
-.markers-x-header-remove {
-	align-content: center;
-}
-
-.markers-y-header-remove {
-	align-content: center;
-}
-
-.markers-z-header-remove {
+.markers-header-remove {
 	align-content: center;
 }
 
@@ -319,23 +296,7 @@ button[name="remove-markers-z"] {
 	align-content: center;
 }
 
-#markers-x-header {
-	padding: 6px;
-	color: aliceblue;
-	width: 100%;
-	line-height: 16px;
-	align-content: center;
-}
-
-#markers-y-header {
-	padding: 6px;
-	color: aliceblue;
-	width: 100%;
-	line-height: 16px;
-	align-content: center;
-}
-
-#markers-z-header {
+#markers-header {
 	padding: 6px;
 	color: aliceblue;
 	width: 100%;
@@ -416,89 +377,32 @@ button[name="remove-markers-z"] {
 	display: flex;
 }
 
-.var-option-markers-x {
+.var-option-markers {
 	display: flex;
 }
 
-.var-option-markers-y {
-	display: flex;
-}
 
-.var-option-markers-z {
-	display: flex;
-}
-
-.markers-x-select-container {
+.markers-select-container {
 	display: flex;
 	width: 100%;
 	height: 32px;
 	padding-right: 6px;
 }
 
-.markers-y-select-container {
-	display: flex;
-	width: 100%;
-	height: 32px;
-	padding-right: 6px;
-}
-
-
-.markers-z-select-container {
-	display: flex;
-	width: 100%;
-	height: 32px;
-	padding-right: 6px;
-}
-
-.markers-x-input {
+.markers-input {
 	z-index: 2;
 }
 
-#markers-x-options {
+#markers-options {
 	width: 16px;
 	z-index: 0;
 }
 
-.markers-x-remove {
+.markers-remove {
 	align-content: center;
 }
 
-.markers-y-input {
-	z-index: 2;
-}
-
-#markers-y-options {
-	width: 16px;
-	z-index: 0;
-}
-
-.markers-y-remove {
-	align-content: center;
-}
-
-
-.markers-z-input {
-	z-index: 2;
-}
-
-#markers-z-options {
-	width: 16px;
-	z-index: 0;
-}
-
-.markers-z-remove {
-	align-content: center;
-}
-
-#markers-x-header-container {
-	padding-top: 4px;
-}
-
-#markers-y-header-container {
-	padding-top: 4px;
-}
-
-#markers-z-header-container {
+#markers-header-container {
 	padding-top: 4px;
 }
 

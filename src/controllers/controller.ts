@@ -53,9 +53,7 @@ export class Controller {
 	private selectedObject = "";
 	private selectedEdges: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private selectedProperties: Map<string, Set<string>> = new Map<string, Set<string>>();
-	private selectedMarkersx: Map<string, Set<string>> = new Map<string, Set<string>>();
-	private selectedMarkersy: Map<string, Set<string>> = new Map<string, Set<string>>();
-	private selectedMarkersz: Map<string, Set<string>> = new Map<string, Set<string>>();
+	private selectedMarkers: Map<string, string> = new Map<string, string>();
 	private selectedLayout: Map<string, string> = new Map<string, string>();
 	private selectedOrientation: Map<string, string> = new Map<string, string>();
 
@@ -187,9 +185,7 @@ export class Controller {
 		this.selectedNodes = new Map<string, Set<string>>();
 		this.selectedEdges = new Map<string, Set<string>>();
 		this.selectedProperties = new Map<string, Set<string>>();
-		this.selectedMarkersx = new Map<string, Set<string>>();
-		this.selectedMarkersy = new Map<string, Set<string>>();
-		this.selectedMarkersz = new Map<string, Set<string>>();
+		this.selectedMarkers = new Map<string, string>();
 		this.selectedLayout = new Map<string, string>();
 		this.selectedOrientation = new Map<string, string>();
 		this.autoStepDelay = 1000;
@@ -213,9 +209,7 @@ export class Controller {
 						this.selectedNodes,
 						this.selectedEdges,
 						this.selectedProperties,
-						this.selectedMarkersx,
-						this.selectedMarkersy,
-						this.selectedMarkersz,
+						this.selectedMarkers,
 						this.selectedLayout,
 						this.selectedOrientation
 					);
@@ -470,22 +464,8 @@ export class Controller {
 					await this.refresh();
 				}
 				return;
-
-			case 'selectedMarkersx':
-				this.selectedMarkersx.set(message.source, new Set(message.data));
-				if (!this.busy) {
-					await this.refresh();
-				}
-				return;
-
-			case 'selectedMarkersy':
-				this.selectedMarkersy.set(message.source, new Set(message.data));
-				if (!this.busy) {
-					await this.refresh();
-				}
-				return;
-			case 'selectedMarkersz':
-				this.selectedMarkersz.set(message.source, new Set(message.data));
+			case 'selectedMarkers':
+				this.selectedMarkers.set(message.source, message.data[0]);
 				if (!this.busy) {
 					await this.refresh();
 				}
