@@ -1,6 +1,10 @@
 class GraphsPrimitivesEdges {
 
     public static runMain() {
+        new GraphsPrimitivesEdges().test();
+    }
+
+    public test() {
         // graph with hashmap primitives
         const gmap = new Map<string, [string, string[], string[]] | [string]>();
         gmap.set("1", ["1", ["2", "3"], ["10", "20"]]);
@@ -8,6 +12,8 @@ class GraphsPrimitivesEdges {
         gmap.set("3", ["3"]);
         gmap.set("4", ["4"]);
         gmap.set("5", ["5"]);
+
+        console.log("done");
     }
 }
 
@@ -15,7 +21,7 @@ class GraphsPrimitivesEdges {
 export class Extractor {
     // register the custom types
     public static registerTypes(): Array<string> {
-        return ["Map", "Array"];
+        return ["Map", "Array[][]"];
     }
 
     public static getNodes(
