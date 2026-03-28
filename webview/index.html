@@ -51,125 +51,127 @@
 					<input name="smooth-edges" id="smooth-edges" type="checkbox">
 				</div>
 			</div>
-			<div id="variables-container">
-				<div id="variables-header-container">
-					<div id="variables-header">Expressions</div>
-					<div class="variables-header-add">
-						<button id="add-variable" name="add-variable" class="dsa-button add-variable"
-							title="Add Variable" onclick="this.blur();">
-							+
-						</button>
-					</div>
-				</div>
-				<div id="vars-options" class="vars-options">
-					<div class="var-options">
-						<div class="var-option-variable">
-							<input type="text" name="variable-input" class="var-select variable-input">
-							<select name="variable" class="variable">
-							</select>
-						</div>
-						<div class="var-option-remove">
-							<button name="remove-variable" class="dsa-button remove-variable" title="Remove Variable"
-								onclick="this.blur();">
-								-
+			<div class="hseparator"></div>
+			<div class="options-expand-container">
+				<div id="variables-container">
+					<div id="variables-header-container">
+						<div id="variables-header">Expressions</div>
+						<div class="variables-header-add">
+							<button id="add-variable" name="add-variable" class="dsa-button add-variable"
+								title="Add Variable" onclick="this.blur();">
+								+
 							</button>
 						</div>
 					</div>
-				</div>
-			</div>
-			<div id="attributes-container">
-				<div id="attributes-header">Attributes</div>
-				<div id="object-name-container">
-					<div id="object-name-label">Name: </div>
-					<div id="object-name"></div>
-				</div>
-				<div id="object-type-container">
-					<div id="object-type-label">Type: </div>
-					<div id="object-type"></div>
-				</div>
-				<div class="var-options-container">
-					<div class="var-option var-option-layout">
-						<span class="attribute-label">Layout</span>
-						<select id="layout" name="layout" class="var-select layout">
-							<option value="graph">Graph</option>
-							<option value="tree">Tree</option>
-							<option value="linkedlist">Linked List</option>
-							<option value="array">Array</option>
-							<option value="array2D">Array2D</option>
-							<option value="array3D">Array3D</option>
-							<option value="stack">Stack</option>
-							<option value="queue">Queue</option>
-							<option value="set">Set</option>
-							<option value="map">Map</option>
-							<option value="bars">Bars</option>
-							<option value="plotpoints">Plot Points</option>
-							<option value="plotlines">Plot Lines</option>
-						</select>
-					</div>
-					<div class="var-option var-option-orientation">
-						<span class="attribute-label">Orientation</span>
-						<select id="orientation" name="orientation" class="var-select orientation">
-							<option value="horizontal">Horizontal</option>
-							<option value="vertical">Vertical</option>
-						</select>
-					</div>
-					<div class="var-option var-option-nodes">
-						<div id="nodes-header-container">
-							<div id="nodes-header" class="attribute-label">Children Nodes</div>
-							<div class="nodes-header-remove">
-								<button id="remove-nodes" name="remove-nodes" class="dsa-button remove-nodes"
-									title="Clear Nodes" onclick="this.blur();">
-									x
-								</button>
-							</div>
-						</div>
-						<select id="nodes" name="nodes" class="var-select nodes" multiple>
-						</select>
-					</div>
-					<div class="var-option var-option-edges">
-						<div id="edges-header-container">
-							<div id="edges-header" class="attribute-label">Children Edges</div>
-							<div class="edges-header-remove">
-								<button id="remove-edges" name="remove-edges" class="dsa-button remove-edges"
-									title="Clear Edges" onclick="this.blur();">
-									x
-								</button>
-							</div>
-						</div>
-						<select id="edges" name="edges" class="var-select edges" multiple>
-						</select>
-					</div>
-					<div class="var-option var-option-properties">
-						<div id="properties-header-container">
-							<div id="properties-header" class="attribute-label">Properties</div>
-							<div class="properties-header-remove">
-								<button id="remove-properties" name="remove-properties"
-									class="dsa-button remove-properties" title="Clear Properties"
-									onclick="this.blur();">
-									x
-								</button>
-							</div>
-						</div>
-						<select id="properties" name="properties" class="var-select properties" multiple>
-						</select>
-					</div>
-					<div class="var-option var-option-markers">
-						<div id="markers-header-container">
-							<div id="markers-header" class="attribute-label">Markers [x,y,z] axes</div>
-						</div>
-						<div class="var-option-markers">
-							<div class="markers-select-container">
-								<input type="text" id="markers-input" name="markers-input"
-									class="var-select markers-input">
-								<select id="markers-options" name="markers" class="markers">
+					<div id="vars-options" class="vars-options">
+						<div class="var-options">
+							<div class="var-option-variable">
+								<input type="text" name="variable-input" class="var-select variable-input">
+								<select name="variable" class="variable">
 								</select>
 							</div>
-							<div class="markers-remove">
-								<button id="remove-markers" name="remove-markers"
-									class="dsa-button remove-markers" title="Remove Markers"
-									onclick="this.blur();">
-									x
+							<div class="var-option-remove">
+								<button name="remove-variable" class="dsa-button remove-variable"
+									title="Remove Variable" onclick="this.blur();">
+									-
 								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hseparator"></div>
+				<div id="attributes-container">
+					<div id="object-name-container">
+						<div id="object-name-label">Name: </div>
+						<div id="object-name"></div>
+					</div>
+					<div id="object-type-container">
+						<div id="object-type-label">Type: </div>
+						<div id="object-type"></div>
+					</div>
+					<div class="var-options-container">
+						<div class="var-option var-option-layout">
+							<span class="attribute-label">Layout</span>
+							<select id="layout" name="layout" class="var-select layout">
+								<option value="graph">Graph</option>
+								<option value="tree">Tree</option>
+								<option value="linkedlist">Linked List</option>
+								<option value="array">Array</option>
+								<option value="array2D">Array2D</option>
+								<option value="array3D">Array3D</option>
+								<option value="stack">Stack</option>
+								<option value="queue">Queue</option>
+								<option value="set">Set</option>
+								<option value="map">Map</option>
+								<option value="bars">Bars</option>
+								<option value="plotpoints">Plot Points</option>
+								<option value="plotlines">Plot Lines</option>
+							</select>
+						</div>
+						<div class="var-option var-option-orientation">
+							<span class="attribute-label">Orientation</span>
+							<select id="orientation" name="orientation" class="var-select orientation">
+								<option value="horizontal">Horizontal</option>
+								<option value="vertical">Vertical</option>
+							</select>
+						</div>
+						<div class="var-option var-option-nodes">
+							<div id="nodes-header-container">
+								<div id="nodes-header" class="attribute-label">Children Nodes</div>
+								<div class="nodes-header-remove">
+									<button id="remove-nodes" name="remove-nodes" class="dsa-button remove-nodes"
+										title="Clear Nodes" onclick="this.blur();">
+										x
+									</button>
+								</div>
+							</div>
+							<select id="nodes" name="nodes" class="var-select-multi nodes" multiple>
+							</select>
+						</div>
+						<div class="var-option var-option-edges">
+							<div id="edges-header-container">
+								<div id="edges-header" class="attribute-label">Children Edges</div>
+								<div class="edges-header-remove">
+									<button id="remove-edges" name="remove-edges" class="dsa-button remove-edges"
+										title="Clear Edges" onclick="this.blur();">
+										x
+									</button>
+								</div>
+							</div>
+							<select id="edges" name="edges" class="var-select-multi edges" multiple>
+							</select>
+						</div>
+						<div class="var-option var-option-properties">
+							<div id="properties-header-container">
+								<div id="properties-header" class="attribute-label">Properties</div>
+								<div class="properties-header-remove">
+									<button id="remove-properties" name="remove-properties"
+										class="dsa-button remove-properties" title="Clear Properties"
+										onclick="this.blur();">
+										x
+									</button>
+								</div>
+							</div>
+							<select id="properties" name="properties" class="var-select-multi properties" multiple>
+							</select>
+						</div>
+						<div class="var-option var-option-markers">
+							<div id="markers-header-container">
+								<div id="markers-header" class="attribute-label">Markers [x,y,z] axes</div>
+							</div>
+							<div class="var-option-markers">
+								<div class="markers-select-container">
+									<input type="text" id="markers-input" name="markers-input"
+										class="var-select markers-input">
+									<select id="markers-options" name="markers" class="markers">
+									</select>
+								</div>
+								<div class="markers-remove">
+									<button id="remove-markers" name="remove-markers" class="dsa-button remove-markers"
+										title="Remove Markers" onclick="this.blur();">
+										x
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>

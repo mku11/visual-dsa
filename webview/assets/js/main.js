@@ -315,8 +315,6 @@ function setupVarOptions(varOptions) {
     let variableInput = varOptions.getElementsByClassName("variable-input")[0];
     variableInput.value = "";
 
-    resizeInputSelect(variable, variableInput);
-
     let removeVariable = varOptions.getElementsByClassName("remove-variable")[0];
 
     // variable listeners
@@ -339,18 +337,6 @@ function setupVarOptions(varOptions) {
             variableInput.value = "";
         }
     }
-}
-
-function resizeInputSelect(variable, variableInput) {
-    // workaround since input with datalist does not work well
-    // see: https://github.com/microsoft/vscode/issues/129999
-    // Note: this will not fix the markers selects because they're 
-    // inside an overflow (scrollable)
-    let reqWidth = variable.parentElement.clientWidth - 4;
-    let reqHeight = variable.parentElement.clientHeight;
-    variable.style.width = reqWidth + "px";
-    variableInput.style.width = (reqWidth - 16) + "px";
-    variable.style.height = reqHeight + "px";
 }
 
 function updateVarOptions(data) {

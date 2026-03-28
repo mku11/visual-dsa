@@ -108,7 +108,7 @@ textarea::placeholder {
 }
 
 .variable {
-	position: absolute;
+	width: 16px;
 	z-index: 0;
 }
 
@@ -121,6 +121,11 @@ textarea::placeholder {
 
 .var-select {
 	min-width: 120px;
+}
+
+.var-select-multi {
+	min-width: 120px;
+	max-height: 80px;
 }
 
 .menu {
@@ -247,7 +252,6 @@ button[name="remove-markers"] {
 
 #left-frame {
 	background-color: #41485d;
-	overflow-y: auto;
 	float: left;
 	min-width: 240px;
 	max-width: 400px;
@@ -256,11 +260,6 @@ button[name="remove-markers"] {
 
 #right-frame {
 	float: right;
-}
-
-#variables-container {
-	overflow: auto;
-	max-height: 200px;
 }
 
 #variables-header {
@@ -448,7 +447,16 @@ body {
 	visibility: hidden;
 }
 
-.var-options-container {
+.options-expand-container {
 	overflow-y: auto;
-	height: 400px;
+	height: 600px;
+}
+
+.hseparator {
+	background-color: #838794;
+	height: 1px;
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-top: 12px;
+	margin-bottom: 8px;
 }
