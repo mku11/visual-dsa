@@ -1,6 +1,11 @@
 class DoublyLinkedLists {
+    arr: number[] = [1,2,3];
 
-    public static runMain() {
+    static runMain() {
+        new DoublyLinkedLists().test();
+    }
+
+    public test() {
         // custom linkedlist
         const linkedList: DoublyLinkedList<string> = new DoublyLinkedList<string>();
         for (let i = 0; i < 7; i++) {

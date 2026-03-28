@@ -5,7 +5,7 @@ class Arrays {
         new Arrays().test();
     }
 
-    test() {
+    public test() {
         const arrString: Array<string> = new Array<string>(5);
         arrString[1] = "one";
         arrString[2] = "two";
