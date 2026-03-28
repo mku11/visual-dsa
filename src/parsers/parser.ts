@@ -128,6 +128,13 @@ export class Parser {
 					}
 					childVar = this.reader.processVariable(childVar);
 					children.push(childVar);
+					const childType: string = await this.reader.getNodeType(childVar);
+					if (this.reader.isArray(childType)) {
+						const childArrayVar: Variable = {} as Variable;
+						Object.assign(childArrayVar, childVar);
+						childArrayVar.name += "[]";
+						children.push(childArrayVar);
+					}
 				}
 			}
 		}
@@ -355,21 +362,19 @@ export class Parser {
 					continue;
 				}
 				ch = this.reader.processVariable(ch);
-				const chType = this.reader.getNodeType(ch);
+
 				if (filterNodes.has(ch.name)) {
-					if (this.reader.hasChildren(ch)) {
-						if (ch.variablesReference > 0) {
-							const grandChildren: Variable[] = await this.reader.getVariables(ch.variablesReference, "indexed");
-							for (let grandChild of grandChildren) {
-								if (this.reader.filterVariable(grandChild)) {
-									continue;
-								}
-								grandChild = this.reader.processVariable(grandChild);
-								nodesChildren.push(grandChild);
+					nodesChildren.push(ch);
+				} else if (filterNodes.has(ch.name + "[]")) {
+					if (this.reader.hasChildren(ch) && ch.variablesReference > 0) {
+						const grandChildren: Variable[] = await this.reader.getVariables(ch.variablesReference, "indexed");
+						for (let grandChild of grandChildren) {
+							if (this.reader.filterVariable(grandChild)) {
+								continue;
 							}
+							grandChild = this.reader.processVariable(grandChild);
+							nodesChildren.push(grandChild);
 						}
-					} else {
-						nodesChildren.push(ch);
 					}
 				} else if ((layout == 'graph' || layout == 'tree' || layout == 'linkedlist')
 					&& this.reader.isIterable(type) && filterNodes.size == 0) {
