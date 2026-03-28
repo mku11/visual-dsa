@@ -541,7 +541,7 @@ mapRepr;
 			} else {
 				type += "[][]";
 			}
-		} else if (type === "Array" || variable.value.startsWith("Array")) {
+		} else if (type === "Array") {
 			type += "[]";
 		}
 		return type;
