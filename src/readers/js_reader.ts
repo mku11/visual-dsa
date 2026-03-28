@@ -111,7 +111,7 @@ export class JsReader extends Reader {
 			if (nodesListVar.type.endsWith('Exception')) {
 				throw new Error(nodesListVar.result);
 			}
-			if(nodesListVar.result === 'null') {
+			if (nodesListVar.result === 'null') {
 				return undefined;
 			}
 			if (nodesListVar.variablesReference == 0) {
@@ -153,7 +153,7 @@ export class JsReader extends Reader {
 			if (edgesListVar.type.endsWith('Exception')) {
 				throw new Error(edgesListVar.result);
 			}
-			if(edgesListVar.result === 'null') {
+			if (edgesListVar.result === 'null') {
 				return undefined;
 			}
 			if (edgesListVar.variablesReference == 0) {
@@ -198,7 +198,7 @@ export class JsReader extends Reader {
 			if (plotListVar.type.endsWith('Exception')) {
 				throw new Error(plotListVar.result);
 			}
-			if(plotListVar.result === 'null') {
+			if (plotListVar.result === 'null') {
 				return undefined;
 			}
 			if (plotListVar.variablesReference == 0) {
@@ -403,9 +403,12 @@ mapRepr;
 			|| variable.name === "module"
 			|| variable.name === "require"
 			|| variable.name === "exports"
-			|| variable.name === "VSID"
+			|| (variable.name.includes("VSID")
+				&& variable.presentationHint 
+				&& variable.presentationHint.visibility === "internal")
 			|| variable.name.includes("[[Prototype]]")
 			|| variable.name.includes("[[Scopes]]")
+			|| variable.name.includes("[[FunctionLocation]]")
 			|| (variable.value.startsWith("f ")
 				&& variable.value.endsWith(")"))
 			|| variable.value === "undefined"
@@ -509,11 +512,11 @@ mapRepr;
 	}
 
 	public isList(type: string): boolean {
-		return type.includes('List');
+		return type === 'Array' || type.endsWith('[]');
 	}
 
 	public isArray(type: string): boolean {
-		return type.endsWith('Array') || type.endsWith('[]');
+		return type === 'Array' || type.endsWith('[]');
 	}
 
 	public isLinkedList(type: string): boolean {
@@ -593,21 +596,19 @@ mapRepr;
 			return "array2D";
 		} else if (type.endsWith('[]')) {
 			return "array";
-		} else if (type.includes('LinkedList')) {
+		} else if (type.endsWith('LinkedList')) {
 			return "linkedlist";
-		} else if (type.includes('List')) {
-			return "array";
-		} else if (type.includes('Map')) {
+		} else if (type.endsWith('Map')) {
 			return "map";
-		} else if (type.includes('Set')) {
+		} else if (type.endsWith('Set')) {
 			return "set";
-		} else if (type.includes('Queue')) {
+		} else if (type.endsWith('Queue')) {
 			return "queue";
-		} else if (type.includes('Stack')) {
+		} else if (type.endsWith('Stack')) {
 			return "stack";
-		} else if (type.includes('Tree')) {
+		} else if (type.endsWith('Tree')) {
 			return "tree";
-		} else if (type.includes('Graph')) {
+		} else if (type.endsWith('Graph')) {
 			return "graph";
 		}
 	}

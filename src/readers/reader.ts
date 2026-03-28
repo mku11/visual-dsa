@@ -466,6 +466,7 @@ export interface Variable {
 	indexedVariables: number;
 	namedVariables: number;
 	memoryReference: string;
+	presentationHint: any;
 }
 
 export interface StackTrace {
