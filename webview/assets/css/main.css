@@ -184,6 +184,13 @@ button[name="remove-properties"] {
 	height: 24px;
 }
 
+button[name="remove-plot"] {
+	color: white;
+	background-color: rgb(107, 65, 207);
+	width: 24px;
+	height: 24px;
+}
+
 button[name="remove-markers"] {
 	color: white;
 	background-color: rgb(107, 65, 207);
@@ -206,6 +213,11 @@ button[name="remove-markers"] {
 .edges-header-remove {
 	align-content: center;
 }
+
+.plot-header-remove {
+	align-content: center;
+}
+
 
 .properties-header-remove {
 	align-content: center;
@@ -302,6 +314,13 @@ button[name="remove-markers"] {
 	align-content: center;
 }
 
+#plot-header {
+	padding: 6px;
+	color: aliceblue;
+	width: 100%;
+	line-height: 16px;
+	align-content: center;
+}
 
 #properties-header {
 	padding: 6px;
@@ -383,6 +402,11 @@ button[name="remove-markers"] {
 }
 
 #edges-header-container {
+	padding-top: 4px;
+	display: flex;
+}
+
+#plot-header-container {
 	padding-top: 4px;
 	display: flex;
 }

@@ -85,12 +85,12 @@
 					<div id="object-name-container">
 						<div id="object-name-label">Name: </div>
 						<div id="object-name"></div>
-						<button id="save-name" name="save-name" title="Apply to object">💾</button>
+						<button id="save-name" name="save-name" title="Save Object">💾</button>
 					</div>
 					<div id="object-type-container">
 						<div id="object-type-label">Type: </div>
 						<div id="object-type"></div>
-						<button id="save-type" name="save-type" title="Apply to all objects with same type">💾</button>
+						<button id="save-type" name="save-type" title="Save Object Type">💾</button>
 					</div>
 					<div class="var-options-container">
 						<div class="var-option var-option-layout">
@@ -107,18 +107,17 @@
 								<option value="set">Set</option>
 								<option value="map">Map</option>
 								<option value="bars">Bars</option>
-								<option value="plotpoints">Plot Points</option>
-								<option value="plotlines">Plot Lines</option>
+								<option value="plot">Plot</option>
 							</select>
 						</div>
-						<div class="var-option var-option-orientation">
+						<div id="var-orientation-container" class="var-option var-option-orientation">
 							<span class="attribute-label">Orientation</span>
 							<select id="orientation" name="orientation" class="var-select orientation">
 								<option value="horizontal">Horizontal</option>
 								<option value="vertical">Vertical</option>
 							</select>
 						</div>
-						<div class="var-option var-option-nodes">
+						<div id="var-nodes-container" class="var-option var-option-nodes">
 							<div id="nodes-header-container">
 								<div id="nodes-header" class="attribute-label">Children Nodes</div>
 								<div class="nodes-header-remove">
@@ -128,10 +127,10 @@
 									</button>
 								</div>
 							</div>
-							<select id="nodes" name="nodes" class="var-select nodes">
+							<select id="nodes" name="nodes" class="var-select-multi nodes" multiple>
 							</select>
 						</div>
-						<div class="var-option var-option-edges">
+						<div id="var-edges-container" class="var-option var-option-edges">
 							<div id="edges-header-container">
 								<div id="edges-header" class="attribute-label">Children Edges</div>
 								<div class="edges-header-remove">
@@ -141,24 +140,24 @@
 									</button>
 								</div>
 							</div>
-							<select id="edges" name="edges" class="var-select edges">
+							<select id="edges" name="edges" class="var-select-multi edges" multiple>
 							</select>
 						</div>
-						<div class="var-option var-option-properties">
-							<div id="properties-header-container">
-								<div id="properties-header" class="attribute-label">Properties</div>
-								<div class="properties-header-remove">
-									<button id="remove-properties" name="remove-properties"
-										class="dsa-button remove-properties" title="Clear Properties"
+						<div id="var-plot-container" class="var-option var-option-plot">
+							<div id="plot-header-container">
+								<div id="plot-header" class="attribute-label">Plot Points</div>
+								<div class="plot-header-remove">
+									<button id="remove-plot" name="remove-plot"
+										class="dsa-button remove-plot" title="Clear Plot"
 										onclick="this.blur();">
 										x
 									</button>
 								</div>
 							</div>
-							<select id="properties" name="properties" class="var-select-multi properties" multiple>
+							<select id="plot" name="plot" class="var-select-multi plot">
 							</select>
 						</div>
-						<div class="var-option var-option-markers">
+						<div id="var-markers-container" class="var-option var-option-markers">
 							<div id="markers-header-container">
 								<div id="markers-header" class="attribute-label">Markers [x,y,z] axes</div>
 							</div>
@@ -176,6 +175,20 @@
 									</button>
 								</div>
 							</div>
+						</div>
+						<div id="var-properties-container" class="var-option var-option-properties">
+							<div id="properties-header-container">
+								<div id="properties-header" class="attribute-label">Properties</div>
+								<div class="properties-header-remove">
+									<button id="remove-properties" name="remove-properties"
+										class="dsa-button remove-properties" title="Clear Properties"
+										onclick="this.blur();">
+										x
+									</button>
+								</div>
+							</div>
+							<select id="properties" name="properties" class="var-select-multi properties" multiple>
+							</select>
 						</div>
 					</div>
 				</div>

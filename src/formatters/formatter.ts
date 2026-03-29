@@ -31,7 +31,7 @@ export class Formatter {
 	static readonly PLOT_COLS = 40;
 	static graphLayouts = new Set<string>(["graph", "tree", "linkedlist"]);
 	static barLayouts = new Set<string>(["bars"]);
-	static plotLayouts = new Set<string>(["plotpoints", "plotlines"]);
+	static plotLayouts = new Set<string>(["plot"]);
 	static edgeColors = ["#6466f3", "#f35e5e", "#ecad4d", "#55f050"];
 	varNodePosX = 0;
 	varNodePosY = 0;
@@ -102,13 +102,10 @@ export class Formatter {
 				visNode.bars = (node.value as []).map(x => parseInt(x));
 			} else if (Formatter.plotLayouts.has(layout) && node instanceof Node) {
 				if (node.value instanceof Array && node.value.length > 0) {
-					let ls: string[] = (node.value as []);
-					if (layout === 'plotlines') // list of lines: [[x1,y1,x2,y2],[],...]
-						visNode.lines = (node.value as [][]).map(el =>
-							el.slice(0, 4).map(c => parseInt(c)));
-					else  // list of points: [[x1,y1],[],...]
-						visNode.points = (node.value as [][]).map(el =>
-							el.slice(0, 2).map(c => parseInt(c)));
+					// list of lines: [[x1,y1,x2,y2],[],...]
+					// list of points: [[x1,y1],[],...]
+					visNode.points = (node.value as [][]).map(el =>
+						el.map(c => parseInt(c)));
 				}
 			}
 			visNode.level = level;
@@ -612,7 +609,6 @@ export class VisNode {
 	public labelMarkers: Diff[] = [];
 	public bars: number[] = [];
 	public points: number[][] = [];
-	public lines: number[][] = [];
 	public group: string | undefined = undefined;
 	public x: number | undefined = undefined;
 	public y: number | undefined = undefined;

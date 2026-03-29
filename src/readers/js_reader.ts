@@ -33,242 +33,8 @@ export class JsReader extends Reader {
 	}
 
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
-		let exprName = variable.evaluateName;
-		// extractor toString
-		if (this.registeredTypes.has(variable.type)) {
-			try {
-				const expr = "Extractor.toString(" + exprName + ")";
-				const result = await debug.activeDebugSession?.customRequest("evaluate", {
-					expression: expr,
-					frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-					context: 'repl',
-				});
-				const content = result.result.substring(1, result.result.length - 1);
-				return content;
-			} catch (ex: Error | unknown) {
-				if (ex instanceof Error) {
-					console.error("getVariableStrRepr1 Error: " + variable.evaluateName + ": " + ex.message);
-				} else {
-					console.error(ex);
-				}
-			}
-		}
-
-		// object toString()
-		try {
-			const expr = exprName + ".toString()";
-			const result = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: expr,
-				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-				context: 'repl',
-			});
-			return result.result;
-		} catch (ex: Error | unknown) {
-			if (ex instanceof Error) {
-				console.error("getVariableStrRepr2 Error: " + variable.evaluateName + ": " + ex.message);
-			} else {
-				console.error(ex);
-			}
-		}
-
-		// if the field is private we try it's getter
-		if (!variable.evaluateName.includes('%s') && variable.evaluateName.includes(".")) {
-			const index = variable.evaluateName.indexOf(".");
-			if (index >= 0) {
-				const parent = variable.evaluateName.substring(0, index);
-				const field = variable.evaluateName.substring(index + 1, index + 2).toUpperCase()
-					+ variable.evaluateName.substring(index + 2);
-				const getterName = parent + ".get" + field + "()";
-				try {
-					const result = await debug.activeDebugSession?.
-						customRequest("evaluate", {
-							expression: getterName + ".toString()",
-							frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-							context: 'repl',
-						});
-					return result.result;
-				} catch (ex: Error | unknown) {
-					if (ex instanceof Error) {
-						console.error("getVariableStrRepr3 Error: " + variable.evaluateName + ": " + ex.message);
-					} else {
-						console.error(ex);
-					}
-				}
-			}
-		}
-	}
-
-	public async getUserDefNodes(variable: Variable, rootVariable: Variable
-	): Promise<Variable[] | undefined> {
-		try {
-			let expr = variable.evaluateName;
-			expr = "Extractor.getNodes(" + expr + "," + rootVariable.name + ")";
-			const nodesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: expr,
-				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-				context: 'repl',
-			});
-			if (nodesListVar.type.endsWith('Exception')) {
-				throw new Error(nodesListVar.result);
-			}
-			if (nodesListVar.result === 'null') {
-				return undefined;
-			}
-			if (nodesListVar.variablesReference == 0) {
-				return [];
-			}
-			const nodes: Variable[] = [];
-			const children = await this.getVariables(nodesListVar.variablesReference);
-			let idx = 0;
-			for (const child of children) {
-				if (isNaN(parseInt(child.name))) {
-					continue;
-				}
-				child.evaluateName = expr + "[" + idx + "]";
-				child.name = String(idx);
-				nodes.push(child);
-				idx++;
-			}
-			return nodes;
-		} catch (ex: Error | unknown) {
-			if (ex instanceof Error) {
-				// this.trackErrors(ex, type, "userDefEdges");
-				console.error("getUserDefNodes Error: " + variable.evaluateName + ": " + ex.message);
-			} else {
-				console.error(ex);
-			}
-		}
-	}
-
-	public async getUserDefEdges(variable: Variable, rootVariable: Variable
-	): Promise<Variable[] | undefined> {
-		try {
-			let expr = variable.evaluateName;
-			expr = "Extractor.getEdges(" + expr + "," + rootVariable.name + ")";
-			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: expr,
-				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-				context: 'repl',
-			});
-			if (edgesListVar.type.endsWith('Exception')) {
-				throw new Error(edgesListVar.result);
-			}
-			if (edgesListVar.result === 'null') {
-				return undefined;
-			}
-			if (edgesListVar.variablesReference == 0) {
-				return [];
-			}
-			const children = await this.getVariables(edgesListVar.variablesReference);
-			const edges = [];
-			let idx = 0;
-			for (const child of children) {
-				if (isNaN(parseInt(child.name))) {
-					continue;
-				}
-				child.evaluateName = expr + "[" + idx + "]";
-				child.name = String(idx);
-				edges.push(child);
-				idx++;
-			}
-			return edges;
-		} catch (ex: Error | unknown) {
-			if (ex instanceof Error) {
-				// this.trackErrors(ex, type, "userDefEdges");
-				console.error("getUserDefEdges Error: " + variable.evaluateName + ": " + ex.message);
-			} else {
-				console.error(ex);
-			}
-		}
-	}
-
-	public async getUserDefPlot(variable: Variable,
-		rootVariable: Variable,
-		layout: string
-	): Promise<number[][] | undefined> {
-		try {
-			let expr = variable.evaluateName;
-			const method = layout === "plotpoints" ? "getPlotPoints" : "getPlotLines";
-			expr = "Extractor." + method + "(" + expr + "," + rootVariable.name + ")";
-			const plotListVar = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: expr,
-				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-				context: 'repl',
-			});
-			if (plotListVar.type.endsWith('Exception')) {
-				throw new Error(plotListVar.result);
-			}
-			if (plotListVar.result === 'null') {
-				return undefined;
-			}
-			if (plotListVar.variablesReference == 0) {
-				return [];
-			}
-			const children = await this.getVariables(plotListVar.variablesReference);
-			const els: number[][] = [];
-			let idx = 0;
-			for (const child of children) {
-				if (isNaN(parseInt(child.name))) {
-					continue;
-				}
-				let gels: number[] = [];
-				let gchildren = await this.getVariables(child.variablesReference);
-				for (const gchild of gchildren) {
-					if (isNaN(parseInt(gchild.name))) {
-						continue;
-					}
-					gels.push(parseInt(gchild.value));
-				}
-				els.push(gels);
-				idx++;
-			}
-			return els;
-		} catch (ex: Error | unknown) {
-			if (ex instanceof Error) {
-				// this.trackErrors(ex, type, "getUserDefPlot");
-				console.error("getUserDefPlot Error: " + variable.evaluateName + ": " + ex.message);
-			} else {
-				console.error(ex);
-			}
-		}
-	}
-
-	public async getEdgeValues(variable: Variable, property: string): Promise<string[] | undefined> {
-		try {
-			const edgeValues: string[] = [];
-			let exprName = variable.evaluateName;
-			const type = variable.type.replaceAll("$", ".");
-			let expr = `{
-			let edgeRepr = "";
-			for(let edgeObjRepr of ${exprName}.${property}) {
-				if(edgeRepr.length > 0)
-					edgeRepr += "|-|";
-				edgeRepr += String(edgeObjRepr);
-			}
-			edgeRepr;
-			}`;
-			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
-			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: expr,
-				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-				context: 'repl',
-			});
-			if (edgesListVar.type.endsWith('Exception')) {
-				throw new Error(edgesListVar.result);
-			}
-			const edgeVars: string[] = edgesListVar.result.substring(1, edgesListVar.result.length - 1).split("|-|");
-			for (const edgeVar of edgeVars) {
-				edgeValues.push(edgeVar);
-			}
-			return edgeValues;
-		} catch (ex: Error | unknown) {
-			if (ex instanceof Error) {
-				// this.trackErrors(ex, type, "userDefEdges");
-				console.error("getEdgeValues Error: " + variable.evaluateName + ": " + ex.message);
-			} else {
-				console.error(ex);
-			}
-		}
+		// for js we already have the string repr in the variable value
+		return undefined;
 	}
 
 	public async getArrayRepr(variable: Variable):
@@ -396,6 +162,44 @@ mapRepr;
 		}
 	}
 
+	public async getEdgeValues(variable: Variable, property: string): Promise<string[] | undefined> {
+		try {
+			const edgeValues: string[] = [];
+			let exprName = variable.evaluateName;
+			const type = variable.type;
+			let expr = `{
+			let edgeRepr = "";
+			for(let edgeObjRepr of (${exprName}).${property}) {
+				if(edgeRepr.length > 0)
+					edgeRepr += "|-|";
+				edgeRepr += String(edgeObjRepr);
+			}
+			edgeRepr;
+			}`;
+			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
+				expression: expr,
+				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
+				context: 'repl',
+			});
+			if (edgesListVar.type.endsWith('Exception')) {
+				throw new Error(edgesListVar.result);
+			}
+			const edgeVars: string[] = edgesListVar.result.substring(1, edgesListVar.result.length - 1).split("|-|");
+			for (const edgeVar of edgeVars) {
+				edgeValues.push(edgeVar);
+			}
+			return edgeValues;
+		} catch (ex: Error | unknown) {
+			if (ex instanceof Error) {
+				// this.trackErrors(ex, type, "userDefEdges");
+				console.error("getEdgeValues Error: " + variable.evaluateName + ": " + ex.message);
+			} else {
+				console.error(ex);
+			}
+		}
+	}
+
 	public filterVariable(variable: Variable) {
 		if (JsReader.excludeVariableTypes.has(variable.type)) {
 			return true;
@@ -408,7 +212,7 @@ mapRepr;
 			|| variable.name === "require"
 			|| variable.name === "exports"
 			|| (variable.name.includes("VSID")
-				&& variable.presentationHint 
+				&& variable.presentationHint
 				&& variable.presentationHint.visibility === "internal")
 			|| variable.name.includes("[[Prototype]]")
 			|| variable.name.includes("[[Scopes]]")
@@ -623,6 +427,15 @@ mapRepr;
 	}
 
 	public getRegisterMethod() {
-		return "Extractor.registerTypes()";
+		return "Extractor.register()";
+	}
+
+	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
+		let exprName = variable.evaluateName;
+		return `Extractor.extract('${type}'
+				, '${attr}'
+				, ${exprName}
+				, ${root.evaluateName}
+				)`;
 	}
 }

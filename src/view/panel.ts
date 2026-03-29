@@ -189,6 +189,8 @@ export class Panel {
 		selectedEdges?: string[],
 		properties?: string[],
 		selectedProperties?: string[],
+		plot?: string[],
+		selectedPlot?: string[],
 		selectedLayout?: string,
 		selectedOrientation?: string,
 		selectedMarkers?: string,
@@ -206,6 +208,8 @@ export class Panel {
 					selectedEdges: selectedEdges,
 					properties: properties,
 					selectedProperties: selectedProperties,
+					plot: plot,
+					selectedPlot: selectedPlot,
 					selectedLayout: selectedLayout,
 					selectedOrientation: selectedOrientation,
 					selectedMarkers: selectedMarkers

@@ -2,6 +2,16 @@ class LinkedLists {
 
     public static runMain() {
         // custom linkedlist
+        // expression: linkedList
+        
+        // Select LinkedListCustom
+        // layout: Linked List
+        // Save Object Type
+        
+        // Select LinkedListNode
+        // layout: Graph
+        // Children Nodes: next
+        // Save Object Type
         const linkedList: LinkedListCustom<string> = new LinkedListCustom<string>();
         linkedList.append("1");
         linkedList.append("2");
@@ -10,7 +20,6 @@ class LinkedLists {
 
         let node: LinkedListNode<string> | undefined = linkedList.getHead();
         while (node != null) {
-            console.log(node.getValue());
             if (node.getValue() === "3") {
                 node.insertNext(new LinkedListNode<string>("5"));
                 break;
@@ -18,22 +27,6 @@ class LinkedLists {
             node = node.getNext();
         }
     }
-
-}
-
-// custom extractor
-export class Extractor {
-
-    // register the custom types
-    public static registerTypes(): Array<string> {
-        return [
-            "LinkedListNode", "*"];
-    }
-
-    public static toString(node: LinkedListNode<string>) {
-        return node.getValue().toString();
-    }
-
 }
 
 class LinkedListCustom<T> {

@@ -6,6 +6,11 @@ class Graphs {
 
     public test() {
         // nodes of a graph
+        // Expression: gnode0
+        // Select Object with type GraphNode
+        // Children Nodes: children[]
+        // Children Edges: childrenCost[]
+        // Save Object Types
         const gnode0: GraphNode<string> = new GraphNode<string>("0");
         const gnode1: GraphNode<string> = new GraphNode<string>("1");
         const gnode2: GraphNode<string> = new GraphNode<string>("2");
@@ -94,18 +99,4 @@ export class GraphNode<T> {
     }
 }
 
-// custom extractor
-export class Extractor {
-    // register the custom types
-    public static registerTypes(): string[] {
-        return ["GraphNode"];
-    }
-
-    public static toString(node: object): string {
-        if (node instanceof GraphNode) {
-            return (node as GraphNode<string>).getValue().toString();
-        }
-        return "";
-    }
-}
 Graphs.runMain();

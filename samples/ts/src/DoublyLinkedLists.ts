@@ -1,5 +1,4 @@
 class DoublyLinkedLists {
-    arr: number[] = [1,2,3];
 
     static runMain() {
         new DoublyLinkedLists().test();
@@ -82,20 +81,6 @@ export class Node<T> {
     public toString(): string {
         return String(this.value);
     }
-}
-
-// custom extractor
-export class Extractor {
-
-    // register the custom types
-    public static registerTypes(): string[] {
-        return ["DoublyLinkedListCustom$DoublyLinkedListNode"];
-    }
-
-    public static toString(type: string, node: Node<object>): string {
-        return node.getValue().toString();
-    }
-
 }
 
 DoublyLinkedLists.runMain();

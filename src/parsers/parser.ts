@@ -34,6 +34,7 @@ export class Parser {
 	private nodeTypeLayouts: Map<string, string> = new Map<string, string>();
 	private edges: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private properties: Map<string, Set<string>> = new Map<string, Set<string>>();
+	private plot: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private arrayLayouts: Set<string> = new Set<string>(["array"]);
 	private array2DLayouts: Set<string> = new Set<string>(["array2D"]);
 	private array3DLayouts: Set<string> = new Set<string>(["array3D"]);
@@ -42,7 +43,7 @@ export class Parser {
 	private setLayouts: Set<string> = new Set<string>(["set"]);
 	private mapLayouts: Set<string> = new Set<string>(["map"]);
 	private barsLayouts: Set<string> = new Set<string>(["bars"]);
-	private plotLayouts: Set<string> = new Set<string>(["plotpoints", "plotlines"]);
+	private plotLayouts: Set<string> = new Set<string>(["plot"]);
 	constructor(reader: Reader) {
 		this.reader = reader;
 	}
@@ -56,6 +57,7 @@ export class Parser {
 		filtersNodes: Map<string, Set<string>>,
 		filtersEdges: Map<string, Set<string>>,
 		filtersProperties: Map<string, Set<string>>,
+		filtersPlot: Map<string, Set<string>>,
 		markers: Map<string, string>,
 		layouts: Map<string, string>,
 		orientations: Map<string, string>
@@ -63,7 +65,7 @@ export class Parser {
 		console.log("parseGraph: " + variable.name);
 		const graph = await this.getGraph(variable, variable,
 			0, visited,
-			filtersNodes, filtersEdges, filtersProperties,
+			filtersNodes, filtersEdges, filtersProperties, filtersPlot,
 			markers, layouts, orientations);
 		if (graph instanceof VarNode) {
 			return graph;
@@ -85,6 +87,10 @@ export class Parser {
 
 	getProperties() {
 		return this.properties;
+	}
+
+	getPlot() {
+		return this.plot;
 	}
 
 	async getAllVariables(): Promise<Variable[]> {
@@ -115,6 +121,8 @@ export class Parser {
 		}
 
 		visited.set(variable.value, variable);
+
+		const type: string = await this.reader.getNodeType(variable);
 		let children: Variable[] = [];
 		if (variable.variablesReference > 0) {
 			const childrenVars = await this.reader.getVariables(variable.variablesReference, "named");
@@ -154,17 +162,24 @@ export class Parser {
 			}
 		}
 
-		if (this.reader.getRegisteredTypes().has(variable.type)
-			|| this.reader.getRegisteredTypes().has("*")) {
-			const userDefNodes = await this.reader
-				.getUserDefNodes(variable, rootVariable);
-			if (userDefNodes) {
-				for (let userDefNode of userDefNodes) {
-					if (this.reader.filterVariable(userDefNode)) {
-						continue;
+		// add registered custom attributes
+		if (this.reader.getRegisteredTypes().has(type)) {
+			const attrs: Set<string> | undefined = this.reader.getRegisteredTypes().get(type);
+			for (const attr of attrs ?? []) {
+				const userDefAttrs: Variable[] | undefined = await this.reader
+					.extract(variable, type, attr, rootVariable);
+				if (userDefAttrs) {
+					this.addNodes(type, "@" + attr);
+					this.addEdges(type, "@" + attr);
+					this.addProperty(type, "@" + attr);
+					this.addPlot(type, "@" + attr);
+					for (let userDefNode of userDefAttrs as Variable[]) {
+						if (this.reader.filterVariable(userDefNode)) {
+							continue;
+						}
+						userDefNode = this.reader.processVariable(userDefNode);
+						children.push(userDefNode);
 					}
-					userDefNode = this.reader.processVariable(userDefNode);
-					children.push(userDefNode);
 				}
 			}
 		}
@@ -177,36 +192,43 @@ export class Parser {
 			}
 			if (child.type && child.type.length > 0) {
 				if (!this.reader.isIndexed(child, variable)) {
-					this.addNodes(variable, child.name);
+					this.addNodes(type, child.name);
 				}
 				await this.updateTypes(child, rootVariable, level + 1, visited);
 			}
 			if (variable.type.length > 0 && child.name.length > 0 && isNaN(parseInt(child.name))) {
-				this.addProperty(variable, child.name);
-				this.addEdges(variable, child.name);
+				this.addProperty(type, child.name);
+				this.addEdges(type, child.name);
 			}
 		}
 	}
 
-	addNodes(variable: Variable, name: string) {
-		if (!this.nodes.has(variable.type)) {
-			this.nodes.set(variable.type, new Set<string>());
+	addNodes(type: string, name: string) {
+		if (!this.nodes.has(type)) {
+			this.nodes.set(type, new Set<string>());
 		}
-		this.nodes.get(variable.type)?.add(name);
+		this.nodes.get(type)?.add(name);
 	}
 
-	addEdges(variable: Variable, name: string) {
-		if (!this.edges.has(variable.type)) {
-			this.edges.set(variable.type, new Set<string>());
+	addEdges(type: string, name: string) {
+		if (!this.edges.has(type)) {
+			this.edges.set(type, new Set<string>());
 		}
-		this.edges.get(variable.type)?.add(name);
+		this.edges.get(type)?.add(name);
 	}
 
-	addProperty(variable: Variable, name: string) {
-		if (!this.properties.has(variable.type)) {
-			this.properties.set(variable.type, new Set<string>());
+	addProperty(type: string, name: string) {
+		if (!this.properties.has(type)) {
+			this.properties.set(type, new Set<string>());
 		}
-		this.properties.get(variable.type)?.add(name);
+		this.properties.get(type)?.add(name);
+	}
+
+	addPlot(type: string, name: string) {
+		if (!this.plot.has(type)) {
+			this.plot.set(type, new Set<string>());
+		}
+		this.plot.get(type)?.add(name);
 	}
 
 	async getVariable(expr: string): Promise<Variable | undefined> {
@@ -220,6 +242,7 @@ export class Parser {
 		filtersNodes: Map<string, Set<string>>,
 		filtersEdges: Map<string, Set<string>>,
 		filtersProperties: Map<string, Set<string>>,
+		filtersPlot: Map<string, Set<string>>,
 		markers: Map<string, string>,
 		layouts: Map<string, string>,
 		orientations: Map<string, string>
@@ -250,6 +273,7 @@ export class Parser {
 		const filterNodes = filtersNodes.get("id:" + id) ?? filtersNodes.get("type:" + type) ?? new Set();
 		const filterEdges = filtersEdges.get("id:" + id) ?? filtersEdges.get("type:" + type) ?? new Set();
 		const filterProperties = filtersProperties.get("id:" + id) ?? filtersProperties.get("type:" + type) ?? new Set();
+		const filterPlot = filtersPlot.get("id:" + id) ?? filtersPlot.get("type:" + type) ?? new Set();
 		const useMarkers = markers.get("id:" + id) ?? markers.get("type:" + type) ?? "";
 		const layout = layouts.get("id:" + id) ?? layouts.get("type:" + type) ?? "graph";
 
@@ -299,9 +323,20 @@ export class Parser {
 			}
 		} else if (this.array2DLayouts.has(layout) || this.plotLayouts.has(layout)) {
 			let arrayRepr;
-			if (this.plotLayouts.has(layout) && (this.reader.getRegisteredTypes().has(type)
-				|| this.reader.getRegisteredTypes().has("*"))) {
-				arrayRepr = await this.reader.getUserDefPlot(variable, rootVariable, layout);
+			if (this.plotLayouts.has(layout) && (this.reader.getRegisteredTypes().has(type))) {
+				// get user defined plot points
+				if (await this.reader.getRegisteredTypes().has(type)) {
+					const attrs = this.reader.getRegisteredTypes().get(type);
+					for (const attr of attrs ?? []) {
+						if (!filterPlot.has("@" + attr)) {
+							continue;
+						}
+						const userDefAttrs: number[][] | undefined = await this.reader.getPlotRepr(variable, type, attr, rootVariable);
+						if (userDefAttrs) {
+							arrayRepr = userDefAttrs;
+						}
+					}
+				}
 			}
 			if (!arrayRepr) {
 				arrayRepr = await this.reader.getArray2DRepr(variable);
@@ -335,23 +370,27 @@ export class Parser {
 		const propertiesChildren: Variable[] = [];
 
 		// get user defined nodes
-		let userDefNodes;
-		if (this.reader.getRegisteredTypes().has(type)
-			|| this.reader.getRegisteredTypes().has("*")) {
-			userDefNodes = await this.reader.getUserDefNodes(variable, rootVariable);
-			if (userDefNodes) {
-				for (let userDefNode of userDefNodes) {
-					if (this.reader.filterVariable(userDefNode)) {
-						continue;
+		if (await this.reader.getRegisteredTypes().has(type)) {
+			const attrs = this.reader.getRegisteredTypes().get(type);
+			for (const attr of attrs ?? []) {
+				if (!filterNodes.has("@" + attr)) {
+					continue;
+				}
+				const userDefAttrs: Variable[] | undefined = await this.reader
+					.extract(variable, type, attr, rootVariable);
+				if (userDefAttrs) {
+					for (let userDefNode of userDefAttrs) {
+						if (this.reader.filterVariable(userDefNode)) {
+							continue;
+						}
+						userDefNode = this.reader.processVariable(userDefNode);
+						nodesChildren.push(userDefNode);
 					}
-					userDefNode = this.reader.processVariable(userDefNode);
-					nodesChildren.push(userDefNode);
 				}
 			}
 		}
 
-		if (!userDefNodes && variable.variablesReference > 0 && level < Parser.MAX_LEVEL) {
-
+		if (variable.variablesReference > 0 && level < Parser.MAX_LEVEL) {
 			let children: Variable[] = await this.reader.getVariables(variable.variablesReference);
 			// if the variable has a string representation defined it will yield one child without name and type
 			if (children.length == 1 && children[0].name === '' && children[0].type === '') {
@@ -376,10 +415,12 @@ export class Parser {
 							nodesChildren.push(grandChild);
 						}
 					}
-				} else if ((layout == 'graph' || layout == 'tree' || layout == 'linkedlist')
-					&& this.reader.isIterable(type) && filterNodes.size == 0) {
-					nodesChildren.push(ch);
 				}
+				// TODO: remove?
+				// else if ((layout == 'graph' || layout == 'tree' || layout == 'linkedlist')
+				// 	&& this.reader.isIterable(type) && filterNodes.size == 0) {
+				// 	nodesChildren.push(ch);
+				// }
 
 				if (filterProperties.has(ch.name)) {
 					propertiesChildren.push(ch);
@@ -396,13 +437,16 @@ export class Parser {
 					filtersNodes,
 					filtersEdges,
 					filtersProperties,
+					filtersPlot,
 					markers,
 					layouts, orientations);
 			if (childNode instanceof Node && node instanceof Node) {
 				node.children.set(childNode.id, childNode);
-				const edge = new Edge(node.id + "->" + childNode.id,
-					node.id, childNode.id, child.name, rootVariable.name);
-				node.childrenEdgeValues.set(childNode.id, edge);
+				if (!this.reader.isIndexed(child, variable)) {
+					const edge = new Edge(node.id + "->" + childNode.id,
+						node.id, childNode.id, child.name, rootVariable.name);
+					node.childrenEdgeValues.set(childNode.id, edge);
+				}
 			}
 		}
 
@@ -437,6 +481,26 @@ export class Parser {
 			}
 		}
 
+		// get the user defined properties if available
+		if (this.reader.getRegisteredTypes().has(type)) {
+			const attrs = this.reader.getRegisteredTypes().get(type);
+			for (const attr of attrs ?? []) {
+				if (!filterProperties.has("@" + attr)) {
+					continue;
+				}
+				const userDefAttr = await this.reader
+					.extract(variable, type, attr, rootVariable);
+				if (userDefAttr) {
+					// for properties we don't expand we expect a 1-element list
+					const child = userDefAttr[0];
+					// override the name with the attribute name
+					child.name = attr;
+					const property = new Property(child.name, child.type, child.value);
+					node.properties.set(child.name, property);
+				}
+			}
+		}
+
 		// get the properties
 		for (const child of propertiesChildren) {
 			if (node instanceof Node && child.name.length > 0) {
@@ -452,9 +516,30 @@ export class Parser {
 			}
 		}
 
+		// get the user defined edges labels if available
+		if ((this.reader.getRegisteredTypes().has(type)) && nodesChildren.length > 0) {
+			const attrs = this.reader.getRegisteredTypes().get(type);
+			for (const attr of attrs ?? []) {
+				if (!filterEdges.has("@" + attr)) {
+					continue;
+				}
+				const edgeValues = await this.reader.getVarToVarStrRepr(
+					variable, type, rootVariable, nodesChildren, attr);
+				if (edgeValues) {
+					for (const [childId, edgeValue] of edgeValues) {
+						const edge = new Edge(node.id + "->" + childId, node.id, childId,
+							edgeValue, rootVariable.name);
+						node.childrenEdgeValues.set(childId, edge);
+					}
+				}
+			}
+		}
+
 		// get the edges
 		let edgeId = 0;
 		for (let filterEdge of filterEdges) {
+			if (filterEdge.startsWith("@"))
+				continue;
 			filterEdge = filterEdge.replaceAll("[]", "");
 			const edgeValues = await this.reader.getEdgeValues(variable, filterEdge);
 			if (edgeValues) {
@@ -462,21 +547,6 @@ export class Parser {
 					const edge = new Edge(node.id + "->" + child.id, node.id, child.id,
 						edgeValues[edgeId++], rootVariable.name);
 					node.childrenEdgeValues.set(child.id, edge);
-				}
-			}
-		}
-
-		// get the user defined edges labels if available
-		if ((this.reader.getRegisteredTypes().has(type)
-			|| this.reader.getRegisteredTypes().has("*"))
-			&& nodesChildren.length > 0) {
-			const edgeValues = await this.reader.getVarToVarStrRepr(
-				variable, rootVariable, nodesChildren);
-			if (edgeValues) {
-				for (const [childId, edgeValue] of edgeValues) {
-					const edge = new Edge(node.id + "->" + childId, node.id, childId,
-						edgeValue, rootVariable.name);
-					node.childrenEdgeValues.set(childId, edge);
 				}
 			}
 		}

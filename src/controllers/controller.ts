@@ -53,6 +53,7 @@ export class Controller {
 	private selectedObject = "";
 	private selectedEdges: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private selectedProperties: Map<string, Set<string>> = new Map<string, Set<string>>();
+	private selectedPlot: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private selectedMarkers: Map<string, string> = new Map<string, string>();
 	private selectedLayout: Map<string, string> = new Map<string, string>();
 	private selectedOrientation: Map<string, string> = new Map<string, string>();
@@ -185,6 +186,7 @@ export class Controller {
 		this.selectedNodes = new Map<string, Set<string>>();
 		this.selectedEdges = new Map<string, Set<string>>();
 		this.selectedProperties = new Map<string, Set<string>>();
+		this.selectedPlot = new Map<string, Set<string>>();
 		this.selectedMarkers = new Map<string, string>();
 		this.selectedLayout = new Map<string, string>();
 		this.selectedOrientation = new Map<string, string>();
@@ -209,6 +211,7 @@ export class Controller {
 						this.selectedNodes,
 						this.selectedEdges,
 						this.selectedProperties,
+						this.selectedPlot,
 						this.selectedMarkers,
 						this.selectedLayout,
 						this.selectedOrientation
@@ -368,6 +371,8 @@ export class Controller {
 			Array.from(this.selectedEdges.get("id:" + this.selectedObject) ?? this.selectedEdges.get("type:" + selectedType) ?? []).sort(),
 			Array.from(this.parser.getProperties().get(selectedType) ?? []).sort(this.getSortMethod(false)),
 			Array.from(this.selectedProperties.get("id:" + this.selectedObject) ?? this.selectedProperties.get("type:" + selectedType) ?? []).sort(),
+			Array.from(this.parser.getPlot().get(selectedType) ?? []).sort(),
+			Array.from(this.selectedPlot.get("id:" + this.selectedObject) ?? this.selectedPlot.get("type:" + selectedType) ?? []).sort(),
 			this.selectedLayout.get("id:" + this.selectedObject) ?? this.selectedLayout.get("type:" + selectedType) ?? "graph",
 			this.selectedOrientation.get("id:" + this.selectedObject) ?? this.selectedOrientation.get("type:" + selectedType) ?? "horizontal",
 			this.selectedMarkers.get("id:" + this.selectedObject) ?? this.selectedMarkers.get("type:" + selectedType) ?? ""
@@ -467,6 +472,9 @@ export class Controller {
 				return;
 			case 'selectedProperties':
 				this.selectedProperties.set(message.source, new Set(message.data));
+				return;
+			case 'selectedPlot':
+				this.selectedPlot.set(message.source, new Set(message.data));
 				return;
 			case 'selectedMarkers':
 				this.selectedMarkers.set(message.source, message.data[0]);

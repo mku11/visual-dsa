@@ -45,7 +45,10 @@ var barsLayouts = new Set([
     "bars"
 ]);
 var plotLayouts = new Set([
-    "plotpoints", "plotlines"
+    "plot"
+]);
+var markersLayouts = new Set([
+    "array", "array2D", "array3D", "bars"
 ]);
 
 const BARS_ROWS = 10;
@@ -97,21 +100,29 @@ function init() {
     this.nodesSelect = document.getElementById("nodes");
     this.edgesSelect = document.getElementById("edges");
     this.propertiesSelect = document.getElementById("properties");
+    this.plotSelect = document.getElementById("plot");
     this.markers = document.getElementById("markers-input");
     this.markersOptions = document.getElementById("markers-options");
     this.removeNodes = document.getElementById("remove-nodes");
     this.removeEdges = document.getElementById("remove-edges");
     this.removeProperties = document.getElementById("remove-properties");
+    this.removePlot = document.getElementById("remove-plot");
     this.removeMarkers = document.getElementById("remove-markers");
     this.elementName = document.getElementById("object-name");
     this.elementType = document.getElementById("object-type");
     this.progressBar = document.getElementById("progress-bar");
     this.saveName = document.getElementById("save-name");
     this.saveType = document.getElementById("save-type");
+
+    this.orientationContainer = document.getElementById("var-orientation-container");
+    this.nodesContainer = document.getElementById("var-nodes-container");
+    this.edgesContainer = document.getElementById("var-edges-container");
+    this.propertiesContainer = document.getElementById("var-properties-container");
+    this.plotContainer = document.getElementById("var-plot-container");
+    this.markersContainer = document.getElementById("var-markers-container");
 }
 
 function saveState() {
-    console.log("save state: ", panelState);
     vscode.setState({ panelState: panelState });
 }
 
@@ -119,7 +130,6 @@ function loadState() {
     let oldState = vscode.getState();
     if (oldState && oldState.panelState) {
         panelState = oldState.panelState;
-        console.log("loaded state: ", panelState);
     }
 }
 
@@ -221,13 +231,17 @@ function setupControlListeners() {
     });
 }
 
+function updateVisibility() {
+    orientationContainer.style.display = orientationLayouts.has(layoutSelect.value) ? "flex" : "none";
+    nodesContainer.style.display = nodesLayouts.has(layoutSelect.value) ? "flex" : "none";
+    edgesContainer.style.display = nodesLayouts.has(layoutSelect.value) ? "flex" : "none";
+    plotContainer.style.display = plotLayouts.has(layoutSelect.value) ? "flex" : "none";
+    markersContainer.style.display = markersLayouts.has(layoutSelect.value) ? "flex" : "none";
+}
+
 function setupVariableListeners() {
-    layoutSelect.addEventListener("click", (e) => {
-        orientationSelect.visibility = orientationLayouts.has(layoutSelect.value) ? "visible" : "collapse";
-        nodesSelect.visibility = nodesLayouts.has(layoutSelect.value) ? "visible" : "collapse";
-        edgesSelect.visibility = nodesLayouts.has(layoutSelect.value) ? "visible" : "collapse";
-        propertiesSelect.visibility = nodesLayouts.has(layoutSelect.value) ? "visible" : "collapse";
-        markers.visibility = arrayLayouts.has(layoutSelect.value) ? "visible" : "collapse";
+    layoutSelect.addEventListener("change", (e) => {
+        updateVisibility();
     });
 
     markersOptions.addEventListener("change", (e) => {
@@ -252,6 +266,10 @@ function setupVariableListeners() {
         propertiesSelect.selectedIndex = -1;
     });
 
+    removePlot.addEventListener("click", (e) => {
+        plotSelect.selectedIndex = -1;
+    });
+
     removeMarkers.addEventListener("click", (e) => {
         markers.value = "";
     });
@@ -274,6 +292,8 @@ function saveOptions(source) {
         Array.from(edgesSelect.selectedOptions).map((x) => x.value));
     sendOptionChanged('selectedProperties', source,
         Array.from(propertiesSelect.selectedOptions).map((x) => x.value));
+    sendOptionChanged('selectedPlot', source,
+        Array.from(plotSelect.selectedOptions).map((x) => x.value));
     sendOptionChanged('selectedMarkers', source,
         [markers.value]);
     requestCommand('refresh');
@@ -281,7 +301,6 @@ function saveOptions(source) {
 
 function showProgress(value) {
     progressBar.style.visibility = value ? "visible" : "hidden";
-    console.log("prog: " + progressBar.style.visibility);
 }
 
 function enableVarsOptions(value) {
@@ -384,9 +403,25 @@ function updateVarOptions(data) {
         propertiesSelect.appendChild(option);
     }
 
+    plotSelect.innerHTML = "";
+    selectedOption = undefined;
+    for (let property of data.plot) {
+        var option = document.createElement('option');
+        option.value = property;
+        option.innerHTML = property;
+        if (data.selectedPlot.includes(property))
+            selectedOption = option;
+        plotSelect.appendChild(option);
+    }
+    if (selectedOption)
+        selectedOption.selected = true;
+    else
+        plotSelect.selectedIndex = -1;
+
     layoutSelect.value = data.selectedLayout;
     orientationSelect.value = data.selectedOrientation;
     markers.value = data.selectedMarkers;
+    updateVisibility();
 
     panelState.paramsData = data;
     saveState();
@@ -547,7 +582,6 @@ function updateNetwork(data) {
 function setupNetworkListeners(selectedLayout) {
     network.on('dragEnd', function (e) {
         // store new position
-        console.log(e);
         for (const nodeId of e.nodes) {
             let newPosition = network.getPositions()[nodeId];
             let node = panelState.nodePositions[nodeId];
@@ -691,7 +725,6 @@ function formatBarsLayout(ctx, selectedLayout) {
         if (node.bars.length == 0) {
             continue;
         }
-        console.log("format bars", node.id);
         let position;
         try {
             position = network.getPosition(node.id);
@@ -738,10 +771,9 @@ function formatPlotLayout(ctx, selectedLayout) {
     ctx.textAlign = 'center';
 
     for (const [nodeId, node] of Object.entries(panelState.networkData.nodes)) {
-        if (node.points.length == 0 && node.lines.length == 0)
+        if (node.points.length == 0)
             continue;
 
-        console.log("format plot:", node.id);
         let position;
         try {
             position = network.getPosition(node.id);
@@ -761,7 +793,7 @@ function formatPlotLayout(ctx, selectedLayout) {
 
         ctx.fillStyle = 'blue';
         ctx.strokeStyle = 'blue';
-        const els = node.points.length > 0 ? node.points : node.lines;
+        const els = node.points;
         let minx = Math.min(...els.map(el => el.length == 2 ? el[0] : Math.min(el[0], el[2])));
         let maxx = Math.max(...els.map(el => el.length == 2 ? el[0] : Math.max(el[0], el[2])));
         let miny = Math.min(...els.map(el => el.length == 2 ? el[1] : Math.min(el[1], el[3])));
@@ -990,13 +1022,11 @@ function saveNetwork(data, source, selectedLayout) {
 function saveNodePositions(network) {
     // get node positions
     for (let [nodeId, node] of Object.entries(network.getPositions())) {
-        console.log("saving pos: ", nodeId, node);
         panelState.nodePositions[nodeId] = node;
     }
 }
 
 function onSelectedNode(e) {
-    console.log(e);
     let nodeName = e.nodes[0];
     sendOptionChanged('selectedObject', nodeName, [nodeName]);
 }
@@ -1005,7 +1035,6 @@ function restoreViewPosition(network) {
     if (panelState.position && panelState.scale) {
         let pos = panelState.position;
         let scl = panelState.scale;
-        console.log("move to: ", panelState.position, panelState.scale);
         network.moveTo({
             position: pos,
             scale: scl

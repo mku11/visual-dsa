@@ -133,130 +133,6 @@ export class CsReader extends Reader {
 		}
 	}
 
-	public async getUserDefNodes(variable: Variable, rootVariable: Variable
-	): Promise<Variable[] | undefined> {
-		try {
-			let expr = variable.evaluateName;
-			const type = variable.type.replaceAll("$", ".");
-
-			expr = "Extractor.GetNodes((" + type + ")" + expr + "," + rootVariable.name + ")";
-			const nodesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: expr,
-				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-				context: 'repl',
-			});
-			if ((nodesListVar.result.startsWith('error '))
-				|| (nodesListVar.type && nodesListVar.type.includes('Exception'))) {
-				throw new Error(nodesListVar.result);
-			}
-			if(nodesListVar.result === 'null') {
-				return undefined;
-			}
-			if (nodesListVar.variablesReference == 0) {
-				return [];
-			}
-			const nodes = await this.getVariables(nodesListVar.variablesReference);
-			let idx = 0;
-			for (const node of nodes) {
-				node.evaluateName = expr + "[" + idx + "]";
-				node.name = String(idx);
-				idx++;
-			}
-			return nodes;
-		} catch (ex: Error | unknown) {
-			if (ex instanceof Error) {
-				// this.trackErrors(ex, type, "userDefEdges");
-				console.error("getUserDefNodes Error: " + variable.evaluateName + ": " + ex.message);
-			} else {
-				console.error(ex);
-			}
-		}
-	}
-
-	public async getUserDefEdges(variable: Variable, rootVariable: Variable
-	): Promise<Variable[] | undefined> {
-		try {
-			let expr = variable.evaluateName;
-			const type = variable.type.replaceAll("$", ".");
-			expr = "Extractor.GetEdges((" + type + ")" + expr + "," + rootVariable.name + ")";
-			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: expr,
-				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-				context: 'repl',
-			});
-			if ((edgesListVar.result.startsWith('error '))
-				|| (edgesListVar.type && edgesListVar.type.endsWith('Exception'))) {
-				throw new Error(edgesListVar.result);
-			}
-			if(edgesListVar.result === 'null') {
-				return undefined;
-			}
-			if (edgesListVar.variablesReference == 0) {
-				return [];
-			}
-			return await this.getVariables(edgesListVar.variablesReference);
-		} catch (ex: Error | unknown) {
-			if (ex instanceof Error) {
-				// this.trackErrors(ex, type, "userDefEdges");
-				console.error("getUserDefEdges Error: " + variable.evaluateName + ": " + ex.message);
-			} else {
-				console.error(ex);
-			}
-		}
-	}
-
-	public async getUserDefPlot(variable: Variable,
-		rootVariable: Variable,
-		layout: string
-	): Promise<number[][] | undefined> {
-		try {
-			let expr = variable.evaluateName;
-			const method = layout === "plotpoints" ? "GetPlotPoints" : "GetPlotLines";
-			expr = "Extractor." + method + "(" + expr + "," + rootVariable.name + ")";
-			const plotListVar = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: expr,
-				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-				context: 'repl',
-			});
-			if ((plotListVar.result.startsWith('error '))
-				|| (plotListVar.type && plotListVar.type.endsWith('Exception'))) {
-				throw new Error(plotListVar.result);
-			}
-			if(plotListVar.result === 'null') {
-				return undefined;
-			}
-			if (plotListVar.variablesReference == 0) {
-				return [];
-			}
-			const children = await this.getVariables(plotListVar.variablesReference);
-			const els: number[][] = [];
-			let idx = 0;
-			for (const child of children) {
-				if (this.filterVariable(child)) {
-					continue;
-				}
-				let gels: number[] = [];
-				let gchildren = await this.getVariables(child.variablesReference);
-				for (const gchild of gchildren) {
-					if (this.filterVariable(gchild)) {
-						continue;
-					}
-					gels.push(parseInt(gchild.value));
-				}
-				els.push(gels);
-				idx++;
-			}
-			return els;
-		} catch (ex: Error | unknown) {
-			if (ex instanceof Error) {
-				// this.trackErrors(ex, type, "getUserDefPlot");
-				console.error("getUserDefPlot Error: " + variable.evaluateName + ": " + ex.message);
-			} else {
-				console.error(ex);
-			}
-		}
-	}
-
 	public async getEdgeValues(variable: Variable, property: string): Promise<string[] | undefined> {
 		try {
 			const edgeValues: string[] = [];
@@ -536,7 +412,7 @@ export class CsReader extends Reader {
 	}
 
 	public getRegisterMethod() {
-		return "Extractor.RegisterTypes()";
+		return "Extractor.Register()";
 	}
 
 	public hasChildren(ch: Variable): boolean {
@@ -545,12 +421,21 @@ export class CsReader extends Reader {
 
 	public isIndexed(variable: Variable, parent: Variable): boolean {
 		const parts = variable.name.split(" ");
-		if(parts.length >= 2 && parts[0].startsWith("[")
-			 && parts[0].endsWith("]")) {
-			if (!isNaN(parseInt(parts[0].substring(1,parts[0].length-1)))){
+		if (parts.length >= 2 && parts[0].startsWith("[")
+			&& parts[0].endsWith("]")) {
+			if (!isNaN(parseInt(parts[0].substring(1, parts[0].length - 1)))) {
 				return true;
 			}
 		}
 		return super.isIndexed(variable, parent);
+	}
+
+	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
+		let exprName = variable.evaluateName;
+		return `Extractor.Extract('${type}'
+				, '${attr}'
+				, ${exprName}
+				, ${root.evaluateName}
+				)`;
 	}
 }

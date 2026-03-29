@@ -27,7 +27,7 @@ import * as fs from 'fs';
 
 export class Reader {
 	protected erroredTypes: Set<string> = new Set<string>();
-	protected registeredTypes: Set<string> = new Set<string>();
+	protected registeredTypes: Map<string, Set<string>> = new Map<string, Set<string>>();
 	protected registered = false;
 	protected static instance?: Reader;
 	protected extractorMethod = this.getRegisterMethod();
@@ -123,20 +123,46 @@ export class Reader {
 				for (const regTypeValue of regTypeValues) {
 					if (this.filterVariable(regTypeValue))
 						continue;
-					let type = regTypeValue.value;
-					if (type.startsWith("\"") && type.endsWith("\"")) {
-						type = type.substring(1, type.length - 1);
-					} else if (type.startsWith("'") && type.endsWith("'")) {
-						type = type.substring(1, type.length - 1);
+					const children: Variable[] = await this.getVariables(regTypeValue.variablesReference, "indexed");
+					const parts: Variable[] = [];
+					for (const child of children) {
+						if (this.filterVariable(child))
+							continue;
+						if (!this.isIndexed(child, regTypeValue))
+							continue;
+						parts.push(child);
+						if (parts.length == 2)
+							break;
 					}
-					this.registeredTypes.add(type);
+					if (parts.length != 2)
+						continue;
+					const attrs: Set<string> = new Set<string>();
+					const type = this.trimQuotes(parts[0].value);
+					const attrChildren: Variable[] = await this.getVariables(parts[1].variablesReference, "indexed");
+					for (const attr of attrChildren) {
+						if (this.filterVariable(attr))
+							continue;
+						if (!this.isIndexed(attr, regTypeValue))
+							continue;
+						let attrValue = this.trimQuotes(attr.value);
+						attrs.add(attrValue);
+					}
+					this.registeredTypes.set(type, attrs);
 				}
 			}
-
 		} catch (error) {
 			console.error(error);
 		}
 		this.registered = true;
+	}
+
+	trimQuotes(value: string) {
+		if (value.startsWith("\"") && value.endsWith("\"")) {
+			value = value.substring(1, value.length - 1);
+		} else if (value.startsWith("'") && value.endsWith("'")) {
+			value = value.substring(1, value.length - 1);
+		}
+		return value;
 	}
 
 	async getMarkersValues(markers: string, layout: string): Promise<Array<Array<number>>> {
@@ -295,19 +321,22 @@ export class Reader {
 	 * public Map<GraphNode<T>, String> toNodeString(){}
 	 */
 	public async getVarToVarStrRepr(variable: Variable,
+		type: string,
 		rootVariable: Variable,
-		nodes: Variable[]
+		nodes: Variable[],
+		attr: string
 	): Promise<Map<string, string> | undefined> {
 		try {
 			const edgesValues: Map<string, string> = new Map<string, string>();
 			const edges: Variable[] | undefined =
-				await this.getUserDefEdges(variable, rootVariable);
+				await this.extract(variable, type, attr, rootVariable);
 			if (!nodes || !edges) {
 				return;
 			}
+			const edgeValues = edges as Variable[];
 			for (let i = 0; i < nodes.length; i++) {
 				const nodeId = await this.getNodeId(nodes[i]);
-				edgesValues.set(nodeId, edges[i].value);
+				edgesValues.set(nodeId, edgeValues[i].value);
 			}
 			return edgesValues;
 		} catch (ex: Error | unknown) {
@@ -333,20 +362,55 @@ export class Reader {
 		return this.erroredTypes.has(group + ":" + type);
 	}
 
-	public async getUserDefNodes(variable: Variable, rootVariable: Variable,
-	): Promise<Variable[] | undefined> {
-		return undefined;
+
+
+	public async extract(variable: Variable, type: string, attr: string, root: Variable):
+		Promise<Variable[] | undefined> {
+		let attrs: Set<string> | undefined = this.registeredTypes.get(type);
+		if (!attrs)
+			return;
+		if (!attrs.has(attr))
+			return;
+		try {
+			let expr: string = this.getExtractCall(variable, type, attr, root);
+			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+			const result = await debug.activeDebugSession?.customRequest("evaluate", {
+				expression: expr,
+				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
+				context: 'repl',
+			});
+			if (result.type.endsWith('Exception')) {
+				throw new Error(result.result);
+			}
+			if (result.result === 'null' || result.result === 'undefined') {
+				return undefined;
+			}
+			const nodes: Variable[] = [];
+			const children = await this.getVariables(result.variablesReference);
+			let idx = 0;
+			for (const child of children) {
+				if (isNaN(parseInt(child.name))) {
+					continue;
+				}
+				child.evaluateName = expr + "[" + idx + "]";
+				child.name = String(idx);
+				nodes.push(child);
+				idx++;
+			}
+			return nodes;
+		} catch (ex: Error | unknown) {
+			if (ex instanceof Error) {
+				console.error("extractor Error: " + variable
+					+ " " + type + " " + attr
+					+ ": " + ex.message);
+			} else {
+				console.error(ex);
+			}
+		}
 	}
 
-	public async getUserDefEdges(variable: Variable, rootVariable: Variable
-	): Promise<Variable[] | undefined> {
-		return undefined;
-	}
-
-	public async getUserDefPlot(variable: Variable, rootVariable: Variable,
-		layout: string):
-		Promise<number[][] | undefined> {
-		return undefined;
+	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
+		return "";
 	}
 
 	public async getArrayRepr(variable: Variable):
@@ -439,7 +503,7 @@ export class Reader {
 	}
 
 	public getRegisterMethod() {
-		return "Extractor.registerTypes()";
+		return "Extractor.register()";
 	}
 
 	public hasChildren(ch: Variable): boolean {
@@ -448,6 +512,26 @@ export class Reader {
 
 	public isIndexed(variable: Variable, parent: Variable): boolean {
 		return !isNaN(parseInt(variable.name));
+	}
+
+	async getPlotRepr(variable: Variable, type: string, attr: string, rootVariable: Variable): Promise<number[][] | undefined> {
+		const points: Variable[] | undefined = await this.extract(variable, type, attr, rootVariable);
+		if (!points)
+			return;
+		const plot: number[][] = [];
+		for (const point of points) {
+			const els = await this.getVariables(point.variablesReference);
+			const nums: number[] = [];
+			for (const el of els) {
+				if (!this.isIndexed(el, point))
+					continue;
+				if (isNaN(parseInt(el.value)))
+					continue;
+				nums.push(parseInt(el.value));
+			}
+			plot.push(nums);
+		}
+		return plot;
 	}
 }
 

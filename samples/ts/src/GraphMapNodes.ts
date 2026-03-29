@@ -27,47 +27,61 @@ export class GraphMapNode<T> {
     public constructor(value: T) {
         this.value = value;
     }
+
+    public toString() {
+        return this.value;
+    }
 }
+
 
 // custom extractor
 export class Extractor {
-    // register the custom types
-    public static registerTypes(): Array<string> {
-        return ["Map", "GraphMapNode", "*"];
+    // register the custom attributes to extract
+    // you can select these from the ui 
+    // instead of modifying your objects
+    public static register(): Array<[string, string[]]> {
+        return [
+            ["Map", ["customNodes", "customValue"]],
+            ["GraphMapNode", ["customNodes", "customValue"]],
+        ];
     }
 
-    public static getNodes(
-        node: Map<GraphMapNode<string>, Array<GraphMapNode<string>>>
-            | GraphMapNode<string>,
-        root: Map<GraphMapNode<string>, Array<GraphMapNode<string>>>):
-        Array<GraphMapNode<string>> {
-        if (node instanceof Map) {
-            const nodes: Array<GraphMapNode<string>> = new Array<GraphMapNode<string>>();
-            for (const key of root.keys())
-                nodes.push(key);
-            return nodes;
-        } else if (node instanceof GraphMapNode) {
-            const nodes: Array<GraphMapNode<string>> | undefined = root.get(node);
-            if (nodes)
+    public static extract(
+        type: string,
+        attr: string,
+        obj: object,
+        root: object
+    ): string[] | object[] | undefined {
+        if (type === "Map") {
+            if (attr === "customNodes") {
+                const nodes: Array<GraphMapNode<string>> = new Array<GraphMapNode<string>>();
+                const rootObject = root as Map<GraphMapNode<string>, Array<GraphMapNode<string>>>;
+                for (const key of rootObject.keys())
+                    nodes.push(key);
                 return nodes;
-        }
-        return [];
-    }
-
-    public static toString(node: object): string {
-        if (node instanceof Map) {
-            let sb = "";
-            const nodeObj = node as Map<GraphMapNode<string>, Array<GraphMapNode<string>>>;
-            for (const key of nodeObj.keys()) {
-                if(sb.length > 0)
-                    sb += "\n";
-                sb += key.getValue();
+            } else if (attr === "customValue") {
+                let sb = "";
+                const objObject = obj as Map<GraphMapNode<string>, Array<GraphMapNode<string>>>;
+                for (const key of objObject.keys()) {
+                    if (sb.length > 0)
+                        sb += "\n";
+                    sb += key.getValue();
+                }
+                return [sb];
             }
-            return sb;
-        } else if (node instanceof GraphMapNode) {
-            return String(node.getValue());
+        } else if (type === "GraphMapNode") {
+            if (attr === "customNodes") {
+                const rootObject = root as Map<GraphMapNode<string>, Array<GraphMapNode<string>>>;
+                const objObject = obj as GraphMapNode<string>;
+                const nodes: Array<GraphMapNode<string>> | undefined = rootObject.get(objObject);
+                if (nodes)
+                    return nodes;
+            } else if (attr === "customValue") {
+                const objObject = obj as GraphMapNode<string>;
+                return [String(objObject.getValue())];
+            }
         }
-        return "";
     }
 }
+
 GraphMapNodes.runMain();

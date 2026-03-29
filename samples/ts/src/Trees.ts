@@ -1,7 +1,15 @@
 class Trees {
 
     public static runMain() {
-        // // nodes of a tree
+        new Trees().start();
+    }
+
+    start() {
+        // nodes of a tree
+        // expression: node1
+        // layout: Tree
+        // Children Nodes: children[]
+        // Click on 'Save Object Type'
         const root: Node<string> = new Node<string>("0");
         const node1: Node<string> = new Node<string>("1");
         const node2: Node<string> = new Node<string>("2");
@@ -19,6 +27,8 @@ class Trees {
         // // wrap to a tree
         const tree: Tree<string> = new Tree<string>(root);
         Trees.visitTree(tree.getRoot(), tree.getRoot());
+
+        console.log("done");
     }
 
     private static visitTree(node: Node<string>, root: Node<string>) {
@@ -29,20 +39,6 @@ class Trees {
         for (const child of node.children) {
             this.visitTree(child, root);
         }
-    }
-}
-
-// custom extractor
-export class Extractor {
-
-    // register the custom types
-    public static registerTypes(): Array<string> {
-        return [
-            "TreeNode", "Node"];
-    }
-
-    public static toString(node: Node<string>): string {
-        return node.value.toString();
     }
 }
 
@@ -71,9 +67,5 @@ class Node<T> {
     public add(value: Node<T>) {
         this.children.push(value);
     }
-
-    // public String toString() {
-    // return String.valueOf(this.value);
-    // }
 }
 Trees.runMain();
