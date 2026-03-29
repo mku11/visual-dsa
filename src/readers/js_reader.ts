@@ -356,6 +356,10 @@ export class JsReader extends Reader {
 		return undefined;
 	}
 
+	public async getQueueRepr(variable: Variable): Promise<string[] | undefined> {
+		return await this.getArrayRepr(variable);
+	}
+
 	public async getMapRepr(variable: Variable): Promise<string[][] | undefined> {
 		try {
 			const name = variable.evaluateName;
