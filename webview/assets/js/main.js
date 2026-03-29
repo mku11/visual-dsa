@@ -51,6 +51,7 @@ var markersLayouts = new Set([
     "array", "array2D", "array3D", "bars"
 ]);
 
+const MAX_TYPE_CHARS = 18;
 const BARS_ROWS = 10;
 var nodeColor = '#ccd4f3';
 var varNodeColor = '#e8ccf0';
@@ -353,6 +354,12 @@ function setupVarOptions(varOptions) {
     }
 }
 
+function truncate(text) {
+    if (text && text.length > MAX_TYPE_CHARS)
+        text = text.substring(0, MAX_TYPE_CHARS) + "...";
+    return text;
+}
+
 function updateVarOptions(data) {
     if (!data)
         return;
@@ -361,7 +368,7 @@ function updateVarOptions(data) {
     selectedObjectType = data.selectedObjectType;
 
     elementName.innerHTML = data.selectedObject;
-    elementType.innerHTML = data.selectedObjectType;
+    elementType.innerHTML = truncate(data.selectedObjectType);
 
     nodesSelect.innerHTML = "";
     let selectedOption;
