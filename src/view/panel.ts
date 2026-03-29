@@ -190,7 +190,8 @@ export class Panel {
 		properties?: string[],
 		selectedProperties?: string[],
 		selectedLayout?: string,
-		selectedOrientation?: string
+		selectedOrientation?: string,
+		selectedMarkers?: string,
 	) {
 		console.log("update var options");
 		if (Panel.currentPanel) {
@@ -206,7 +207,8 @@ export class Panel {
 					properties: properties,
 					selectedProperties: selectedProperties,
 					selectedLayout: selectedLayout,
-					selectedOrientation: selectedOrientation
+					selectedOrientation: selectedOrientation,
+					selectedMarkers: selectedMarkers
 				});
 		}
 	}

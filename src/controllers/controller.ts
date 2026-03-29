@@ -331,8 +331,8 @@ export class Controller {
 
 	setDefaultLayouts() {
 		for (const [nodeType, layout] of this.parser.getNodeTypeLayouts()) {
-			if (!this.selectedLayout.get(nodeType)) {
-				this.selectedLayout.set(nodeType, layout);
+			if (!this.selectedLayout.get("type:" + nodeType)) {
+				this.selectedLayout.set("type:" + nodeType, layout);
 			}
 		}
 	}
@@ -344,20 +344,33 @@ export class Controller {
 		);
 	}
 
+	getSortMethod(incr: boolean) {
+		return (a: string, b: string) => {
+			const sign = incr ? 1 : -1;
+			if (a.endsWith("[]") && !b.endsWith("[]"))
+				return -1 * sign;
+			if (!a.endsWith("[]") && b.endsWith("[]"))
+				return 1 * sign;
+			return a.localeCompare(b);
+		};
+	}
+
+
 	updateObjectAttributes() {
 		console.log("update object attrs");
 		const selectedType = this.varNodes.get(this.selectedObject)?.type ?? "";
 		Panel.getPanel()?.updateVarOptions(
 			this.selectedObject,
 			selectedType,
-			Array.from(this.parser.getNodes().get(selectedType) ?? []).sort(),
-			Array.from(this.selectedNodes.get(selectedType) ?? []).sort(),
-			Array.from(this.parser.getEdges().get(selectedType) ?? []).sort(),
-			Array.from(this.selectedEdges.get(selectedType) ?? []).sort(),
-			Array.from(this.parser.getProperties().get(selectedType) ?? []).sort(),
-			Array.from(this.selectedProperties.get(selectedType) ?? []).sort(),
-			this.selectedLayout.get(selectedType) ?? "graph",
-			this.selectedOrientation.get(selectedType) ?? "horizontal"
+			Array.from(this.parser.getNodes().get(selectedType) ?? []).sort(this.getSortMethod(true)),
+			Array.from(this.selectedNodes.get("id:" + this.selectedObject) ?? this.selectedNodes.get("type:" + selectedType) ?? []).sort(),
+			Array.from(this.parser.getEdges().get(selectedType) ?? []).sort(this.getSortMethod(true)),
+			Array.from(this.selectedEdges.get("id:" + this.selectedObject) ?? this.selectedEdges.get("type:" + selectedType) ?? []).sort(),
+			Array.from(this.parser.getProperties().get(selectedType) ?? []).sort(this.getSortMethod(false)),
+			Array.from(this.selectedProperties.get("id:" + this.selectedObject) ?? this.selectedProperties.get("type:" + selectedType) ?? []).sort(),
+			this.selectedLayout.get("id:" + this.selectedObject) ?? this.selectedLayout.get("type:" + selectedType) ?? "graph",
+			this.selectedOrientation.get("id:" + this.selectedObject) ?? this.selectedOrientation.get("type:" + selectedType) ?? "horizontal",
+			this.selectedMarkers.get("id:" + this.selectedObject) ?? this.selectedMarkers.get("type:" + selectedType) ?? ""
 		);
 	}
 
@@ -448,41 +461,21 @@ export class Controller {
 				return;
 			case 'selectedNodes':
 				this.selectedNodes.set(message.source, new Set(message.data));
-				if (!this.busy) {
-					await this.refresh();
-				}
 				return;
 			case 'selectedEdges':
 				this.selectedEdges.set(message.source, new Set(message.data));
-				if (!this.busy) {
-					await this.refresh();
-				}
 				return;
 			case 'selectedProperties':
 				this.selectedProperties.set(message.source, new Set(message.data));
-				if (!this.busy) {
-					await this.refresh();
-				}
 				return;
 			case 'selectedMarkers':
 				this.selectedMarkers.set(message.source, message.data[0]);
-				if (!this.busy) {
-					await this.refresh();
-				}
 				return;
 			case 'selectedLayout':
-				if (message.source) {
-					this.selectedLayout.set(message.source, message.data[0]);
-				}
-				if (!this.busy) {
-					await this.refresh();
-				}
+				this.selectedLayout.set(message.source, message.data[0]);
 				return;
 			case 'selectedOrientation':
 				this.selectedOrientation.set(message.source, message.data[0]);
-				if (!this.busy) {
-					await this.refresh();
-				}
 				return;
 			case 'delay':
 				this.autoStepDelay = parseInt(message.data[0]);

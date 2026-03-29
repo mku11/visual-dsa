@@ -247,11 +247,11 @@ export class Parser {
 			}
 		}
 
-		const filterNodes = filtersNodes.get(type) ?? new Set();
-		const filterEdges = filtersEdges.get(type) ?? new Set();
-		const filterProperties = filtersProperties.get(type) ?? new Set();
-		const useMarkers = markers.get(type) ?? "";
-		const layout = layouts.get(type) ?? "graph";
+		const filterNodes = filtersNodes.get("id:" + id) ?? filtersNodes.get("type:" + type) ?? new Set();
+		const filterEdges = filtersEdges.get("id:" + id) ?? filtersEdges.get("type:" + type) ?? new Set();
+		const filterProperties = filtersProperties.get("id:" + id) ?? filtersProperties.get("type:" + type) ?? new Set();
+		const useMarkers = markers.get("id:" + id) ?? markers.get("type:" + type) ?? "";
+		const layout = layouts.get("id:" + id) ?? layouts.get("type:" + type) ?? "graph";
 
 		// check if this is the variable node
 		let varNode: VarNode | Node | undefined;
@@ -454,7 +454,8 @@ export class Parser {
 
 		// get the edges
 		let edgeId = 0;
-		for (const filterEdge of filterEdges) {
+		for (let filterEdge of filterEdges) {
+			filterEdge = filterEdge.replaceAll("[]", "");
 			const edgeValues = await this.reader.getEdgeValues(variable, filterEdge);
 			if (edgeValues) {
 				for (const [, child] of node.children) {

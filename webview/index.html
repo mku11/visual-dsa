@@ -81,13 +81,16 @@
 				</div>
 				<div class="hseparator"></div>
 				<div id="attributes-container">
+					<div id="attributes-header">Attributes</div>
 					<div id="object-name-container">
 						<div id="object-name-label">Name: </div>
 						<div id="object-name"></div>
+						<button id="save-name" name="save-name" title="Apply to object">💾</button>
 					</div>
 					<div id="object-type-container">
 						<div id="object-type-label">Type: </div>
 						<div id="object-type"></div>
+						<button id="save-type" name="save-type" title="Apply to all objects with same type">💾</button>
 					</div>
 					<div class="var-options-container">
 						<div class="var-option var-option-layout">
@@ -125,7 +128,7 @@
 									</button>
 								</div>
 							</div>
-							<select id="nodes" name="nodes" class="var-select-multi nodes" multiple>
+							<select id="nodes" name="nodes" class="var-select nodes">
 							</select>
 						</div>
 						<div class="var-option var-option-edges">
@@ -138,7 +141,7 @@
 									</button>
 								</div>
 							</div>
-							<select id="edges" name="edges" class="var-select-multi edges" multiple>
+							<select id="edges" name="edges" class="var-select edges">
 							</select>
 						</div>
 						<div class="var-option var-option-properties">

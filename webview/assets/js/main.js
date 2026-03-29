@@ -106,6 +106,8 @@ function init() {
     this.elementName = document.getElementById("object-name");
     this.elementType = document.getElementById("object-type");
     this.progressBar = document.getElementById("progress-bar");
+    this.saveName = document.getElementById("save-name");
+    this.saveType = document.getElementById("save-type");
 }
 
 function saveState() {
@@ -221,7 +223,6 @@ function setupControlListeners() {
 
 function setupVariableListeners() {
     layoutSelect.addEventListener("click", (e) => {
-        sendOptionChanged('selectedLayout', selectedObjectType, [layoutSelect.value]);
         orientationSelect.visibility = orientationLayouts.has(layoutSelect.value) ? "visible" : "collapse";
         nodesSelect.visibility = nodesLayouts.has(layoutSelect.value) ? "visible" : "collapse";
         edgesSelect.visibility = nodesLayouts.has(layoutSelect.value) ? "visible" : "collapse";
@@ -229,59 +230,53 @@ function setupVariableListeners() {
         markers.visibility = arrayLayouts.has(layoutSelect.value) ? "visible" : "collapse";
     });
 
-
-    orientationSelect.addEventListener("click", (e) => {
-        sendOptionChanged('selectedOrientation', selectedObjectType, [orientationSelect.value]);
-    });
-
-    nodesSelect.addEventListener("click", (e) => {
-        sendOptionChanged('selectedNodes', selectedObjectType,
-            Array.from(nodesSelect.selectedOptions).map((x) => x.value));
-    });
-
-    edgesSelect.addEventListener("click", (e) => {
-        sendOptionChanged('selectedEdges', selectedObjectType,
-            Array.from(edgesSelect.selectedOptions).map((x) => x.value));
-    });
-
-    propertiesSelect.addEventListener("click", (e) => {
-        sendOptionChanged('selectedProperties', selectedObjectType,
-            Array.from(propertiesSelect.selectedOptions).map((x) => x.value));
-    });
-
-    markers.addEventListener("change", (e) => {
-        sendOptionChanged('selectedMarkers', selectedObjectType,
-            [markers.value]);
-            
     markersOptions.addEventListener("change", (e) => {
         markers.value = markersOptions.value;
         sendOptionChanged('selectedMarkers', selectedObjectType,
             markers.value.split(","));
     });
+
+    markersOptions.addEventListener("change", (e) => {
+        markers.value = markersOptions.value;
     });
 
     removeNodes.addEventListener("click", (e) => {
         nodesSelect.selectedIndex = -1;
-        sendOptionChanged('selectedNodes', selectedObjectType,
-            Array.from(nodesSelect.selectedOptions).map((x) => x.value));
     });
 
     removeEdges.addEventListener("click", (e) => {
         edgesSelect.selectedIndex = -1;
-        sendOptionChanged('selectedEdges', selectedObjectType,
-            Array.from(edgesSelect.selectedOptions).map((x) => x.value));
     });
 
     removeProperties.addEventListener("click", (e) => {
         propertiesSelect.selectedIndex = -1;
-        sendOptionChanged('selectedProperties', selectedObjectType,
-            Array.from(propertiesSelect.selectedOptions).map((x) => x.value));
     });
 
     removeMarkers.addEventListener("click", (e) => {
         markers.value = "";
-        sendOptionChanged('selectedMarkers', selectedObjectType, []);
     });
+
+    saveName.addEventListener("click", (e) => {
+        saveOptions("id:" + selectedObject);
+    });
+
+    saveType.addEventListener("click", (e) => {
+        saveOptions("type:" + selectedObjectType);
+    });
+}
+
+function saveOptions(source) {
+    sendOptionChanged('selectedLayout', source, [layoutSelect.value]);
+    sendOptionChanged('selectedOrientation', source, [orientationSelect.value]);
+    sendOptionChanged('selectedNodes', source,
+        Array.from(nodesSelect.selectedOptions).map((x) => x.value));
+    sendOptionChanged('selectedEdges', source,
+        Array.from(edgesSelect.selectedOptions).map((x) => x.value));
+    sendOptionChanged('selectedProperties', source,
+        Array.from(propertiesSelect.selectedOptions).map((x) => x.value));
+    sendOptionChanged('selectedMarkers', source,
+        [markers.value]);
+    requestCommand('refresh');
 }
 
 function showProgress(value) {
@@ -350,24 +345,34 @@ function updateVarOptions(data) {
     elementType.innerHTML = data.selectedObjectType;
 
     nodesSelect.innerHTML = "";
+    let selectedOption;
     for (let node of data.nodes) {
         var option = document.createElement('option');
         option.value = node;
         option.innerHTML = node;
         if (data.selectedNodes.includes(node))
-            option.selected = true;
+            selectedOption = option;
         nodesSelect.appendChild(option);
     }
+    if (selectedOption)
+        selectedOption.selected = true;
+    else
+        nodesSelect.selectedIndex = -1;
 
     edgesSelect.innerHTML = "";
+    selectedOption = undefined;
     for (let property of data.edges) {
         var option = document.createElement('option');
         option.value = property;
         option.innerHTML = property;
         if (data.selectedEdges.includes(property))
-            option.selected = true;
+            selectedOption = option;
         edgesSelect.appendChild(option);
     }
+    if (selectedOption)
+        selectedOption.selected = true;
+    else
+        edgesSelect.selectedIndex = -1;
 
     properties.innerHTML = "";
     for (let property of data.properties) {
@@ -381,6 +386,7 @@ function updateVarOptions(data) {
 
     layoutSelect.value = data.selectedLayout;
     orientationSelect.value = data.selectedOrientation;
+    markers.value = data.selectedMarkers;
 
     panelState.paramsData = data;
     saveState();
@@ -404,7 +410,7 @@ function updateParams(data) {
         }
         variable.selectedIndex = selectedIndex;
     }
-    
+
     for (let variableName of data.variables) {
         if (hasValue(markersOptions, variableName)) {
             continue;

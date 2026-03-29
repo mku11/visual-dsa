@@ -81,8 +81,8 @@ export class Formatter {
 		if (!node) {
 			return;
 		}
-		const layout = layouts.get(node.type!) ?? "graph";
-		const orientation = orientations.get(node.type!) ?? "horizontal";
+		const layout = layouts.get("id:" + node.id!) ?? layouts.get("type:" + node.type!) ?? "graph";
+		const orientation = orientations.get("id:" + node.id!) ?? orientations.get("type:" + node.type!) ?? "horizontal";
 		let visNode: VisNode | undefined = undefined;
 		if (visited.has(node.id)) {
 			return;
@@ -433,7 +433,7 @@ export class Formatter {
 
 		if (markers) {
 			for (const marker of markers) {
-				const [indX,indY] = marker;
+				const [indX, indY] = marker;
 				if (isNaN(indY) || indY < 0 || indY >= arr2D.length)
 					continue;
 				if (isNaN(indX) || indX < 0 || indX >= arr2D[indY].length)
@@ -466,7 +466,7 @@ export class Formatter {
 			}
 			for (let arr2DIdx2 = -1; arr2DIdx2 < maxLength; arr2DIdx2++) {
 				let marked: [number, number] = [0, 0];
-				if (indexes.has([arr2DIdx2,arr2DIdx].toString())) {
+				if (indexes.has([arr2DIdx2, arr2DIdx].toString())) {
 					marked[0] = arr2DRepr.length + arr2DRepr2.length;
 				}
 				if (arr2DIdx == -1 && arr2DIdx2 == -1) {
@@ -487,7 +487,7 @@ export class Formatter {
 				}
 
 				// end of marker
-				if (indexes.has([arr2DIdx2,arr2DIdx].toString())) {
+				if (indexes.has([arr2DIdx2, arr2DIdx].toString())) {
 					marked[1] = arr2DRepr.length + arr2DRepr2.length;
 					markerPos.push(marked);
 				}
