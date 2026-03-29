@@ -264,7 +264,7 @@ export class Parser {
 				if (arrayRepr) {
 					varNode.value = arrayRepr;
 				}
-				const markers = await this.reader.getMarkersValues(useMarkers);
+				const markers = await this.reader.getMarkersValues(useMarkers, layout);
 				if (markers) {
 					varNode.markers = markers;
 				}
@@ -293,7 +293,7 @@ export class Parser {
 			if (arrayRepr) {
 				node.value = arrayRepr;
 			}
-			const markers = await this.reader.getMarkersValues(useMarkers);
+			const markers = await this.reader.getMarkersValues(useMarkers, layout);
 			if (markers) {
 				node.markers = markers;
 			}
@@ -309,7 +309,7 @@ export class Parser {
 			if (arrayRepr) {
 				node.value = arrayRepr;
 			}
-			const markers = await this.reader.getMarkersValues(useMarkers);
+			const markers = await this.reader.getMarkersValues(useMarkers, layout);
 			if (markers) {
 				node.markers = markers;
 			}
@@ -318,7 +318,7 @@ export class Parser {
 			if (arrayRepr) {
 				node.value = arrayRepr;
 			}
-			const markers = await this.reader.getMarkersValues(useMarkers);
+			const markers = await this.reader.getMarkersValues(useMarkers, layout);
 			if (markers) {
 				node.markers = markers;
 			}

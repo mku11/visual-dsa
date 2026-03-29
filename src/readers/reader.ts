@@ -139,7 +139,7 @@ export class Reader {
 		this.registered = true;
 	}
 
-	async getMarkersValues(markers: string): Promise<Array<Array<number>>> {
+	async getMarkersValues(markers: string, layout: string): Promise<Array<Array<number>>> {
 		let markersValues: Array<Array<number>> = [];
 		const variable = await this.getVariable(markers);
 		if (!variable)
@@ -160,7 +160,7 @@ export class Reader {
 			if (child.variablesReference == 0) {
 				if (!isNaN(parseInt(child.value)))
 					childrenList.push(parseInt(child.value));
-			} else {
+			} else if (layout === "array2D" || layout === "array3D") {
 				const gChildren = await this.getVariables(child.variablesReference);
 				const gChildrenList: Array<number> = [];
 				for (const gChild of gChildren) {

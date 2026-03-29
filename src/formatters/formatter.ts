@@ -271,24 +271,24 @@ export class Formatter {
 		} else if (layout === 'array2D') {
 			return this.formatArray2D(value as string[][], markers);
 		} else if (layout === 'array') {
-			return this.formatArray(value as string[], orientation, markers);
+			return this.formatArray(value as string[], orientation, markers ? markers[0] : undefined);
 		} else if (layout === 'queue') {
-			return this.formatArray(value as string[], "horizontal", markers);
+			return this.formatArray(value as string[], "horizontal", markers ? markers[0] : undefined);
 		} else if (layout === 'map') {
 			return [[], this.formatMap(value as string[][])];
 		} else if (layout === 'set') {
-			return this.formatArray(value as string[], orientation, markers);
+			return this.formatArray(value as string[], orientation, markers ? markers[0] : undefined);
 		} else if (layout === 'stack') {
-			return this.formatArray(value as string[], "vertical", markers, true);
+			return this.formatArray(value as string[], "vertical", markers ? markers[0] : undefined, true);
 		} else if (layout === 'bars') {
-			return [[], this.formatBars(value as string[], markers)];
+			return [[], this.formatBars(value as string[], markers ? markers[0] : undefined)];
 		} else if (layout && Formatter.plotLayouts.has(layout)) {
 			return [[], this.formatPlot()];
 		}
 		return [[], ""];
 	}
 
-	formatBars(value: string[], markers?: Array<Array<number>>): string {
+	formatBars(value: string[], markers?: Array<number>): string {
 		let barsRepr = "";
 		for (let i = 0; i < Formatter.BARS_ROWS; i++) {
 			barsRepr += "\n";
@@ -336,7 +336,7 @@ export class Formatter {
 	// TODO: add orientation
 	formatArray(arr: string[],
 		orientation?: string,
-		markers?: Array<Array<number>>,
+		markers?: Array<number> | undefined,
 		reverse?: boolean
 	): [Array<[number, number]>, string] {
 		let arrRepr = "";
@@ -345,7 +345,7 @@ export class Formatter {
 		const markerPos = Array<[number, number]>();
 		const indexes = new Set<number>();
 		if (markers) {
-			for (const [marker] of markers) {
+			for (const marker of markers) {
 				const ind = marker;
 				if (isNaN(ind) || ind < 0 || ind >= arr.length)
 					continue;
