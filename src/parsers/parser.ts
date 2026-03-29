@@ -125,7 +125,10 @@ export class Parser {
 		const type: string = await this.reader.getNodeType(variable);
 		let children: Variable[] = [];
 		if (variable.variablesReference > 0) {
-			const childrenVars = await this.reader.getVariables(variable.variablesReference, "named");
+			let childrenVars = await this.reader.getVariables(variable.variablesReference, "named");
+			if (childrenVars.length == 1 && childrenVars[0].name === '' && childrenVars[0].type === '') {
+				childrenVars = await this.reader.getVariables(childrenVars[0].variablesReference);
+			}
 			if (childrenVars) {
 				for (let childVar of childrenVars) {
 					if (this.reader.isIndexed(childVar, variable)) {
@@ -137,7 +140,8 @@ export class Parser {
 					childVar = this.reader.processVariable(childVar);
 					children.push(childVar);
 					const childType: string = await this.reader.getNodeType(childVar);
-					if (this.reader.isArray(childType)) {
+					if (this.reader.isArray(childType) || this.reader.isList(childType)
+						|| childVar.indexedVariables > 0) {
 						const childArrayVar: Variable = {} as Variable;
 						Object.assign(childArrayVar, childVar);
 						childArrayVar.name += "[]";
