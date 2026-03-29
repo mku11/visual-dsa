@@ -1,6 +1,10 @@
 class Graphs {
 
     public static runMain() {
+        new Graphs().test();
+    }
+
+    public test() {
         // nodes of a graph
         const gnode0: GraphNode<string> = new GraphNode<string>("0");
         const gnode1: GraphNode<string> = new GraphNode<string>("1");
