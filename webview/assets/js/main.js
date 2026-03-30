@@ -367,8 +367,8 @@ function updateVarOptions(data) {
     selectedObject = data.selectedObject;
     selectedObjectType = data.selectedObjectType;
 
-    elementName.innerHTML = data.selectedObject;
-    elementType.innerHTML = truncate(data.selectedObjectType);
+    elementName.innerText = data.selectedObject;
+    elementType.innerText = truncate(data.selectedObjectType);
 
     nodesSelect.innerHTML = "";
     let selectedOption;
