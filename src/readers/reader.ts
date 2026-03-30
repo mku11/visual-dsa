@@ -171,7 +171,7 @@ export class Reader {
 			return markersValues;
 		if (variable?.variablesReference == 0) {
 			if (!isNaN(parseInt(variable.value)))
-				markersValues.push([parseInt(variable.value), 0, 0]);
+				markersValues.push([parseInt(variable.value)]);
 			return markersValues;
 		}
 		const children = await this.getVariables(variable);
