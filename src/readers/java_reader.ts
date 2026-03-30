@@ -433,7 +433,7 @@ return mapRepr.toString();
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			const nodes = await this.getVariables(queueNodesList.variablesReference);
+			const nodes = await this.getVariables(queueNodesList);
 			return nodes;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
@@ -466,7 +466,7 @@ return mapRepr.toString();
 		const expVariables: Variable[] = [];
 		for (const variable of variables) {
 			if (variable.name === 'this') {
-				const childVariables = await this.getVariables(variable.variablesReference, "named");
+				const childVariables = await this.getVariables(variable, "named");
 				for (const child of childVariables) {
 					if (child.name === 'Class has no fields') {
 						continue;
@@ -572,5 +572,25 @@ return mapRepr.toString();
 				, ${exprName}
 				, ${root.evaluateName}
 				)`;
+	}
+
+	async getVariables(
+		variable: Variable,
+		filter?: 'indexed' | 'named'
+	): Promise<Variable[]> {
+		// for nested calls to properties (ie for linked list and graphs)
+		// the java debugger complaints about resolving types
+		// so we try getting a new variable with the casted evaluation name
+		// then we get the children variables with the inherited evaluation name
+		if (variable && variable.type) {
+			const newVariable: Variable = {} as Variable;
+			Object.assign(newVariable, variable);
+			const type = variable.type.replaceAll("$", ".");
+			newVariable.evaluateName = "((" + type + ") " + variable.evaluateName + ")";
+			const castedVariable: Variable | undefined = await this.getVariable(newVariable.evaluateName);
+			if (castedVariable)
+				variable = castedVariable;
+		}
+		return super.getVariables(variable);
 	}
 }

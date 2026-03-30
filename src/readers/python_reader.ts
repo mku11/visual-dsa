@@ -252,7 +252,7 @@ export class PythonReader extends Reader {
 		const expVariables: Variable[] = [];
 		for (const variable of variables) {
 			if (variable.name === 'self') {
-				const childVariables = await this.getVariables(variable.variablesReference, "named");
+				const childVariables = await this.getVariables(variable, "named");
 				for (const child of childVariables) {
 					if (child.name === 'Class has no fields') {
 						continue;

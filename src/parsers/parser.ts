@@ -94,7 +94,7 @@ export class Parser {
 	}
 
 	async getAllVariables(): Promise<Variable[]> {
-		let variables: Variable[] = await this.reader.getVariables();
+		let variables: Variable[] = await this.reader.getAllVariables();
 		variables = await this.reader.expandVariables(variables);
 		variables = variables.filter(x => !this.reader.filterVariable(x));
 		variables = variables.map(x => this.reader.processVariable(x));
@@ -125,9 +125,10 @@ export class Parser {
 		const type: string = await this.reader.getNodeType(variable);
 		let children: Variable[] = [];
 		if (variable.variablesReference > 0) {
-			let childrenVars = await this.reader.getVariables(variable.variablesReference, "named");
+			let childrenVars = await this.reader.getVariables(variable, "named");
 			if (childrenVars.length == 1 && childrenVars[0].name === '' && childrenVars[0].type === '') {
-				childrenVars = await this.reader.getVariables(childrenVars[0].variablesReference);
+				childrenVars[0] = this.reader.processVariable(childrenVars[0]);
+				childrenVars = await this.reader.getVariables(childrenVars[0]);
 			}
 			if (childrenVars) {
 				for (let childVar of childrenVars) {
@@ -153,7 +154,7 @@ export class Parser {
 
 		// if the variable has a string representation defined it will yield one child without name and type
 		if (children.length == 1 && children[0].name === '' && children[0].type === '') {
-			const childrenVars = await this.reader.getVariables(children[0].variablesReference, "named");
+			const childrenVars = await this.reader.getVariables(children[0], "named");
 			if (childrenVars) {
 				children = [];
 				for (let childVar of childrenVars) {
@@ -251,6 +252,8 @@ export class Parser {
 		layouts: Map<string, string>,
 		orientations: Map<string, string>
 	): Promise<VarNode | Node | undefined> {
+
+		variable = this.reader.processVariable(variable);
 
 		// node already visited
 		if (level > 0 && visited.has(await this.reader.getNodeId(variable))
@@ -395,10 +398,12 @@ export class Parser {
 		}
 
 		if (variable.variablesReference > 0 && level < Parser.MAX_LEVEL) {
-			let children: Variable[] = await this.reader.getVariables(variable.variablesReference);
+			let children: Variable[] = await this.reader.getVariables(variable);
 			// if the variable has a string representation defined it will yield one child without name and type
 			if (children.length == 1 && children[0].name === '' && children[0].type === '') {
-				children = await this.reader.getVariables(children[0].variablesReference);
+				children[0] = this.reader.processVariable(children[0], variable.type);
+				const newChildren = await this.reader.getVariables(children[0]);
+				children = newChildren;
 			}
 			for (let ch of children) {
 				if (this.reader.filterVariable(ch)) {
@@ -410,7 +415,7 @@ export class Parser {
 					nodesChildren.push(ch);
 				} else if (filterNodes.has(ch.name + "[]")) {
 					if (this.reader.hasChildren(ch) && ch.variablesReference > 0) {
-						const grandChildren: Variable[] = await this.reader.getVariables(ch.variablesReference, "indexed");
+						const grandChildren: Variable[] = await this.reader.getVariables(ch, "indexed");
 						for (let grandChild of grandChildren) {
 							if (this.reader.filterVariable(grandChild)) {
 								continue;
@@ -420,11 +425,11 @@ export class Parser {
 						}
 					}
 				}
-				// TODO: remove?
-				// else if ((layout == 'graph' || layout == 'tree' || layout == 'linkedlist')
-				// 	&& this.reader.isIterable(type) && filterNodes.size == 0) {
-				// 	nodesChildren.push(ch);
-				// }
+				else if ((layout == 'graph' || layout == 'tree' || layout == 'linkedlist')
+					&& this.reader.isIndexed(ch, variable) && filterNodes.size == 0
+				) {
+					nodesChildren.push(ch);
+				}
 
 				if (filterProperties.has(ch.name)) {
 					propertiesChildren.push(ch);
@@ -455,7 +460,7 @@ export class Parser {
 		}
 
 		// if its a linked list we linked the nodes
-		if (layout == 'linkedlist' && this.reader.isIterable(variable.type)) {
+		if (layout == 'linkedlist' && node.children.size > 1) {
 			let child: Node | undefined = undefined;
 			let head: Node | undefined = undefined;
 			let idx = 0;
@@ -467,7 +472,7 @@ export class Parser {
 					if (!child.children.has(chId)) {
 						child.children.set(chId, ch);
 						const edge = new Edge(node.id + "->" + chId, node.id, chId,
-							String(idx), rootVariable.name);
+							"", rootVariable.name);
 						child.childrenEdgeValues.set(chId, edge);
 					}
 					child = ch;
@@ -479,7 +484,7 @@ export class Parser {
 				if (!node.children.has(head.id)) {
 					node.children.set(head.id, head);
 					const edge = new Edge(node.id + "->" + head.id, node.id, head.id,
-						String(0), rootVariable.name);
+						"", rootVariable.name);
 					node.childrenEdgeValues.set(head.id, edge);
 				}
 			}

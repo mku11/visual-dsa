@@ -327,7 +327,7 @@ export class CsReader extends Reader {
 					});
 				}
 			}
-			const nodes = await this.getVariables(queueNodesList.variablesReference);
+			const nodes = await this.getVariables(queueNodesList);
 			return nodes;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
@@ -342,7 +342,7 @@ export class CsReader extends Reader {
 		const expVariables: Variable[] = [];
 		for (const variable of variables) {
 			if (variable.name === 'this') {
-				const childVariables = await this.getVariables(variable.variablesReference, "named");
+				const childVariables = await this.getVariables(variable, "named");
 				for (const child of childVariables) {
 					if (child.name === 'Class has no fields') {
 						continue;

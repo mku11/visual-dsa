@@ -230,7 +230,7 @@ mapRepr;
 		const expVariables: Variable[] = [];
 		for (const variable of variables) {
 			if (variable.name === 'this') {
-				const childVariables = await this.getVariables(variable.variablesReference, "named");
+				const childVariables = await this.getVariables(variable, "named");
 				for (const child of childVariables) {
 					if (child.name === 'Class has no fields') {
 						continue;

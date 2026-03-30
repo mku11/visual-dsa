@@ -119,11 +119,11 @@ export class Reader {
 				throw new Error(regTypes.result);
 			}
 			if (regTypes.variablesReference > 0) {
-				const regTypeValues = await this.getVariables(regTypes.variablesReference, "indexed");
+				const regTypeValues = await this.getVariables(regTypes, "indexed");
 				for (const regTypeValue of regTypeValues) {
 					if (this.filterVariable(regTypeValue))
 						continue;
-					const children: Variable[] = await this.getVariables(regTypeValue.variablesReference, "indexed");
+					const children: Variable[] = await this.getVariables(regTypeValue, "indexed");
 					const parts: Variable[] = [];
 					for (const child of children) {
 						if (this.filterVariable(child))
@@ -138,7 +138,7 @@ export class Reader {
 						continue;
 					const attrs: Set<string> = new Set<string>();
 					const type = this.trimQuotes(parts[0].value);
-					const attrChildren: Variable[] = await this.getVariables(parts[1].variablesReference, "indexed");
+					const attrChildren: Variable[] = await this.getVariables(parts[1], "indexed");
 					for (const attr of attrChildren) {
 						if (this.filterVariable(attr))
 							continue;
@@ -175,7 +175,7 @@ export class Reader {
 				markersValues.push([parseInt(variable.value), 0, 0]);
 			return markersValues;
 		}
-		const children = await this.getVariables(variable.variablesReference);
+		const children = await this.getVariables(variable);
 		const childrenList: Array<number> = [];
 		for (const child of children) {
 			if (this.filterVariable(child))
@@ -187,7 +187,7 @@ export class Reader {
 				if (!isNaN(parseInt(child.value)))
 					childrenList.push(parseInt(child.value));
 			} else if (layout === "array2D" || layout === "array3D") {
-				const gChildren = await this.getVariables(child.variablesReference);
+				const gChildren = await this.getVariables(child);
 				const gChildrenList: Array<number> = [];
 				for (const gChild of gChildren) {
 					if (this.filterVariable(gChild))
@@ -249,17 +249,27 @@ export class Reader {
 		return result.scopes;
 	}
 
+	async getAllVariables(): Promise<Variable[]> {
+		const scopes: Scope[] = await this.getScopes();
+		if (!scopes || scopes.length == 0) {
+			return [];
+		}
+		const variablesReference = scopes[0].variablesReference;
+		const result = await debug.activeDebugSession?.customRequest("variables", {
+			variablesReference: variablesReference,
+			filter: undefined
+		});
+		if (!result) {
+			return [];
+		}
+		return result.variables;
+	}
+
 	async getVariables(
-		variablesReference?: number,
+		variable: Variable,
 		filter?: 'indexed' | 'named'
 	): Promise<Variable[]> {
-		if (!variablesReference) {
-			const scopes: Scope[] = await this.getScopes();
-			if (!scopes || scopes.length == 0) {
-				return [];
-			}
-			variablesReference = scopes[0].variablesReference;
-		}
+		let variablesReference: number | undefined = variable?.variablesReference;
 		const result = await debug.activeDebugSession?.customRequest("variables", {
 			variablesReference: variablesReference,
 			filter: filter
@@ -386,7 +396,7 @@ export class Reader {
 				return undefined;
 			}
 			const nodes: Variable[] = [];
-			const children = await this.getVariables(result.variablesReference);
+			const children = await this.getVariables(result);
 			let idx = 0;
 			for (const child of children) {
 				if (isNaN(parseInt(child.name))) {
@@ -425,7 +435,7 @@ export class Reader {
 
 	public async getArray3DRepr(variable: Variable):
 		Promise<string[][][] | undefined> {
-		const childrenVars = await this.getVariables(variable.variablesReference);
+		const childrenVars = await this.getVariables(variable);
 		const children: string[][][] = [];
 		let idx = 0;
 		for (const childVar of childrenVars) {
@@ -458,7 +468,7 @@ export class Reader {
 		return false;
 	}
 
-	public processVariable(variable: Variable): Variable {
+	public processVariable(variable: Variable, type?: string): Variable {
 		return variable;
 	}
 
@@ -520,7 +530,7 @@ export class Reader {
 			return;
 		const plot: number[][] = [];
 		for (const point of points) {
-			const els = await this.getVariables(point.variablesReference);
+			const els = await this.getVariables(point);
 			const nums: number[] = [];
 			for (const el of els) {
 				if (!this.isIndexed(el, point))
@@ -551,6 +561,8 @@ export interface Variable {
 	namedVariables: number;
 	memoryReference: string;
 	presentationHint: any;
+	// vsa specific
+	processed: boolean;
 }
 
 export interface StackTrace {
