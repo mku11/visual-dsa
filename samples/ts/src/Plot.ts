@@ -6,22 +6,28 @@ class Arrays {
     start() {
         // 1d array
         // to convert to points:
-        // expression: arrInt
-        // select the object and choose:
-        // layout: plot
+
+        // User Settings
+        
+        // Expression: arrInt
+        
+        // Type: Array[]
+        // Layout: Plot
         // Plot Points: @points
-        // Save Object
         const arrInt: Array<number> = new Array<number>(5);
         arrInt[1] = 1;
         arrInt[2] = 212;
 
         // list of points
         // to convert to lines:
-        // expression: arrPoints
-        // select the object and choose:
-        // layout: plot
+        
+        // User Settings
+        
+        // Expression: arrPoints
+
+        // Type: Array[][]
+        // Layout: Plot
         // Plot Points: @lines
-        // Save Object
         const arrPoints: Array<Array<number>> = new Array<Array<number>>();
         arrPoints.push([2, 4]);
         arrPoints.push([1, 7]);
@@ -29,8 +35,8 @@ class Arrays {
         arrPoints.push([-4, -1]);
 
         // list of lines
-        // expression: arrLines
-        // Save Object
+        
+        // Expression: arrLines
         const arrLines: Array<Array<number>> = new Array<Array<number>>();
         arrLines.push([8, 4, 1, 8]);
         arrLines.push([5, -1, 6, 8]);

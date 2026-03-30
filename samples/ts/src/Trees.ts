@@ -6,10 +6,14 @@ class Trees {
 
     start() {
         // nodes of a tree
-        // expression: node1
-        // layout: Tree
+
+        // User Settings
+        
+        // Expression: node1
+
+        // Type: Node
+        // Layout: Tree
         // Children Nodes: children[]
-        // Click on 'Save Object Type'
         const root: Node<string> = new Node<string>("0");
         const node1: Node<string> = new Node<string>("1");
         const node2: Node<string> = new Node<string>("2");

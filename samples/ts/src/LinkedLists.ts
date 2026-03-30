@@ -2,16 +2,17 @@ class LinkedLists {
 
     public static runMain() {
         // custom linkedlist
+
+        // UI Settings
         // expression: linkedList
         
-        // Select LinkedListCustom
-        // layout: Linked List
-        // Save Object Type
+        // Type: LinkedListCustom
+        // Layout: Linked List
         
-        // Select LinkedListNode
-        // layout: Graph
+        // Type: LinkedListNode
+        // Layout: Graph
         // Children Nodes: next
-        // Save Object Type
+
         const linkedList: LinkedListCustom<string> = new LinkedListCustom<string>();
         linkedList.append("1");
         linkedList.append("2");

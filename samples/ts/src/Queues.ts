@@ -1,6 +1,13 @@
 export class Queues {
 
     public static runMain() {
+        // User Settings
+        
+        // Expression: qo
+
+        // Type: QueueNode
+        // Layout: Tree
+        // Children Nodes: children[]
         const q: string[] = [];
         q.push("1");
         q.push("3");
@@ -12,6 +19,7 @@ export class Queues {
             console.log(node);
         }
 
+        // Queue with value and priority number
         const qo: QueueNode<string, number>[] = [];
         qo.push(new QueueNode<string, number>("1", 1));
         qo.push(new QueueNode<string, number>("3", 3));

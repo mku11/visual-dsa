@@ -6,11 +6,15 @@ class Graphs {
 
     public test() {
         // nodes of a graph
+
+        // UI Settings
+
         // Expression: gnode0
-        // Select Object with type GraphNode
+        
+        // Type: GraphNode
         // Children Nodes: children[]
         // Children Edges: childrenCost[]
-        // Save Object Types
+        
         const gnode0: GraphNode<string> = new GraphNode<string>("0");
         const gnode1: GraphNode<string> = new GraphNode<string>("1");
         const gnode2: GraphNode<string> = new GraphNode<string>("2");
