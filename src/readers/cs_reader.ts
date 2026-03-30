@@ -92,35 +92,6 @@ export class CsReader extends Reader {
 		let exprName = variable.evaluateName;
 		const type = (await this.getNodeType(variable));
 
-		// extractor toString
-		if (this.registeredTypes.has(variable.type)
-			|| this.registeredTypes.has("*")) {
-			try {
-				const expr = "Extractor.ToString((" + type + ") " + exprName + ")";
-				const result = await debug.activeDebugSession?.customRequest("evaluate", {
-					expression: expr,
-					frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-					context: 'repl',
-				});
-				if ((result.result.startsWith('error '))
-					|| (result.type && result.type.includes('Exception'))) {
-					throw new Error(result.result);
-				}
-				let res = result.result;
-				if (res.startsWith("\"")) {
-					res = res.substring(1, res.length - 1);
-				}
-				return res;
-			} catch (ex: Error | unknown) {
-				if (ex instanceof Error) {
-					console.error("getVariableStrRepr1 Error: " + variable.evaluateName + ": " + ex.message);
-				} else {
-					console.error(ex);
-				}
-			}
-		}
-
-		// object toString()
 		try {
 			const expr = "((" + type + ") " + exprName + ").ToString()";
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
