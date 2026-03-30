@@ -357,7 +357,8 @@ export class CsReader extends Reader {
 	}
 
 	public isList(type: string): boolean {
-		return type.endsWith('List');
+		return type.startsWith('System.Collections.Generic.IList')
+			|| type.startsWith('System.Collections.Generic.List');
 	}
 
 	public isArray(type: string): boolean {
@@ -365,7 +366,7 @@ export class CsReader extends Reader {
 	}
 
 	public isLinkedList(type: string): boolean {
-		return type.endsWith('LinkedList');
+		return type.startsWith('System.Collections.Generic.LinkedList');
 	}
 
 	public isIterable(type: string): boolean {
@@ -376,7 +377,7 @@ export class CsReader extends Reader {
 	}
 
 	public isSet(type: string): boolean {
-		return type.endsWith('HashSet');
+		return type.startsWith('System.Collections.Generic.HashSet');
 	}
 
 	getRawType(variable: Variable) {
