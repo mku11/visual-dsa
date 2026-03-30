@@ -55,7 +55,6 @@ export class Reader {
 			}
 
 			const stackTrace = await Reader.instance?.getStackTrace(threadId);
-			console.log(stackTrace);
 			const sourceLines: string[] = await this.getSourceLines(stackTrace!);
 			const source: string[] = [];
 			let sourceStart = 0;
@@ -250,34 +249,44 @@ export class Reader {
 	}
 
 	async getAllVariables(): Promise<Variable[]> {
-		const scopes: Scope[] = await this.getScopes();
-		if (!scopes || scopes.length == 0) {
+		try {
+			const scopes: Scope[] = await this.getScopes();
+			if (!scopes || scopes.length == 0) {
+				return [];
+			}
+			const variablesReference = scopes[0].variablesReference;
+			const result = await debug.activeDebugSession?.customRequest("variables", {
+				variablesReference: variablesReference,
+				filter: undefined
+			});
+			if (!result) {
+				return [];
+			}
+			return result.variables;
+		} catch (ex) {
+			console.error(ex);
 			return [];
 		}
-		const variablesReference = scopes[0].variablesReference;
-		const result = await debug.activeDebugSession?.customRequest("variables", {
-			variablesReference: variablesReference,
-			filter: undefined
-		});
-		if (!result) {
-			return [];
-		}
-		return result.variables;
 	}
 
 	async getVariables(
 		variable: Variable,
 		filter?: 'indexed' | 'named'
 	): Promise<Variable[]> {
-		let variablesReference: number | undefined = variable?.variablesReference;
-		const result = await debug.activeDebugSession?.customRequest("variables", {
-			variablesReference: variablesReference,
-			filter: filter
-		});
-		if (!result) {
+		try {
+			let variablesReference: number | undefined = variable?.variablesReference;
+			const result = await debug.activeDebugSession?.customRequest("variables", {
+				variablesReference: variablesReference,
+				filter: filter
+			});
+			if (!result) {
+				return [];
+			}
+			return result.variables;
+		} catch (ex) {
+			console.error(ex);
 			return [];
 		}
-		return result.variables;
 	}
 
 	async getVariable(expr: string): Promise<Variable | undefined> {
