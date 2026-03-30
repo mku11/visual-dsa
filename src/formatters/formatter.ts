@@ -330,7 +330,6 @@ export class Formatter {
 		return newText;
 	}
 
-	// TODO: add orientation
 	formatArray(arr: string[],
 		orientation?: string,
 		markers?: Array<number> | undefined,
