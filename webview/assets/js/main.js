@@ -354,7 +354,8 @@ function setupVarOptions(varOptions) {
     }
 }
 
-function truncate(text) {
+function formatLabel(text) {
+    text = text.replaceAll(" ","");
     if (text && text.length > MAX_TYPE_CHARS)
         text =  "..." + text.substring(text.length - MAX_TYPE_CHARS);
     return text;
@@ -368,7 +369,7 @@ function updateVarOptions(data) {
     selectedObjectType = data.selectedObjectType;
 
     elementName.innerText = data.selectedObject;
-    elementType.innerText = truncate(data.selectedObjectType);
+    elementType.innerText = formatLabel(data.selectedObjectType);
 
     nodesSelect.innerHTML = "";
     let selectedOption;
