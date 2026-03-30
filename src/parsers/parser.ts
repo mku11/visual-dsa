@@ -62,7 +62,7 @@ export class Parser {
 		layouts: Map<string, string>,
 		orientations: Map<string, string>
 	): Promise<VarNode | undefined> {
-		console.log("parseGraph: " + variable.name);
+		console.log("parse graph: " + variable.name);
 		const graph = await this.getGraph(variable, variable,
 			0, visited,
 			filtersNodes, filtersEdges, filtersProperties, filtersPlot,

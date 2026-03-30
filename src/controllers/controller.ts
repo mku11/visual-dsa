@@ -79,7 +79,6 @@ export class Controller {
 		}, async (lines: string[], startLine: number, endLine: number) => {
 			setTimeout(async () => {
 				try {
-					console.log("dbg upd start", this.busy);
 					await this.initialize();
 					this.step();
 					this.source[this.idx] = new Source(lines, startLine, endLine);
@@ -87,7 +86,6 @@ export class Controller {
 				} catch (ex) {
 					console.error(ex);
 				}
-				console.log("dbg upd done", this.busy);
 				this.busy = false;
 			});
 		});
@@ -447,7 +445,7 @@ export class Controller {
 						break;
 				}
 			} catch (ex) {
-				console.log(ex);
+				console.error(ex);
 			}
 		});
 	}
@@ -493,11 +491,9 @@ export class Controller {
 
 	async nextStatement(step = true) {
 		if (this.busy) {
-			console.log("ns ret", this.busy);
 			return;
 		}
 		this.busy = true;
-		console.log("ns req", this.busy);
 		await this.reader.nextStatement(step);
 	}
 

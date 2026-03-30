@@ -158,7 +158,7 @@ export class Panel {
 	public updateGraph(visDiffData: VisDiffData,
 		source: Source,
 		selectedLayout: Map<string, string>) {
-		console.log("create graph");
+		console.log("update graph");
 		if (Panel.currentPanel) {
 			Panel.currentPanel._panel.webview.postMessage({
 				command: 'updateGraph',
