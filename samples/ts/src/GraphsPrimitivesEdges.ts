@@ -5,26 +5,30 @@ class GraphsPrimitivesEdges {
     }
 
     public test() {
-        // an example of a graph with hashmap primitives
-        // you can use any structure you wish and use the extractor to 
-        // bring the data on the ui
-        // the value of each key has the node value, the node childern
+        // It is preferable you use objects since 
+        // arrays are used for iterating over node collections.
+        // Though you can still use primitive arrays is you wish, see 
+        // below an extreme example of a graph using a map with primitives
+        // with the help of the Extractor to structure the nodes and edges.
 
+        // UI Settings
         // Expression: gmap
+
+        // Type: Map
         // Layout: Graph
         // Children Nodes: @customNodes
-        // Save Object Types
 
-        // Select Object with type Array[][]
+        // Type: Array[][]
         // Layout: Graph
         // Children Nodes: @customNodes
         // Children Edges: @customEdges
-        // Save Object Types
+
         const gmap = new Map<string, [string, string[], string[]] | [string]>();
-        gmap.set("1",
+        gmap.set("1", // key
+            // value
             ["1", // node
                 ["2", "3"], // nodes links
-                ["10", "20"] // corresponding edge label for each node
+                ["10", "20"] // edges for each link
             ]);
         gmap.set("2", ["2", ["3", "4"], ["30", "40"]]);
         gmap.set("3", ["3"]); // no links
@@ -44,7 +48,7 @@ export class Extractor {
         return [
             ["Map", ["customNodes"]],
             ["Array[][]", ["customNodes", "customEdges", "customValue"]],
-            ["Array[]", ["customNodes"]]
+            ["Array[]", ["customNodes", "customValue"]]
         ];
     }
 
@@ -78,6 +82,7 @@ export class Extractor {
                 }
                 return nodes;
             } else if (attr === "customEdges") {
+                // edges
                 const objObject = obj as [string, string[], string[]];
                 if (objObject.length >= 3 && objObject[2])
                     return objObject[2];
@@ -86,6 +91,7 @@ export class Extractor {
                 return [String(objObject[0])];
             }
         } else if (type === "Array[]") {
+            // value for nodes without links
             if (attr === "customValue") {
                 const objObject = obj as [string];
                 return [String(objObject[0])];
