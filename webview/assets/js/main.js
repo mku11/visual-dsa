@@ -356,7 +356,7 @@ function setupVarOptions(varOptions) {
 
 function truncate(text) {
     if (text && text.length > MAX_TYPE_CHARS)
-        text = text.substring(0, MAX_TYPE_CHARS) + "...";
+        text =  "..." + text.substring(text.length - MAX_TYPE_CHARS);
     return text;
 }
 
