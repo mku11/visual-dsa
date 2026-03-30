@@ -42,6 +42,7 @@ export class CsReader extends Reader {
 			|| variable.value === "null"
 			|| variable.name === "Raw View"
 			|| !variable.type
+			|| variable.type.includes("DebugViewDictionaryItem")
 			|| variable.type.endsWith("Exception")) {
 			return true;
 		}
@@ -73,15 +74,23 @@ export class CsReader extends Reader {
 
 	public async getNodeType(variable: Variable): Promise<string> {
 		let type = variable.type;
-		if (type.includes(" ")) {
-			type = type.split(" ")[0];
+		if (type.startsWith("object {") && type.endsWith("}")) {
+			type = type.split(" ")[1];
+			type = type.substring(1,type.length-1);
 		}
 		return type;
 	}
 
+	public async getNodeName(variable: Variable): Promise<string> {
+		let name = variable.name;
+		if (name.startsWith("[") && name.endsWith("]"))
+			name = name.substring(1, name.length - 1);
+		return name;
+	}
+
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
 		let exprName = variable.evaluateName;
-		const type = (await this.getNodeType(variable)).replaceAll("$", ".");
+		const type = (await this.getNodeType(variable));
 
 		// extractor toString
 		if (this.registeredTypes.has(variable.type)
@@ -422,7 +431,7 @@ export class CsReader extends Reader {
 
 	public isIndexed(variable: Variable, parent: Variable): boolean {
 		const parts = variable.name.split(" ");
-		if (parts.length >= 2 && parts[0].startsWith("[")
+		if (parts.length > 0 && parts[0].startsWith("[")
 			&& parts[0].endsWith("]")) {
 			if (!isNaN(parseInt(parts[0].substring(1, parts[0].length - 1)))) {
 				return true;
@@ -433,8 +442,8 @@ export class CsReader extends Reader {
 
 	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
 		let exprName = variable.evaluateName;
-		return `Extractor.Extract('${type}'
-				, '${attr}'
+		return `Extractor.Extract("${type}"
+				, "${attr}"
 				, ${exprName}
 				, ${root.evaluateName}
 				)`;

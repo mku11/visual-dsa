@@ -398,6 +398,10 @@ export class Reader {
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
+			if ((result.result.startsWith('error '))
+				|| (result.type && result.type.includes('Exception'))) {
+				throw new Error(result.result);
+			}
 			if (result.type.endsWith('Exception')) {
 				throw new Error(result.result);
 			}
@@ -408,7 +412,10 @@ export class Reader {
 			const children = await this.getVariables(result);
 			let idx = 0;
 			for (const child of children) {
-				if (isNaN(parseInt(child.name))) {
+				if (!this.isIndexed(child, result)) {
+					continue;
+				}
+				if(this.filterVariable(child)) {
 					continue;
 				}
 				child.evaluateName = expr + "[" + idx + "]";
@@ -491,6 +498,10 @@ export class Reader {
 
 	public async getNodeType(variable: Variable): Promise<string> {
 		return variable.type;
+	}
+
+	public async getNodeName(variable: Variable): Promise<string> {
+		return variable.name;
 	}
 
 	public async getNodeValue(variable: Variable): Promise<string> {
