@@ -3,9 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Queues
+internal class Queues
 {
     public static void RunMain(string[] args)
+    {
+        new Queues().Start();
+    }
+
+    public void Start()
     {
         Queue<string> q = new Queue<string>();
         q.Enqueue("1");
@@ -48,6 +53,7 @@ public class Queues
             System.Collections.Generic.Comparer<(string,int)>.
                 Create((a,b)=>a.Item2 - b.Item2));
         
+        Console.WriteLine("done");
     }
 }
 

@@ -1,28 +1,42 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public class GraphMapNodes
+internal  class GraphMapNodes
 {
 
     public static void RunMain(string[] args)
     {
+        new GraphMapNodes().Start();
+    }
 
+    public void Start()
+    {
         // graph with hashmap node
         Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> gmap
             = new Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>();
+        Dictionary<string, int> gedges = new Dictionary<string, int>();
+        Extractor.gedges = gedges;
+
+        // nodes
         GraphMapNode<string> node1 = new GraphMapNode<string>("1");
         GraphMapNode<string> node2 = new GraphMapNode<string>("2");
         GraphMapNode<string> node3 = new GraphMapNode<string>("3");
         GraphMapNode<string> node4 = new GraphMapNode<string>("4");
 
-        gmap[node1] = new List<GraphMapNode<string>>([node2, node3]);
-        gmap[node2] = new List<GraphMapNode<string>>([node3, node4]);
-        gmap[node3] = new List<GraphMapNode<string>>();
-        gmap[node4] = new List<GraphMapNode<string>>();
+        gmap.Add(node1, new List<GraphMapNode<string>>([node2, node3]));
+        gmap.Add(node2, new List<GraphMapNode<string>>([node3, node4]));
+        gmap.Add(node3, []);
+        gmap.Add(node4, []);
 
+        // edges
+        gedges.Add(node1.Value + "," + node2.Value, 100);
+        gedges.Add(node1.Value + "," + node3.Value, 200);
+        gedges.Add(node2.Value + "," + node3.Value, 300);
+        gedges.Add(node2.Value + "," + node4.Value, 400);
+
+        Console.WriteLine("done");
     }
 
     class GraphMapNode<T>
@@ -39,50 +53,84 @@ public class GraphMapNodes
     // custom extractor
     static class Extractor
     {
-        // register the custom types
-        public static IList<string> RegisterTypes()
+        internal static Dictionary<string, int> gedges;
+
+        // register the custom attributes to extract
+        // you can select these from the ui 
+        // instead of modifying your objects
+        public static object[] Register()
         {
-            return new List<string>(["Dictionary", "GraphMapNodes$GraphMapNode", "*"]);
+            return [
+                new object[]{"System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>",
+                    new string[]{"customNodes", "customValue"}},
+                new object[] {"GraphMapNodes.GraphMapNode<string>",
+                    new string[]{"customNodes", "customEdges", "customValue"}}
+            ];
         }
 
-        public static List<GraphMapNode<string>> GetNodes(
-                Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> node,
-                Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
+        public static object[] Extract(
+            string type,
+            string attr,
+            object obj,
+            object root)
         {
-            List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
-            if (root.Keys.Count > 0)
-                nodes.Add(root.Keys.First());
-            return nodes;
-        }
-
-        public static List<GraphMapNode<string>> GetNodes(
-                GraphMapNode<string> node,
-                Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
-        {
-            List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
-            if (root.ContainsKey(node))
-                nodes.AddRange(root[node]);
-            return nodes;
-        }
-
-        public static string ToString(Object node)
-        {
-            if (node.GetType() == typeof(IDictionary))
+            if (type == "System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>")
             {
-                StringBuilder sb = new StringBuilder();
-                var nodeObj = (Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>)node;
-                foreach (GraphMapNode<string> key in nodeObj.Keys)
+                if (attr == "customNodes")
                 {
-                    sb.Append(key.Value);
-                    sb.Append("\n");
+                    Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
+                        root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
+                    List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
+                    if (rootObject.Keys.Count > 0)
+                        nodes.Add(rootObject.Keys.First());
+                    return nodes.ToArray();
                 }
-                return sb.ToString();
+                else if (attr == "customValue")
+                {
+                    StringBuilder sb = new StringBuilder();
+                    var nodeObj = obj as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
+                    foreach (GraphMapNode<string> key in nodeObj.Keys)
+                    {
+                        sb.Append(key.Value);
+                        sb.Append("\n");
+                    }
+                    return new string[] { sb.ToString() };
+                }
             }
-            else if (node.GetType() == typeof(GraphMapNode<string>))
+            else if (type == "GraphMapNodes.GraphMapNode<string>")
             {
-                return ((GraphMapNode<string>)node).Value.ToString();
+                if (attr == "customNodes")
+                {
+                    Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
+                        root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
+                    GraphMapNode<string> objObject = obj as GraphMapNode<string>;
+                    List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
+                    if (rootObject.ContainsKey(objObject))
+                        nodes.AddRange(rootObject[objObject]);
+                    return nodes.ToArray();
+                }
+                if (attr == "customEdges")
+                {
+                    Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
+                        root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
+                    GraphMapNode<string> objObject = obj as GraphMapNode<string>;
+
+                    List<int> edges = new List<int>();
+                    foreach (GraphMapNode<string> child in rootObject[objObject])
+                    {
+                        string edgeKey = objObject.Value + "," + child.Value;
+                        int edgeValue = Extractor.gedges[edgeKey];
+                        edges.Add(edgeValue);
+                    }
+                    return edges.Select(x=>(object)x).ToArray();
+                }
+                else if (attr == "customValue")
+                {
+                    GraphMapNode<string> objObject = obj as GraphMapNode<string>;
+                    return new string[] { objObject.Value.ToString() };
+                }
             }
-            return "";
+            return null;
         }
     }
 }

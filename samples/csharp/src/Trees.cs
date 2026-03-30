@@ -1,9 +1,14 @@
 using System;
 using System.Collections.Generic;
 
-public class Trees
+internal class Trees
 {
     public static void RunMain(string[] args)
+    {
+        new Trees().Start();
+    }
+
+    public void Start()
     {
         // // nodes of a tree
         Node<string> root = new Node<string>("0");
@@ -23,6 +28,8 @@ public class Trees
         // // wrap to a tree
         Tree<string> tree = new Tree<string>(root);
         visitTree(tree.Root, tree.Root);
+
+        Console.WriteLine("done");
     }
 
     private static void visitTree(Node<String> node, Node<String> root)
@@ -35,23 +42,6 @@ public class Trees
         foreach (Node<string> child in node.children)
         {
             visitTree(child, root);
-        }
-    }
-
-    // custom extractor
-    static class Extractor
-    {
-
-        // register the custom types
-        public static IList<string> registerTypes()
-        {
-            return new List<string>([
-                    "TreeNode"]);
-        }
-
-        public static string ToString(string type, Node<string> node)
-        {
-            return node.Value.ToString();
         }
     }
 }
@@ -82,8 +72,4 @@ class Node<T>
     {
         children.Add(value);
     }
-
-    // public string ToString() {
-    // return this.value.ToString();
-    // }
 }

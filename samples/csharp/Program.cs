@@ -27,8 +27,6 @@ namespace Demo
                 Primitives.RunMain(args);
             else if (args[0] == "GraphMapNodes")
                 GraphMapNodes.RunMain(args);
-            else if (args[0] == "GraphsPrimitivesEdges")
-                GraphsPrimitivesEdges.RunMain(args);
             else if (args[0] == "DoublyLinkedLists")
                 DoublyLinkedLists.RunMain(args);
             else if (args[0] == "Queues")

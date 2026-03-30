@@ -1,8 +1,13 @@
 using System;
 using System.Collections.Generic;
-public class Graphs
+internal class Graphs
 {
     public static void RunMain(string[] args)
+    {
+        new Graphs().Start();
+    }
+
+    public void Start()
     {
         // nodes of a graph
         GraphNode<string> gnode0 = new GraphNode<string>("0");
@@ -26,6 +31,8 @@ public class Graphs
         gnode2.Add(new GraphNode<string>("7"), 13);
 
         Bfs(gnode0);
+
+        Console.WriteLine("done");
     }
 
     static void Bfs(GraphNode<string> node)
@@ -86,25 +93,6 @@ public class Graphs
         public override string ToString()
         {
             return this.Value.ToString();
-        }
-    }
-
-    // custom extractor
-    static class Extractor
-    {
-        // register the custom types
-        public static IList<string> registerTypes()
-        {
-            return new List<string>(["GraphNode"]);
-        }
-
-        public static string tostring(object node)
-        {
-            if (node.GetType() == typeof(GraphNode<string>))
-            {
-                return ((GraphNode<string>)node).Value.ToString();
-            }
-            return "";
         }
     }
 }

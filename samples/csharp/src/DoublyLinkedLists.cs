@@ -6,6 +6,11 @@ public class DoublyLinkedLists
 
     public static void RunMain(string[] args)
     {
+        new DoublyLinkedLists().Start();
+    }
+
+    public void Start()
+    {
         // custom linkedlist
         DoublyLinkedList<string> linkedList = new DoublyLinkedList<string>();
         for (int i = 0; i < 7; i++)

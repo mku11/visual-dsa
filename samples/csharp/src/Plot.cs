@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 
-public class Plot
+internal class Plot
 {
-    public static void RunMain(String[] args)
+    public static void RunMain(string[] args)
     {
-        new Plot().Test();
+        new Plot().Start();
     }
 
-    void Test()
+    void Start()
     {
         // 1d array
         // to convert to points see Extractor
@@ -33,57 +33,69 @@ public class Plot
 
         Console.WriteLine("done");
     }
-}
 
-// custom extractor
-class Extractor
-{
 
-    // register the types
-    public static string[] RegisterTypes()
+    // custom extractor
+    static class Extractor
     {
-        return new string[] {
-                // uncomment for custom conversions, see below
-                "int?[]", "System.Collections.Generic.List<System.Collections.Generic.List<int>>"
-        };
-    }
+        internal static Dictionary<string, int> gedges;
 
-    public static List<int[]> GetPlotPoints(
-            int?[] obj,
-            Object root)
-    {
-        // convert list of numbers to list of points (i,xi)
-        List<int[]> nodes = new List<int[]>();
-        for (int i = 0; i < obj.Length; i++)
+        // register the custom attributes to extract
+        // you can select these from the ui 
+        // instead of modifying your objects
+        public static object[] Register()
         {
-            if (obj[i] != null)
-            {
-                nodes.Add([i, (int)obj[i]]);
-            }
+            return [
+                new object[]{"int?[]",
+                    new string[]{"points"}},
+                new object[] {"System.Collections.Generic.List<System.Collections.Generic.List<int>>",
+                    new string[]{"lines"}}
+            ];
         }
-        return nodes;
-    }
 
-    public static List<int[]> GetPlotLines(
-            List<List<int>> obj,
-            Object root)
-    {
-        if (obj[0].Count != 2)
+        public static object[] Extract(
+            string type,
+            string attr,
+            object obj,
+            object root)
         {
+            if (type == "int?[]")
+            {
+                if (attr == "points")
+                {
+                    // convert list of numbers to list of points (i,xi)
+                    int?[] objObject = obj as int?[];
+                    List<int[]> nodes = new List<int[]>();
+                    for (int i = 0; i < objObject.Length; i++)
+                    {
+                        if (objObject[i] != null)
+                        {
+                            nodes.Add([i, (int)objObject[i]]);
+                        }
+                    }
+                    return nodes.ToArray();
+                }
+            }
+            else if (type == "System.Collections.Generic.List<System.Collections.Generic.List<int>>")
+            {
+                if (attr == "lines")
+                {
+                    // convert list of points to list of lines
+                    List<List<int>> objObject = obj as List<List<int>>;
+                    List<int[]> nodes = new List<int[]>();
+                    for (int i = 0; i < objObject.Count - 1; i++)
+                    {
+                        nodes.Add([
+                            objObject[i][0],
+                            objObject[i][1],
+                            objObject[i + 1][0],
+                            objObject[i + 1][1]
+                        ]);
+                    }
+                    return nodes.ToArray();
+                }
+            }
             return null;
         }
-
-        // convert list of points to list of lines
-        List<int[]> nodes = new List<int[]>();
-        for (int i = 0; i < obj.Count - 1; i++)
-        {
-            nodes.Add([
-                    obj[i][0],
-                    obj[i][1],
-                    obj[i + 1][0],
-                    obj[i + 1][1]
-            ]);
-        }
-        return nodes;
     }
 }

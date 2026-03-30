@@ -1,13 +1,13 @@
 using System;
 
-public class Arrays {
+class Arrays {
     char[][] arrChar2D;
 
     public static void RunMain(string[] args) {
-        new Arrays().Test();
+        new Arrays().Start();
     }
 
-    public void Test() {
+    public void Start() {
         string[] arrString = new string[5];
         arrString[1] = "one";
         arrString[2] = "two";

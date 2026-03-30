@@ -1,22 +1,22 @@
 using System;
 using System.Collections.Generic;
 
-public class Lists
+internal class Lists
 {
     List<List<int>> listOfLists;
-    public static void RunMain(String[] args)
+    public static void RunMain(string[] args)
     {
-        new Lists().Test();
+        new Lists().Start();
     }
 
-    public void Test()
+    public void Start()
     {
-        // // list
+        // list
         List<int> arrayList = new List<int>();
         arrayList.Add(1);
         arrayList.Add(2);
 
-        // // // list of lists
+        // list of lists
         listOfLists = new List<List<int>>();
         List<int> a1 = new List<int>();
         a1.Add(1);
@@ -26,5 +26,7 @@ public class Lists
         a2.Add(4);
         listOfLists.Add(a1);
         listOfLists.Add(a2);
+
+        Console.WriteLine("done");
     }
 }

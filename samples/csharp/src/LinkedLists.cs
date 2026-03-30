@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
 
-public class LinkedLists
+internal class LinkedLists
 {
 
     public static void RunMain(string[] args)
+    {
+        new LinkedLists().Start();
+    }
+
+    public void Start()
     {
         // custom linkedlist
         LinkedListCustom<string> linkedList = new LinkedListCustom<string>();
@@ -16,7 +21,6 @@ public class LinkedLists
         LinkedListCustom<string>.LinkedListNode<string> head = linkedList.Head;
         while (head != null)
         {
-            Console.WriteLine(head.Value);
             if (head.Value.Equals("3"))
             {
                 head.insertNext(new LinkedListCustom<string>.LinkedListNode<string>("5"));
@@ -25,30 +29,14 @@ public class LinkedLists
             head = head.Next;
         }
 
-        // JDK linked list
+        // .NET linked list
         LinkedList<string> linkedList2 = new LinkedList<string>();
         linkedList2.AddLast("1");
         linkedList2.AddLast("2");
         linkedList2.AddLast("3");
         linkedList2.AddLast("4");
-    }
 
-    // custom extractor
-    class Extractor
-    {
-
-        // register the custom types
-        public static IList<string> registerTypes()
-        {
-            return new List<string>([
-                    "LinkedListCustom$LinkedListNode"]);
-        }
-
-        public static string toString(LinkedListCustom<string>.LinkedListNode<string> node)
-        {
-            return node.Value.ToString();
-        }
-
+        Console.WriteLine("done");
     }
 }
 
