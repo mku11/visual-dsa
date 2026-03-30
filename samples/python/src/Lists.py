@@ -3,9 +3,9 @@ class Lists:
 
     @staticmethod
     def run_main():
-        Lists().test()
+        Lists().start()
 
-    def test(self):
+    def start(self):
         arrString: list[str] = [None] * 5
         arrString[1] = "one"
         arrString[2] = "two"
@@ -60,5 +60,5 @@ class Lists:
         arr3D[1][2][2] = 21
         arr3D[1][2][3] = 31
 
-
+        print("done")
 Lists.run_main()

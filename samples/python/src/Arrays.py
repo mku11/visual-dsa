@@ -5,9 +5,9 @@ class Arrays:
 
     @staticmethod
     def runMain():
-        Arrays().test()
+        Arrays().start()
 
-    def test(self):
+    def start(self):
         # byte array
         arrInt: bytearray = bytearray([0] * 5)
         arrInt[1] = 1
@@ -37,4 +37,5 @@ class Arrays:
         arr3D[1][2][2] = 2
         arr3D[1][2][3] = 3
 
+        print("done")
 Arrays().runMain()

@@ -10,6 +10,9 @@ class GraphMapNodes:
 
     @staticmethod
     def run_main():
+        GraphMapNodes().start()
+
+    def start(self):
 
         # graph with hashmap node
         gmap: dict[

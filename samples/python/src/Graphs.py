@@ -5,10 +5,14 @@ from queue import Queue
 
 T = TypeVar("T")
 
+
 class Graphs:
 
     @staticmethod
     def run_main():
+        Graphs().start()
+
+    def start(self):
         # nodes of a graph
         gnode0 = Graphs.GraphNode[str]("0")
         gnode1 = Graphs.GraphNode[str]("1")
@@ -32,6 +36,7 @@ class Graphs:
         gnode2.add(Graphs.GraphNode[str]("7"), 13)
 
         Graphs.bfs(gnode0)
+        print("done")
 
     @staticmethod
     def bfs(node: Graphs.GraphNode[str]):
@@ -76,17 +81,5 @@ class Graphs:
         def __str__(self):
             return str(self.value)
 
-# custom extractor
-class Extractor:
-    # register the custom types
-    @staticmethod
-    def register_types() -> list[str]:
-        return ["GraphNode"]
-
-    @staticmethod
-    def __str__(node: any):
-        if type(node) == Graphs.GraphNode:
-            return str(node.get_value())
-        return ""
 
 Graphs.run_main()

@@ -1,6 +1,9 @@
 class GraphsPrimitivesEdges:
     @staticmethod
     def run_main():
+        GraphsPrimitivesEdges().start()
+
+    def start(self):
         # graph with hashmap primitives
         gmap: dict[str, list[list[str]]] = {}
         gmap["1"] = [["2", "3"], ["10", "20"]]
@@ -8,6 +11,9 @@ class GraphsPrimitivesEdges:
         gmap["3"] = []
         gmap["4"] = []
         gmap["5"] = []
+
+        print("done")
+
 
 # custom extractor
 class Extractor:

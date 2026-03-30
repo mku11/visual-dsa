@@ -11,6 +11,9 @@ class Queues:
 
     @staticmethod
     def run_main():
+        Queues().start()
+
+    def start(self):
         q: Queue[str] = Queue[str]()
         q.put("1")
         q.put("3")
@@ -40,6 +43,8 @@ class Queues:
         while len(pq.queue) > 0:
             value = pq.get()
             print(value)
+
+        print("done")
 
 class QueueNode(Generic[T, S]):
     def __init__(self, value: T, data: S):

@@ -9,6 +9,9 @@ class DoublyLinkedLists:
 
     @staticmethod
     def run_main():
+        DoublyLinkedLists().start()
+
+    def start(self):
         # custom linkedlist
         linkedList = DoublyLinkedLists.DoublyLinkedList[str]()
         for i in range(10):
@@ -21,6 +24,7 @@ class DoublyLinkedLists:
                 node.insert_next(DoublyLinkedLists.Node[str]("50"))
                 break
             node = node.get_next()
+        print("done")
 
     class DoublyLinkedList(Generic[T]):
 
@@ -53,7 +57,7 @@ class DoublyLinkedLists:
             return self.value
 
         def get_next(self) -> DoublyLinkedLists.Node[T]:
-            return next
+            return self.next
 
         def get_prev(self) -> DoublyLinkedLists.Node[T]:
             return self.prev
@@ -68,17 +72,5 @@ class DoublyLinkedLists:
 
         def __str__(self) -> str:
             return str(self.value)
-
-    # custom extractor
-    class Extractor:
-
-        # register the custom types
-        @staticmethod
-        def register_types() -> list[str]:
-            return ["DoublyLinkedListNode"]
-
-        def __str__(node: DoublyLinkedLists.Node[str]):
-            return str(node.get_value())
-
 
 DoublyLinkedLists.run_main()

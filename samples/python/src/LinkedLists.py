@@ -8,6 +8,9 @@ class LinkedLists:
 
     @staticmethod
     def run_main():
+        LinkedLists().start()
+
+    def start(self):
         # custom linkedlist
         linkedList: LinkedListCustom[str] = LinkedListCustom[str]()
         linkedList.append("1")
@@ -30,17 +33,7 @@ class LinkedLists:
         linkedList2.append("3")
         linkedList2.append("4")
 
-# custom extractor
-class Extractor:
-
-    # register the custom types
-    @staticmethod
-    def register_types() -> list[str]:
-        return ["LinkedListNode"]
-
-    @staticmethod
-    def __str__(node: LinkedListCustom.LinkedListNode[str]) -> str:
-        return str(node.get_value())
+        print("done")
 
 class LinkedListCustom(Generic[T]):
 

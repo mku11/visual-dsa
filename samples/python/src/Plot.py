@@ -4,12 +4,12 @@ from typing import Any, List
 class Arrays:
     @staticmethod
     def run_main():
-        Arrays().test()
+        Arrays().start()
 
-    def test(self):
+    def start(self):
         # 1d array
         # to convert to points see Extractor
-        arrInt: List[int] = [None]*5
+        arrInt: List[int] = [None] * 5
         arrInt[1] = 1
         arrInt[2] = 212
 
@@ -38,7 +38,8 @@ class Extractor:
     def register_types() -> List[str]:
         return [
             # uncomment for custom conversions, see below
-            "list[]", "list[][]"
+            "list[]",
+            "list[][]",
         ]
 
     @staticmethod
