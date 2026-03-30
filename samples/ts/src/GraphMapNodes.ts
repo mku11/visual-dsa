@@ -28,13 +28,14 @@ class GraphMapNodes {
         gmap.set(node1, [node2, node3]);
         gmap.set(node2, [node3, node4]);
         gmap.set(node3, []);
+        gmap.set(node4, []);
 
         // edges
         gedges.set(node1.getValue() + "," + node2.getValue(), 100);
         gedges.set(node1.getValue() + "," + node3.getValue(), 200);
         gedges.set(node2.getValue() + "," + node3.getValue(), 300);
         gedges.set(node2.getValue() + "," + node4.getValue(), 400);
-        gmap.set(node4, []);
+        
 
         console.log("done");
     }
