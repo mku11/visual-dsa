@@ -6,9 +6,12 @@ class GraphsPrimitivesEdges:
     def start(self):
         # graph with hashmap primitives
         gmap: dict[str, list[list[str]]] = {}
-        gmap["1"] = [["2", "3"], ["10", "20"]]
+        gmap["1"] = [  # node value
+            ["2", "3"],  # children nodes
+            ["10", "20"],  # chidlren edges
+        ]
         gmap["2"] = [["3", "4"], ["30", "40"]]
-        gmap["3"] = []
+        gmap["3"] = []  # no children nodes
         gmap["4"] = []
         gmap["5"] = []
 
@@ -17,44 +20,38 @@ class GraphsPrimitivesEdges:
 
 # custom extractor
 class Extractor:
-    # register the custom types
+    # register the custom attributes
     @staticmethod
-    def register_types():
-        return ["dict", "str"]
+    def register() -> list[list[str, list[str]]]:
+        return [
+            ["dict", ["customNodes"]],
+            ["str", ["customNodes", "customEdges"]],
+        ]
 
     @staticmethod
-    def get_nodes(node: any, root: dict[str, list[list[str]]]):
-        if isinstance(node, dict):
+    def extract(
+        type: str, attr: str, obj: object, root: object
+    ) -> list[str] | list[int] | list[object] | None:
+
+        print("extract:", type, attr)
+        if type == "dict" and attr == "customNodes":
+            rootObject: dict[str, list[list[str]]] = root
             nodes: list[str] = []
-            for k in root.keys():
+            for k in rootObject.keys():
                 nodes.append(k)
                 break
             return nodes
-        elif isinstance(node, str):
-            nodes: list[str] = []
-            nodeObj: str = node
-            if nodeObj in root:
-                if len(root[nodeObj]) >= 1:
-                    return root[nodeObj][0]
-        return []
-
-    def get_edges(node: any, root: dict[str, list[list[str]]]):
-        if isinstance(node, dict):
-            return [""]
-        elif isinstance(node, str):
-            nodeObj: str = node
-            if nodeObj in root:
-                if len(root[nodeObj]) == 2:
-                    return root[nodeObj][1]
-        return []
-
-    @staticmethod
-    def __str__(node: str) -> str:
-        if isinstance(node, dict):
-            return ""
-        elif isinstance(node, list):
-            return str(node[0])
-        return ""
+        elif type == "str" and attr == "customNodes":
+            rootObject: dict[str, list[list[str]]] = root
+            objObject: str = obj
+            nodes: list[list[str]] | None = rootObject.get(objObject)
+            if objObject in root and len(root[objObject]) >= 1:
+                return root[objObject][0]
+        elif type == "str" and attr == "customEdges":
+            rootObject: dict[str, list[list[str]]] = root
+            objObject: str = obj
+            if objObject in root and len(rootObject[objObject]) == 2:
+                return rootObject[objObject][1]
 
 
 GraphsPrimitivesEdges.run_main()
