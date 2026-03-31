@@ -62,7 +62,7 @@ public class GraphMapNodes {
                 var nodeObj = ((HashMap<GraphMapNode<String>, List<GraphMapNode<String>>>) node);
                 for (GraphMapNode<String> key : nodeObj.keySet()) {
                     sb.append(key.value);
-                    sb.append("\n");
+                    sb.append(",");
                 }
                 return sb.toString();
             } else if (node instanceof GraphMapNode) {

@@ -35,7 +35,6 @@ class GraphMapNodes {
         gedges.set(node1.getValue() + "," + node3.getValue(), 200);
         gedges.set(node2.getValue() + "," + node3.getValue(), 300);
         gedges.set(node2.getValue() + "," + node4.getValue(), 400);
-        
 
         console.log("done");
     }
@@ -91,7 +90,7 @@ export class Extractor {
                 const objObject = obj as Map<GraphMapNode<string>, Array<GraphMapNode<string>>>;
                 for (const key of objObject.keys()) {
                     if (sb.length > 0)
-                        sb += "\n";
+                        sb += ",";
                     sb += key.getValue();
                 }
                 return [sb];

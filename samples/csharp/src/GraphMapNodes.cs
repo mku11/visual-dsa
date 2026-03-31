@@ -92,7 +92,7 @@ internal  class GraphMapNodes
                     foreach (GraphMapNode<string> key in nodeObj.Keys)
                     {
                         sb.Append(key.Value);
-                        sb.Append("\n");
+                        sb.Append(",");
                     }
                     return new string[] { sb.ToString() };
                 }
