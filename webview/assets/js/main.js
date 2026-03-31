@@ -355,9 +355,9 @@ function setupVarOptions(varOptions) {
 }
 
 function formatLabel(text) {
-    text = text.replaceAll(" ","");
+    text = text.replaceAll(" ", "");
     if (text && text.length > MAX_TYPE_CHARS)
-        text =  "..." + text.substring(text.length - MAX_TYPE_CHARS);
+        text = "..." + text.substring(text.length - MAX_TYPE_CHARS);
     return text;
 }
 
@@ -372,33 +372,27 @@ function updateVarOptions(data) {
     elementType.innerText = formatLabel(data.selectedObjectType);
 
     nodesSelect.innerHTML = "";
-    let selectedOption;
     for (let node of data.nodes) {
         var option = document.createElement('option');
         option.value = node;
         option.innerHTML = node;
         if (data.selectedNodes.includes(node))
-            selectedOption = option;
+            option.selected = true;
         nodesSelect.appendChild(option);
     }
-    if (selectedOption)
-        selectedOption.selected = true;
-    else
+    if (data.selectedNodes.length == 0)
         nodesSelect.selectedIndex = -1;
 
     edgesSelect.innerHTML = "";
-    selectedOption = undefined;
     for (let property of data.edges) {
         var option = document.createElement('option');
         option.value = property;
         option.innerHTML = property;
         if (data.selectedEdges.includes(property))
-            selectedOption = option;
+            option.selected = true;
         edgesSelect.appendChild(option);
     }
-    if (selectedOption)
-        selectedOption.selected = true;
-    else
+    if (data.selectedEdges.length == 0)
         edgesSelect.selectedIndex = -1;
 
     properties.innerHTML = "";
@@ -412,18 +406,15 @@ function updateVarOptions(data) {
     }
 
     plotSelect.innerHTML = "";
-    selectedOption = undefined;
     for (let property of data.plot) {
         var option = document.createElement('option');
         option.value = property;
         option.innerHTML = property;
         if (data.selectedPlot.includes(property))
-            selectedOption = option;
+            option.selected = true;
         plotSelect.appendChild(option);
     }
-    if (selectedOption)
-        selectedOption.selected = true;
-    else
+    if (data.selectedPlot.length == 0)
         plotSelect.selectedIndex = -1;
 
     layoutSelect.value = data.selectedLayout;
