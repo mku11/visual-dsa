@@ -23,7 +23,7 @@ internal class Graphs
         gnode1.Add(gnode4, 45);
         gnode4.Add(gnode2, 55);
 
-        // // wrap to a graph
+        // wrap to a graph
         Graph<string> graph = new Graph<string>(gnode0);
         GraphNode<string> graphRoot = graph.Root;
         graphRoot.Add(new GraphNode<string>("5"), 11);

@@ -74,6 +74,7 @@ internal class GraphMapNodes
             object obj,
             object root)
         {
+            Console.WriteLine("extract: " + type + ", " + attr);
             if (type == "System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>"
              && attr == "customNodes")
             {
@@ -122,7 +123,7 @@ internal class GraphMapNodes
                 }
                 return edges.Select(x => (object)x).ToArray();
             }
-            else if (attr == "customValue")
+            else if (type == "GraphMapNodes.GraphMapNode<string>" && attr == "customValue")
             {
                 GraphMapNode<string> objObject = obj as GraphMapNode<string>;
                 return new string[] { objObject.Value.ToString() };

@@ -38,8 +38,6 @@ internal class Plot
     // custom extractor
     static class Extractor
     {
-        internal static Dictionary<string, int> gedges;
-
         // register the custom attributes to extract
         // you can select these from the ui 
         // instead of modifying your objects
@@ -59,6 +57,7 @@ internal class Plot
             object obj,
             object root)
         {
+            Console.WriteLine("extract: " + type + ", " + attr);
             if (type == "int?[]" && attr == "points")
             {
                 // convert list of numbers to list of points (i,xi)
