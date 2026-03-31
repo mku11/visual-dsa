@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-internal  class GraphMapNodes
+internal class GraphMapNodes
 {
 
     public static void RunMain(string[] args)
@@ -74,61 +74,58 @@ internal  class GraphMapNodes
             object obj,
             object root)
         {
-            if (type == "System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>")
+            if (type == "System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>"
+             && attr == "customNodes")
             {
-                if (attr == "customNodes")
-                {
-                    Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
-                        root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
-                    List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
-                    if (rootObject.Keys.Count > 0)
-                        nodes.Add(rootObject.Keys.First());
-                    return nodes.ToArray();
-                }
-                else if (attr == "customValue")
-                {
-                    StringBuilder sb = new StringBuilder();
-                    var nodeObj = obj as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
-                    foreach (GraphMapNode<string> key in nodeObj.Keys)
-                    {
-                        sb.Append(key.Value);
-                        sb.Append(",");
-                    }
-                    return new string[] { sb.ToString() };
-                }
+                Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
+                    root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
+                List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
+                if (rootObject.Keys.Count > 0)
+                    nodes.Add(rootObject.Keys.First());
+                return nodes.ToArray();
             }
-            else if (type == "GraphMapNodes.GraphMapNode<string>")
+            else if (type == "System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>"
+            && attr == "customValue")
             {
-                if (attr == "customNodes")
+                StringBuilder sb = new StringBuilder();
+                var nodeObj = obj as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
+                foreach (GraphMapNode<string> key in nodeObj.Keys)
                 {
-                    Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
-                        root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
-                    GraphMapNode<string> objObject = obj as GraphMapNode<string>;
-                    List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
-                    if (rootObject.ContainsKey(objObject))
-                        nodes.AddRange(rootObject[objObject]);
-                    return nodes.ToArray();
+                    sb.Append(key.Value);
+                    sb.Append(",");
                 }
-                if (attr == "customEdges")
-                {
-                    Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
-                        root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
-                    GraphMapNode<string> objObject = obj as GraphMapNode<string>;
+                return new string[] { sb.ToString() };
+            }
 
-                    List<int> edges = new List<int>();
-                    foreach (GraphMapNode<string> child in rootObject[objObject])
-                    {
-                        string edgeKey = objObject.Value + "," + child.Value;
-                        int edgeValue = Extractor.gedges[edgeKey];
-                        edges.Add(edgeValue);
-                    }
-                    return edges.Select(x=>(object)x).ToArray();
-                }
-                else if (attr == "customValue")
+            else if (type == "GraphMapNodes.GraphMapNode<string>" && attr == "customNodes")
+            {
+                Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
+                    root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
+                GraphMapNode<string> objObject = obj as GraphMapNode<string>;
+                List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
+                if (rootObject.ContainsKey(objObject))
+                    nodes.AddRange(rootObject[objObject]);
+                return nodes.ToArray();
+            }
+            if (type == "GraphMapNodes.GraphMapNode<string>" && attr == "customEdges")
+            {
+                Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
+                    root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
+                GraphMapNode<string> objObject = obj as GraphMapNode<string>;
+
+                List<int> edges = new List<int>();
+                foreach (GraphMapNode<string> child in rootObject[objObject])
                 {
-                    GraphMapNode<string> objObject = obj as GraphMapNode<string>;
-                    return new string[] { objObject.Value.ToString() };
+                    string edgeKey = objObject.Value + "," + child.Value;
+                    int edgeValue = Extractor.gedges[edgeKey];
+                    edges.Add(edgeValue);
                 }
+                return edges.Select(x => (object)x).ToArray();
+            }
+            else if (attr == "customValue")
+            {
+                GraphMapNode<string> objObject = obj as GraphMapNode<string>;
+                return new string[] { objObject.Value.ToString() };
             }
             return null;
         }

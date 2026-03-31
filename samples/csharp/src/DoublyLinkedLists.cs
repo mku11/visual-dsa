@@ -79,20 +79,4 @@ public class DoublyLinkedLists
             return Value.ToString();
         }
     }
-
-    // custom extractor
-    static class Extractor
-    {
-
-        // register the custom types
-        public static List<string> RegisterTypes()
-        {
-            return ["DoublyLinkedListCustom.DoublyLinkedListNode"];
-        }
-
-        public static string ToString(string type, Node<string> node)
-        {
-            return node.Value.ToString();
-        }
-    }
 }
