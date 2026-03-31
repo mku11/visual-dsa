@@ -263,6 +263,10 @@ export class Controller {
 				if (prevNode && prevNode.label !== currNode.label) {
 					currNode.labelDiff = this.getDiffString(currNode.label, prevNode.label);
 					diffData.updateNodes.push(currNode);
+				} else if (prevNode &&
+					prevNode?.labelMarkers.map(x => x.start + "," + x.end).join(':')
+					!== currNode?.labelMarkers.map(x => x.start + "," + x.end).join(':')) {
+					diffData.updateNodes.push(currNode);
 				}
 			}
 		}
