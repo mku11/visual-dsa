@@ -27,7 +27,7 @@ import { Reader, Variable } from "./reader";
 
 export class JavaReader extends Reader {
 	private static excludeVariableTypes = new Set([
-		"Class", "Object", "Object[]"
+		"Class",
 	]);
 	constructor() {
 		super();
@@ -42,32 +42,9 @@ export class JavaReader extends Reader {
 		}
 		const type = variable.type.replaceAll("$", ".");
 
-		// extractor toString
-		if (this.registeredTypes.has(variable.type)) {
-			try {
-				const expr = "Extractor.toString((" + type + ") " + exprName + ")";
-				const result = await debug.activeDebugSession?.customRequest("evaluate", {
-					expression: expr,
-					frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-					context: 'repl',
-				});
-				let res = result.result;
-				if (res.startsWith("\"")) {
-					res = res.substring(1, res.length - 1);
-				}
-				return res;
-			} catch (ex: Error | unknown) {
-				if (ex instanceof Error) {
-					console.error("getVariableStrRepr1 Error: " + variable.evaluateName + ": " + ex.message);
-				} else {
-					console.error(ex);
-				}
-			}
-		}
-
 		// object toString()
 		try {
-			const expr = "((" + type + ") " + exprName + ").toString()";
+			const expr = `((${type}) ${exprName}).toString()`;
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
@@ -482,7 +459,7 @@ return mapRepr.toString();
 
 	public async getNodeId(variable: Variable): Promise<string> {
 		try {
-			const name = variable.evaluateName;
+			let name = variable.evaluateName;
 			let expr = `System.identityHashCode(${name})`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const currNodeId = await debug.activeDebugSession?.customRequest("evaluate", {
@@ -501,6 +478,12 @@ return mapRepr.toString();
 		}
 		return "";
 	}
+	
+	public async getNodeType(variable: Variable): Promise<string> {
+		let type = variable.type.replaceAll("$",".");
+		return type;
+	}
+
 
 	public isList(type: string): boolean {
 		return type.endsWith('List');
@@ -567,30 +550,10 @@ return mapRepr.toString();
 
 	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
 		let exprName = variable.evaluateName;
-		return `Extractor.extract('${type}'
-				, '${attr}'
+		return `Extractor.extract("${type}"
+				, "${attr}"
 				, ${exprName}
 				, ${root.evaluateName}
 				)`;
-	}
-
-	async getVariables(
-		variable: Variable,
-		filter?: 'indexed' | 'named'
-	): Promise<Variable[]> {
-		// for nested calls to properties (ie for linked list and graphs)
-		// the java debugger complaints about resolving types
-		// so we try getting a new variable with the casted evaluation name
-		// then we get the children variables with the inherited evaluation name
-		if (variable && variable.type) {
-			const newVariable: Variable = {} as Variable;
-			Object.assign(newVariable, variable);
-			const type = variable.type.replaceAll("$", ".");
-			newVariable.evaluateName = "((" + type + ") " + variable.evaluateName + ")";
-			const castedVariable: Variable | undefined = await this.getVariable(newVariable.evaluateName);
-			if (castedVariable)
-				variable = castedVariable;
-		}
-		return super.getVariables(variable);
 	}
 }
