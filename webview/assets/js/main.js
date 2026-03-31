@@ -327,6 +327,7 @@ function setupVarOptions(varOptions) {
         option.value = child.value;
         variable.appendChild(option);
     }
+    variable.selectedIndex = -1;
     let variableInput = varOptions.getElementsByClassName("variable-input")[0];
     variableInput.value = "";
 
@@ -346,11 +347,12 @@ function setupVarOptions(varOptions) {
     removeVariable.onclick = (e) => {
         if (varsOptions.children.length > 1) {
             varsOptions.removeChild(varOptions);
-            sendOptionChanged('selectedVariables', '',
-                Array.from(varsOptions.getElementsByClassName("variable-input")).map((x) => x.value));
         } else {
             variableInput.value = "";
+            variable.selectedIndex = -1;
         }
+        sendOptionChanged('selectedVariables', '',
+            Array.from(varsOptions.getElementsByClassName("variable-input")).map((x) => x.value));
     }
 }
 
