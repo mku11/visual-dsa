@@ -91,6 +91,9 @@ vsce publish
 
 For more info see: https://code.visualstudio.com/api/working-with-extensions/publishing-extension
 
+## Installation
+Click on Extensions on the left side in VS Code and click on the menu option "Install from VSIX".
+
 ## License:
 Visual DSA is released under MIT License.  
 Code includes other projects with their own license:  
