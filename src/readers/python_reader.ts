@@ -302,6 +302,9 @@ export class PythonReader extends Reader {
 		if (variable.name.startsWith("__") && variable.name.endsWith("__")) {
 			return true;
 		}
+		if (variable.name.startsWith("<__main__.")) {
+			return true;
+		}
 		if (variable.name.endsWith("()")) {
 			return true;
 		}
@@ -396,8 +399,8 @@ export class PythonReader extends Reader {
 
 	public isIndexed(variable: Variable, parent: Variable): boolean {
 		const parts = variable.name.split(" ");
-		if (parts.length >= 2 && parts[0].startsWith("[")
-			&& parts[0].endsWith("]")) {
+		if ((parts[0].startsWith("[") && parts[0].endsWith("]"))
+			|| (parts[0].startsWith("'") && parts[0].endsWith("'"))) {
 			const val = parts[0].substring(1, parts[0].length - 1)
 			const valParts = val.split(":");
 			if (valParts.length == 1 && !isNaN(parseInt(valParts[0]))) {
