@@ -56,44 +56,38 @@ export class Extractor {
         obj: object,
         root: object
     ): string[] | object[] | undefined {
-        if (type === "Map") {
-            if (attr === "customNodes") {
-                const nodes: object[] = [];
-                for (const value of (root as Map<string, object>).values()) {
-                    nodes.push(value);
-                    break;
-                }
-                return nodes;
+        if (type === "Map" && attr === "customNodes") {
+            const nodes: object[] = [];
+            for (const value of (root as Map<string, object>).values()) {
+                nodes.push(value);
+                break;
             }
-        } else if (type === "Array[][]") {
-            if (attr === "customNodes") {
-                const objObject: Array<[]> = obj as Array<[]>;
-                const rootObject: Map<string, object> = root as Map<string, object>;
-                const nodes: object[] = [];
-                if (objObject.length >= 2 && objObject[1]) {
-                    for (const id of objObject[1]) {
-                        const nodeObj = rootObject.get(id);
-                        if (nodeObj) {
-                            nodes.push(nodeObj);
-                        }
+            return nodes;
+        } else if (type === "Array[][]" && attr === "customNodes") {
+            const objObject: Array<[]> = obj as Array<[]>;
+            const rootObject: Map<string, object> = root as Map<string, object>;
+            const nodes: object[] = [];
+            if (objObject.length >= 2 && objObject[1]) {
+                for (const id of objObject[1]) {
+                    const nodeObj = rootObject.get(id);
+                    if (nodeObj) {
+                        nodes.push(nodeObj);
                     }
                 }
-                return nodes;
-            } else if (attr === "customEdges") {
-                // edges
-                const objObject = obj as [string, string[], string[]];
-                if (objObject.length >= 3 && objObject[2])
-                    return objObject[2];
-            } else if (attr === "customValue") {
-                const objObject = obj as [string, string[], string[]];
-                return [String(objObject[0])];
             }
-        } else if (type === "Array[]") {
+            return nodes;
+        } else if (type === "Array[][]" && attr === "customEdges") {
+            // edges
+            const objObject = obj as [string, string[], string[]];
+            if (objObject.length >= 3 && objObject[2])
+                return objObject[2];
+        } else if (type === "Array[][]" && attr === "customValue") {
+            const objObject = obj as [string, string[], string[]];
+            return [String(objObject[0])];
+        } else if (type === "Array[]" && attr === "customValue") {
             // value for nodes without links
-            if (attr === "customValue") {
-                const objObject = obj as [string];
-                return [String(objObject[0])];
-            }
+            const objObject = obj as [string];
+            return [String(objObject[0])];
         }
     }
 }

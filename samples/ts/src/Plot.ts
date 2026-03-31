@@ -8,9 +8,9 @@ class Arrays {
         // to convert to points:
 
         // User Settings
-        
+
         // Expression: arrInt
-        
+
         // Type: Array[]
         // Layout: Plot
         // Plot Points: @points
@@ -20,9 +20,9 @@ class Arrays {
 
         // list of points
         // to convert to lines:
-        
+
         // User Settings
-        
+
         // Expression: arrPoints
 
         // Type: Array[][]
@@ -35,7 +35,7 @@ class Arrays {
         arrPoints.push([-4, -1]);
 
         // list of lines
-        
+
         // Expression: arrLines
         const arrLines: Array<Array<number>> = new Array<Array<number>>();
         arrLines.push([8, 4, 1, 8]);
@@ -65,25 +65,22 @@ export class Extractor {
         attr: string,
         obj: object
     ): number[][] | undefined {
-        if (type === "Array[]") {
-            if (attr === "points") {
-                const nodes: Array<Array<number>> = [];
-                const objObject = obj as Array<number>;
-                for (let i = 0; i < objObject.length; i++) {
-                    if (objObject[i])
-                        nodes.push([i, objObject[i]]);
-                }
-                return nodes;
+        if (type === "Array[]" && attr === "points") {
+            const nodes: Array<Array<number>> = [];
+            const objObject = obj as Array<number>;
+            for (let i = 0; i < objObject.length; i++) {
+                if (objObject[i])
+                    nodes.push([i, objObject[i]]);
             }
-        } else if (type === "Array[][]") {
-            if (attr === "lines") {
-                const nodes: Array<Array<number>> = [];
-                const objObject = obj as Array<Array<number>>;
-                for (let i = 0; i < objObject.length - 1; i++) {
-                    nodes.push(objObject[i].concat(objObject[i + 1]));
-                }
-                return nodes;
+            return nodes;
+        }
+        else if (type === "Array[][]" && attr === "lines") {
+            const nodes: Array<Array<number>> = [];
+            const objObject = obj as Array<Array<number>>;
+            for (let i = 0; i < objObject.length - 1; i++) {
+                nodes.push(objObject[i].concat(objObject[i + 1]));
             }
+            return nodes;
         }
     }
 }
