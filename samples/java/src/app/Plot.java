@@ -30,7 +30,6 @@ public class Plot {
         lines.add(List.of(new Integer[] { -4, -1, 2, 3 }));
         lines.add(List.of(new Integer[] { 3, 4, 5, 6 }));
 
-        // Object[] a = Extractor.extract("ArrayList", "lines", points, points);
         System.out.println("done");
     }
 }
