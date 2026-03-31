@@ -53,8 +53,10 @@ var markersLayouts = new Set([
 
 const MAX_TYPE_CHARS = 18;
 const BARS_ROWS = 10;
-var nodeColor = '#ccd4f3';
-var varNodeColor = '#e8ccf0';
+var nodeColor = '#3a4364';
+var nodeSelectedColor = '#272c41';
+var varNodeColor = '#4d8185';
+var varNodeSelectedColor = '#315457';
 var vscode;
 var network;
 var layout;
@@ -626,8 +628,8 @@ function setupNetworkListeners(selectedLayout) {
     });
 
     network.on('afterDrawing', (ctx) => {
-        formatLabels(ctx, "labelMarkers", '#035bff');
-        formatLabels(ctx, "labelDiffs", '#e93b1c');
+        formatLabels(ctx, "labelDiffs", '#ec63cf');
+        formatLabels(ctx, "labelMarkers", '#f12d58');
         formatBarsLayout(ctx, selectedLayout);
         formatPlotLayout(ctx, selectedLayout);
     });
@@ -921,7 +923,7 @@ function createNetworkOptions(selectedLayout) {
             font: {
                 face: 'monospace',
                 size: 14,
-                color: 'black'
+                color: '#c1d8ee'
             }
         },
         edges: {
@@ -948,13 +950,23 @@ function createNetworkOptions(selectedLayout) {
         },
         groups: {
             VarNode: {
-                color: { background: varNodeColor },
+                color: {
+                    background: varNodeColor,
+                    highlight: {
+                        background: varNodeSelectedColor
+                    }
+                },
                 borderWidth: 2,
                 shape: 'box',
                 mass: 1
             },
             Node: {
-                color: { background: nodeColor },
+                color: {
+                    background: nodeColor,
+                    highlight: {
+                        background: nodeSelectedColor
+                    }
+                },
                 borderWidth: 2,
                 shape: 'box',
                 mass: 2
