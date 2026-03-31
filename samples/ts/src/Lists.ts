@@ -2,10 +2,10 @@ class Lists {
     listOfLists: Array<Array<number>> | undefined;
 
     public static runMain() {
-        new Lists().test();
+        new Lists().start();
     }
 
-    public test() {
+    public start() {
         // list
         const arrayList: Array<number> = new Array<number>();
         arrayList.push(1);

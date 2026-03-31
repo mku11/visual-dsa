@@ -2,10 +2,10 @@ class Arrays {
     arrChar2D: Array<Array<string>> | undefined;
 
     static runMain() {
-        new Arrays().test();
+        new Arrays().start();
     }
 
-    public test() {
+    public start() {
         const arrString: Array<string> = new Array<string>(5);
         arrString[1] = "one";
         arrString[2] = "two";

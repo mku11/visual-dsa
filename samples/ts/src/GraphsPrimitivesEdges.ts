@@ -1,10 +1,10 @@
 class GraphsPrimitivesEdges {
 
     public static runMain() {
-        new GraphsPrimitivesEdges().test();
+        new GraphsPrimitivesEdges().start();
     }
 
-    public test() {
+    public start() {
         // It is preferable you use objects since 
         // arrays are used for iterating over node collections.
         // Though you can still use primitive arrays is you wish, see 

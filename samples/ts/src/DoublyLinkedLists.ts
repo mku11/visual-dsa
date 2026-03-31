@@ -1,10 +1,10 @@
 class DoublyLinkedLists {
 
     static runMain() {
-        new DoublyLinkedLists().test();
+        new DoublyLinkedLists().start();
     }
 
-    public test() {
+    public start() {
         // custom linkedlist
         const linkedList: DoublyLinkedList<string> = new DoublyLinkedList<string>();
         for (let i = 0; i < 7; i++) {

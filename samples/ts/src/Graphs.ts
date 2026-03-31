@@ -1,10 +1,10 @@
 class Graphs {
 
     public static runMain() {
-        new Graphs().test();
+        new Graphs().start();
     }
 
-    public test() {
+    public start() {
         // nodes of a graph
 
         // UI Settings
