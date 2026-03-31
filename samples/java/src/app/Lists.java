@@ -5,10 +5,10 @@ import java.util.ArrayList;
 public class Lists {
     ArrayList<ArrayList<Integer>> listOfLists;
     public static void main(String[] args) {
-        new Lists().test();
+        new Lists().start();
     }
 
-    public void test() {
+    public void start() {
         // list
         ArrayList<Integer> arrayList = new ArrayList<>();
         arrayList.add(1);
@@ -24,5 +24,7 @@ public class Lists {
         a2.add(4);
         listOfLists.add(a1);
         listOfLists.add(a2);
+
+        System.out.println("done");
     }
 }

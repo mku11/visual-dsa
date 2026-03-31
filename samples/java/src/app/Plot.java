@@ -2,15 +2,13 @@ package app;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Plot {
     public static void main(String[] args) {
-        new Plot().test();
+        new Plot().start();
     }
 
-    void test() {
+    void start() {
         // 1d array
         // to convert to points see Extractor
         Integer[] arrInt = new Integer[5];
@@ -32,6 +30,7 @@ public class Plot {
         lines.add(List.of(new Integer[] { -4, -1, 2, 3 }));
         lines.add(List.of(new Integer[] { 3, 4, 5, 6 }));
 
+        // Object[] a = Extractor.extract("ArrayList", "lines", points, points);
         System.out.println("done");
     }
 }
@@ -39,47 +38,48 @@ public class Plot {
 // custom extractor
 class Extractor {
 
-    // register the types
-    public static String[] registerTypes() {
-        return new String[] {
-                // uncomment for custom conversions, see below
-                "Integer[]", "ArrayList"
+    // register the custom attributes to extract
+    // you can select these from the ui
+    // instead of modifying your Objects
+    public static Object[] register() {
+        return new Object[] {
+                new Object[] { "Integer[]",
+                        new String[] { "points" } },
+                new Object[] { "ArrayList",
+                        new String[] { "lines" } }
         };
     }
 
-    public static List<int[]> getPlotPoints(
-            Integer[] obj,
+    public static Object[] extract(
+            String type,
+            String attr,
+            Object obj,
             Object root) {
-        // convert list of numbers to list of points (i,xi)
-        List<int[]> nodes = new ArrayList<>();
-        for (int i = 0; i < obj.length; i++) {
-            if (obj[i] != null) {
-                nodes.add(new int[] { i, obj[i] });
+        System.out.println("extract: " + type + ", " + attr);
+        if (type.equals("Integer[]") && attr.equals("points")) {
+            // convert list of numbers to list of points (i,xi)
+            Integer[] objObject = (Integer[]) obj;
+            List<int[]> nodes = new ArrayList<int[]>();
+            for (int i = 0; i < objObject.length; i++) {
+                if (objObject[i] != null) {
+                    nodes.add(new int[] { i, (int) objObject[i] });
+                }
             }
+            return nodes.toArray();
+        } else if (type.equals("ArrayList") && attr.equals("lines")) {
+            // convert list of points to list of lines
+            List<List<Integer>> objObject = (List<List<Integer>>) obj;
+            List<int[]> nodes = new ArrayList<int[]>();
+            for (int i = 0; i < objObject.size() - 1; i++) {
+                nodes.add(new int[] {
+                        objObject.get(i).get(0),
+                        objObject.get(i).get(1),
+                        objObject.get(i + 1).get(0),
+                        objObject.get(i + 1).get(1)
+                });
+            }
+            return nodes.toArray();
         }
-        return nodes;
-    }
-
-    public static List<int[]> getPlotLines(
-            List<List<Integer>> obj,
-            Object root) {
-        if (!(obj instanceof List))
-            return null;
-
-        if (!(obj.get(0) instanceof List) || obj.get(0).size() != 2) {            
-            return null;
-        }
-
-        // convert list of points to list of lines
-        List<int[]> nodes = new ArrayList<>();
-        for (int i = 0; i < obj.size() - 1; i++) {
-            nodes.add(new int[] {
-                    obj.get(i).get(0),
-                    obj.get(i).get(1),
-                    obj.get(i + 1).get(0),
-                    obj.get(i + 1).get(1)
-            });
-        }
-        return nodes;
+        return null;
     }
 }

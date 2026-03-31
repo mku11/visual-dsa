@@ -7,10 +7,10 @@ import java.util.LinkedHashSet;
 
 public class Hashes {
     public static void main(String[] args) {
-        new Hashes().test();
+        new Hashes().start();
     }
 
-    public void test() {
+    public void start() {
         HashMap<String, Integer> h1 = new HashMap<>();
         h1.put("1", 1);
         h1.put("2", 2);
@@ -26,5 +26,7 @@ public class Hashes {
         LinkedHashSet<String> hs2 = new LinkedHashSet<>();
         hs2.add("1");
         hs2.add("2");
+
+        System.out.println("done");
     }
 }

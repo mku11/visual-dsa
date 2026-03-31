@@ -1,8 +1,5 @@
 package app;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DoublyLinkedLists {
 
     public static void main(String[] args) {
@@ -21,6 +18,8 @@ public class DoublyLinkedLists {
             }
             node = node.getNext();
         }
+
+        System.out.println("done");
     }
 
     private static class DoublyLinkedList<T> {
@@ -85,20 +84,4 @@ public class DoublyLinkedLists {
             return value.toString();
         }
     }
-
-    // custom extractor
-    static class Extractor {
-
-        // register the custom types
-        public static List<String> registerTypes() {
-            return new ArrayList<>(List.of(
-                    "DoublyLinkedListCustom$DoublyLinkedListNode"));
-        }
-
-        public static String toString(String type, Node<?> node) {
-            return node.getValue().toString();
-        }
-
-    }
-
 }

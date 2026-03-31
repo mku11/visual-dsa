@@ -3,7 +3,6 @@ package app;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 public class Graphs {
@@ -23,7 +22,7 @@ public class Graphs {
         gnode1.add(gnode4, 45);
         gnode4.add(gnode2, 55);
 
-        // // wrap to a graph
+        // wrap to a graph
         Graph<String> graph = new Graph<>(gnode0);
         GraphNode<String> graphRoot = graph.getRoot();
         graphRoot.add(new GraphNode<>("5"), 11);
@@ -31,6 +30,8 @@ public class Graphs {
         gnode2.add(new GraphNode<>("7"), 13);
 
         bfs(gnode0);
+
+        System.out.println("done");
     }
 
     static void bfs(GraphNode<String> node) {
@@ -91,21 +92,6 @@ public class Graphs {
 
         public String toString() {
             return String.valueOf(this.value);
-        }
-    }
-
-    // custom extractor
-    static class Extractor {
-        // register the custom types
-        public static List<String> registerTypes() {
-            return new ArrayList<>(List.of("GraphNode"));
-        }
-
-        public static String toString(Object node) {
-            if (node instanceof GraphNode) {
-                return ((GraphNode<?>) node).getValue().toString();
-            }
-            return "";
         }
     }
 }

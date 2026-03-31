@@ -4,10 +4,14 @@ public class Arrays {
     char[][] arrChar2D;
 
     public static void main(String[] args) {
-        new Arrays().test();
+        new Arrays().start();
     }
 
-    public void test() {
+    public void start() {
+        Arrays[] classes = new Arrays[2];
+        classes[0] = new Arrays();
+        classes[1] = new Arrays();
+
         String[] arrString = new String[5];
         arrString[1] = "one";
         arrString[2] = "two";
@@ -65,5 +69,7 @@ public class Arrays {
         arr3D[1][1][1] = 1;
         arr3D[1][2][2] = 2;
         arr3D[1][2][3] = 3;
+
+        System.out.println("done");
     }
 }

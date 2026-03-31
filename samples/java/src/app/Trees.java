@@ -1,12 +1,11 @@
 package app;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Trees {
 
     public static void main(String[] args) {
-        // // nodes of a tree
+        // nodes of a tree
         Node<String> root = new Node<>("0");
         Node<String> node1 = new Node<>("1");
         Node<String> node2 = new Node<>("2");
@@ -21,46 +20,29 @@ public class Trees {
         node4.add(node5);
         node4.add(node6);
 
-        // // wrap to a tree
+        // wrap to a tree
         Tree<String> tree = new Tree<>(root);
-        visitTree(tree.getRoot(), tree.getRoot());
+        visitTree(tree.root, tree.root);
+
+        System.out.println("done");
     }
 
     private static void visitTree(Node<String> node, Node<String> root) {
         if (node == null) {
             return;
         }
-        System.out.println(node.value);
         for (Node<String> child : node.children) {
             visitTree(child, root);
-        }
-    }
-
-    // custom extractor
-    static class Extractor {
-
-        // register the custom types
-        public static List<String> registerTypes() {
-            return new ArrayList<>(List.of(
-                    "TreeNode"));
-        }
-
-        public static String toString(String type, Node<?> node) {
-            return node.value.toString();
         }
     }
 }
 
 class Tree<T> {
 
-    private Node<T> root;
+    public Node<T> root;
 
     public Tree(Node<T> root) {
         this.root = root;
-    }
-
-    public Node<T> getRoot() {
-        return this.root;
     }
 }
 
@@ -76,8 +58,4 @@ class Node<T> {
     public void add(Node<T> value) {
         children.add(value);
     }
-
-    // public String toString() {
-    // return String.valueOf(this.value);
-    // }
 }

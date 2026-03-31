@@ -1,11 +1,14 @@
 package app;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 public class LinkedLists {
 
     public static void main(String[] args) {
+        new LinkedLists().start();
+    }
+
+    public void start() {
         // custom linkedlist
         LinkedListCustom<String> linkedList = new LinkedListCustom<>();
         linkedList.append("1");
@@ -15,7 +18,6 @@ public class LinkedLists {
 
         LinkedListCustom.LinkedListNode<String> head = linkedList.getHead();
         while (head != null) {
-            System.out.println(head.getValue());
             if (head.getValue().equals("3")) {
                 head.insertNext(new LinkedListCustom.LinkedListNode<>("5"));
                 break;
@@ -23,27 +25,14 @@ public class LinkedLists {
             head = head.getNext();
         }
 
-        // // JDK linked list
-        java.util.LinkedList<String> linkedList2 = new java.util.LinkedList<String>();
+        // JDK linked list
+        LinkedList<String> linkedList2 = new LinkedList<String>();
         linkedList2.add("1");
         linkedList2.add("2");
         linkedList2.add("3");
         linkedList2.add("4");
-    }
 
-    // custom extractor
-    static class Extractor {
-
-        // register the custom types
-        public static List<String> registerTypes() {
-            return new ArrayList<>(List.of(
-                    "LinkedListCustom$LinkedListNode"));
-        }
-
-        public static String toString(LinkedListCustom.LinkedListNode<?> node) {
-            return node.getValue().toString();
-        }
-
+        System.out.println("done");
     }
 }
 
