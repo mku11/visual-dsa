@@ -402,6 +402,9 @@ export class Reader {
 				|| (result.type && result.type.includes('Exception'))) {
 				throw new Error(result.result);
 			}
+			if (result.type === undefined) {
+				return undefined;
+			}
 			if (result.type.endsWith('Exception')) {
 				throw new Error(result.result);
 			}
@@ -426,9 +429,9 @@ export class Reader {
 			return nodes;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
-				console.error("extractor Error: " + variable
+				console.error("extractor Error: " + variable.evaluateName
 					+ " " + type + " " + attr
-					+ ": " + ex.message);
+					+ ": " + ex);
 			} else {
 				console.error(ex);
 			}
