@@ -126,6 +126,7 @@ export class Parser {
 		let children: Variable[] = [];
 		if (variable.variablesReference > 0) {
 			let childrenVars = await this.reader.getVariables(variable, "named");
+			// if the variable has a string representation defined it will yield one child without name and type
 			if (childrenVars.length == 1 && childrenVars[0].name === '' && childrenVars[0].type === '') {
 				childrenVars[0] = this.reader.processVariable(childrenVars[0]);
 				childrenVars = await this.reader.getVariables(childrenVars[0]);
@@ -148,21 +149,6 @@ export class Parser {
 						childArrayVar.name += "[]";
 						children.push(childArrayVar);
 					}
-				}
-			}
-		}
-
-		// if the variable has a string representation defined it will yield one child without name and type
-		if (children.length == 1 && children[0].name === '' && children[0].type === '') {
-			const childrenVars = await this.reader.getVariables(children[0], "named");
-			if (childrenVars) {
-				children = [];
-				for (let childVar of childrenVars) {
-					if (this.reader.filterVariable(childVar)) {
-						continue;
-					}
-					childVar = this.reader.processVariable(childVar);
-					children.push(childVar);
 				}
 			}
 		}
