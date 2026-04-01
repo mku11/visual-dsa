@@ -89,7 +89,7 @@ export class CsReader extends Reader {
 	}
 
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
-		let exprName = variable.evaluateName;
+		const exprName = variable.evaluateName;
 		const type = (await this.getNodeType(variable));
 
 		try {
@@ -116,7 +116,7 @@ export class CsReader extends Reader {
 	public async getEdgeValues(variable: Variable, property: string): Promise<string[] | undefined> {
 		try {
 			const edgeValues: string[] = [];
-			let exprName = variable.evaluateName;
+			const exprName = variable.evaluateName;
 			let expr = `string.Join("|-|",System.Linq.Enumerable.Select(${exprName}.${property}, (xRepr)=>xRepr!=null?xRepr.ToString():"null"));`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
@@ -162,7 +162,6 @@ export class CsReader extends Reader {
 			const content = arrRepr.result.substring(1, arrRepr.result.length - 1);
 			const arr: string[] = [];
 			const parts = content.split('|-|');
-			// eslint-disable-next-line @typescript-eslint/prefer-for-of
 			for (let i = 0; i < parts.length; i++) {
 				arr.push(parts[i]);
 			}
@@ -194,11 +193,9 @@ export class CsReader extends Reader {
 			const content = arrRepr.result.substring(1, arrRepr.result.length - 1);
 			const arr2D: string[][] = [];
 			const lines = content.split('\\n');
-			// eslint-disable-next-line @typescript-eslint/prefer-for-of
 			for (let i = 0; i < lines.length; i++) {
 				const row: string[] = [];
 				const parts = lines[i].split("|-|");
-				// eslint-disable-next-line @typescript-eslint/prefer-for-of
 				for (let j = 0; j < parts.length; j++) {
 					row.push(parts[j]);
 				}
@@ -244,7 +241,6 @@ export class CsReader extends Reader {
 			const content = queueRepr.result.substring(1, queueRepr.result.length - 1);
 			const arr: string[] = [];
 			const parts = content.split('|-|');
-			// eslint-disable-next-line @typescript-eslint/prefer-for-of
 			for (let i = 0; i < parts.length; i++) {
 				arr.push(parts[i]);
 			}
@@ -271,7 +267,6 @@ export class CsReader extends Reader {
 			const content = arrRepr.result.substring(1, arrRepr.result.length - 1);
 			const entries: string[][] = [];
 			const lines = content.split('\\n');
-			// eslint-disable-next-line @typescript-eslint/prefer-for-of
 			for (let i = 0; i < lines.length; i++) {
 				const parts = lines[i].split('|-|');
 				entries.push(parts);
@@ -366,7 +361,7 @@ export class CsReader extends Reader {
 		return rawType;
 	}
 
-	public getDefaultLayout(type: string, value: string): string | undefined {
+	public getDefaultLayout(type: string, _value: string): string | undefined {
 		if (type.endsWith('[][][]')) {
 			return "array3D";
 		} else if (type.endsWith('[][]')) {
@@ -412,7 +407,7 @@ export class CsReader extends Reader {
 	}
 
 	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
-		let exprName = variable.evaluateName;
+		const exprName = variable.evaluateName;
 		return `Extractor.Extract("${type}"
 				, "${attr}"
 				, ${exprName}

@@ -32,7 +32,7 @@ export class JsReader extends Reader {
 		super();
 	}
 
-	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
+	public async getVariableStrRepr(_variable: Variable): Promise<string | undefined> {
 		// for js we already have the string repr in the variable value
 		return undefined;
 	}
@@ -165,8 +165,7 @@ mapRepr;
 	public async getEdgeValues(variable: Variable, property: string): Promise<string[] | undefined> {
 		try {
 			const edgeValues: string[] = [];
-			let exprName = variable.evaluateName;
-			const type = variable.type;
+			const exprName = variable.evaluateName;
 			let expr = `{
 			let edgeRepr = "";
 			for(let edgeObjRepr of (${exprName}).${property}) {
@@ -275,14 +274,14 @@ mapRepr;
 		let id: string | undefined = variable.value;
 		id = await this.getCurrentNodeId(variable);
 		if (!id) {
-			id = await this.generateNodeId(variable);
+			id = await this.generateNodeId();
 			await this.setNodeId(variable, id);
 		}
 		return id;
 	}
 
-	public async generateNodeId(variable: Variable): Promise<string> {
-		let bytes = new Uint8Array(JsReader.NODE_ID_LENGTH);
+	public async generateNodeId(): Promise<string> {
+		const bytes = new Uint8Array(JsReader.NODE_ID_LENGTH);
 		crypto.getRandomValues(bytes);
 		return "0x" + this.toHex(bytes);
 	}
@@ -305,11 +304,15 @@ mapRepr;
 			${name}.VSID = "${vsID}";
 			}`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
-			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
+			const result = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
+			if ((result.result.startsWith('error '))
+				|| (result.type && result.type.endsWith('Exception'))) {
+				throw new Error(result.result);
+			}
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
 				console.error("Error: setNodeId " + variable + ": " + ex.message);
@@ -397,7 +400,7 @@ mapRepr;
 		return false;
 	}
 
-	public getDefaultLayout(type: string, value: string): string | undefined {
+	public getDefaultLayout(type: string, _value: string): string | undefined {
 		if (type.endsWith('[][][]')) {
 			return "array3D";
 		} else if (type.endsWith('[][]')) {
@@ -431,7 +434,7 @@ mapRepr;
 	}
 
 	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
-		let exprName = variable.evaluateName;
+		const exprName = variable.evaluateName;
 		return `Extractor.extract('${type}'
 				, '${attr}'
 				, ${exprName}

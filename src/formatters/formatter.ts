@@ -257,7 +257,7 @@ export class Formatter {
 	}
 
 	getLabelValue(node: VarNode | Node,
-		layout?: string, orientation?: string): [Array<[number, number]>, string] {
+		layout?: string, orientation?: string): [[number, number][], string] {
 		const value: string | object = node.value;
 		const markers = node.markers;
 
@@ -285,7 +285,7 @@ export class Formatter {
 		return [[], ""];
 	}
 
-	formatBars(value: string[], markers?: Array<number>): string {
+	formatBars(value: string[], markers?: number[]): string {
 		let barsRepr = "";
 		for (let i = 0; i < Formatter.BARS_ROWS; i++) {
 			barsRepr += "\n";
@@ -332,13 +332,13 @@ export class Formatter {
 
 	formatArray(arr: string[],
 		orientation?: string,
-		markers?: Array<number> | undefined,
+		markers?: number[] | undefined,
 		reverse?: boolean
-	): [Array<[number, number]>, string] {
+	): [[number, number][], string] {
 		let arrRepr = "";
 		let arrPadRepr = String(arr.length).length;
 		const arrPadHeaderRepr = String(arr.length).length;
-		const markerPos = Array<[number, number]>();
+		const markerPos: [number, number][] = [];
 		const indexes = new Set<number>();
 		if (markers) {
 			for (const marker of markers) {
@@ -349,13 +349,13 @@ export class Formatter {
 			}
 		}
 		for (let idx = 0; idx < arr.length; idx++) {
-			let len = String(arr[idx]).length;
+			const len = String(arr[idx]).length;
 			arrPadRepr = Math.max(len, arrPadRepr);
 		}
 		let idx = 0;
 		if (orientation === 'horizontal') {
 			for (let idx = 0; idx < arr.length; idx++) {
-				let header = String(idx);
+				const header = String(idx);
 				if (!reverse) {
 					arrRepr += ' ';
 					arrRepr += header.padStart(arrPadRepr);
@@ -371,7 +371,6 @@ export class Formatter {
 			}
 
 			// underline
-			// eslint-disable-next-line @typescript-eslint/prefer-for-of
 			for (let idx = 0; idx < arr.length; idx++) {
 				if (!reverse) {
 					arrRepr += '-';
@@ -417,15 +416,15 @@ export class Formatter {
 	}
 
 	formatArray2D(arr2D: string[][],
-		markers?: Array<Array<number>>
-	): [Array<[number, number]>, string] {
+		markers?: number[][]
+	): [[number, number][], string] {
 		let arr2DRepr = "";
 		let arr2DRepr2 = "";
 		let maxLength = 0;
 		let arr2DPadRepr = 0;
 		let arr2DPadHeaderVertRepr = String(arr2D.length).length;
-		const markerPos = Array<[number, number]>();
-		const indexes = new Set<string>();
+		const markerPos: [number, number][] = [];
+		const indexes: Set<string> = new Set<string>();
 
 		if (markers) {
 			for (const marker of markers) {
@@ -446,13 +445,13 @@ export class Formatter {
 			maxLength = Math.max(maxLength, elRepr.length);
 			for (let idx2 = 0; idx2 < elRepr.length; idx2++) {
 				const elRepr2 = arr2D[idx][idx2];
-				let len = String(idx2).length;
+				const len = String(idx2).length;
 				arr2DPadRepr = Math.max(arr2DPadRepr, len);
 				arr2DPadRepr = Math.max(arr2DPadRepr, elRepr2.length);
 			}
 			arr2DPadRepr = Math.max(arr2DPadRepr, String(elRepr.length).length);
 
-			let len2 = String(idx).length;
+			const len2 = String(idx).length;
 			arr2DPadHeaderVertRepr = Math.max(arr2DPadHeaderVertRepr, len2);
 		}
 		for (let arr2DIdx = -1; arr2DIdx < arr2D.length; arr2DIdx++) {
@@ -461,17 +460,17 @@ export class Formatter {
 				arr2DRepr += "\n";
 			}
 			for (let arr2DIdx2 = -1; arr2DIdx2 < maxLength; arr2DIdx2++) {
-				let marked: [number, number] = [0, 0];
+				const marked: [number, number] = [0, 0];
 				if (indexes.has([arr2DIdx2, arr2DIdx].toString())) {
 					marked[0] = arr2DRepr.length + arr2DRepr2.length;
 				}
 				if (arr2DIdx == -1 && arr2DIdx2 == -1) {
 					arr2DRepr2 += ' '.padStart(arr2DPadHeaderVertRepr);
 				} else if (arr2DIdx == -1) {
-					let header = String(arr2DIdx2);
+					const header = String(arr2DIdx2);
 					arr2DRepr2 += header.padStart(arr2DPadRepr);
 				} else if (arr2DIdx2 == -1) {
-					let header = String(arr2DIdx);
+					const header = String(arr2DIdx);
 					arr2DRepr2 += header.padStart(arr2DPadHeaderVertRepr);
 				} else {
 					let value = new String();
@@ -513,12 +512,12 @@ export class Formatter {
 	}
 
 	formatArray3D(arr3D: string[][][],
-		markers?: Array<Array<number>>
-	): [Array<[number, number]>, string] {
+		markers?: number[][]
+	): [[number, number][], string] {
 		let arr3DRepr = "";
 
 		// index the markers for easier lookup
-		const indexesZ = new Map<number, Array<Array<number>>>();
+		const indexesZ = new Map<number, number[][]>();
 		if (markers) {
 			for (const marker of markers) {
 				if (marker.length != 3)
@@ -536,7 +535,7 @@ export class Formatter {
 			}
 		}
 
-		const markerPos: Array<[number, number]> = [];
+		const markerPos: [number, number][] = [];
 		for (let i = 0; i < arr3D.length; i++) {
 			// pass the indexes only if z dimension has a marker
 			const [markersPosXY, arr2DRepr] = this.formatArray2D(arr3D[i],

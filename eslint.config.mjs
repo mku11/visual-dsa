@@ -5,33 +5,41 @@
  */
 // @ts-check
 import js from '@eslint/js';
-import tseslint, { config } from 'typescript-eslint';
+import tsparser from '@typescript-eslint/parser';
+import tseslint from 'typescript-eslint';
 import stylistic from '@stylistic/eslint-plugin';
+import globals from "globals";
 
-module.exports = {
-	parserOptions: {
-		tsconfigRootDir: "."
-	}
-}
-export default tseslint.config(
+export default [
 	{
 		ignores: [
 			'out',
 			'webview',
+			'samples',
 		],
 	},
 	js.configs.recommended,
 	...tseslint.configs.recommended,
 	...tseslint.configs.stylistic,
 	{
+		languageOptions: {
+			parser: tsparser,
+			parserOptions: {
+				sourceType: 'module',
+				tsconfigRootDir: import.meta.dirname
+			},
+			globals: {
+				...globals.browser,
+				...globals.jquery,
+				...globals.node,
+			},
+		},
 		plugins: {
 			'@stylistic': stylistic,
 		},
-		
 		rules: {
-			'curly': 'warn',
-			'@stylistic/semi': ['warn', 'always'],
-			'@typescript-eslint/no-empty-function': 'off',
+			'@typescript-eslint/prefer-for-of': ['off'],
+			'@stylistic/semi': ['error', 'always'],
 			'@typescript-eslint/naming-convention': [
 				'warn',
 				{
@@ -40,11 +48,11 @@ export default tseslint.config(
 				}
 			],
 			'@typescript-eslint/no-unused-vars': [
-				'error',
+				'warn',
 				{
 					'argsIgnorePattern': '^_'
 				}
 			]
 		}
 	}
-);
+];

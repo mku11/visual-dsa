@@ -123,7 +123,7 @@ export class Parser {
 		visited.set(variable.value, variable);
 
 		const type: string = await this.reader.getNodeType(variable);
-		let children: Variable[] = [];
+		const children: Variable[] = [];
 		if (variable.variablesReference > 0) {
 			let childrenVars = await this.reader.getVariables(variable, "named");
 			// if the variable has a string representation defined it will yield one child without name and type
@@ -342,7 +342,7 @@ export class Parser {
 				node.markers = markers;
 			}
 		} else if (this.array3DLayouts.has(layout)) {
-			let arrayRepr = await this.reader.getArray3DRepr(variable);
+			const arrayRepr = await this.reader.getArray3DRepr(variable);
 			if (arrayRepr) {
 				node.value = arrayRepr;
 			}
@@ -449,7 +449,6 @@ export class Parser {
 		if (layout == 'linkedlist' && node.children.size > 1) {
 			let child: Node | undefined = undefined;
 			let head: Node | undefined = undefined;
-			let idx = 0;
 			for (const [chId, ch] of node.children.entries()) {
 				if (!child) {
 					child = ch;
@@ -463,7 +462,6 @@ export class Parser {
 					}
 					child = ch;
 				}
-				idx++;
 			}
 			node.children.clear();
 			if (head) {
@@ -582,8 +580,8 @@ export class Node {
 	public properties: Map<string, Property> = new Map<string, Property>();
 	public children: Map<string, Node> = new Map<string, Node>();
 	public childrenEdgeValues: Map<string, Edge> = new Map<string, Edge>();
-	public markers?: Array<Array<number>>; // markers for x,y,z axis
-	public markerLabelPos: Array<[number, number]> = []; // markers label positions
+	public markers?: number[][]; // markers for x,y,z axis
+	public markerLabelPos: [number, number][] = []; // markers label positions
 	constructor(id: string, type: string | undefined, value: string | object) {
 		this.id = id;
 		this.type = type;
@@ -610,8 +608,8 @@ export class VarNode {
 	public id: string; // unique id
 	public type: string | undefined = undefined; // data type
 	public value: string | object; // data value
-	public markers?: Array<Array<number>>; // markers for x,y,z axis
-	public markerLabelPos: Array<[number, number]> = []; // markers label positions
+	public markers?: number[][]; // markers for x,y,z axis
+	public markerLabelPos: [number, number][] = []; // markers label positions
 	constructor(id: string, type: string | undefined, value: string | Node) {
 		this.id = id;
 		this.type = type;

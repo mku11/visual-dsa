@@ -37,7 +37,7 @@ export class PythonReader extends Reader {
 	}
 
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
-		let exprName = variable.evaluateName;
+		const exprName = variable.evaluateName;
 		// extractor toString
 		if (this.registeredTypes.has(variable.type)) {
 			try {
@@ -105,8 +105,7 @@ export class PythonReader extends Reader {
 	public async getEdgeValues(variable: Variable, property: string): Promise<string[] | undefined> {
 		try {
 			const edgeValues: string[] = [];
-			let exprName = variable.evaluateName;
-			const type = variable.type.replaceAll("$", ".");
+			const exprName = variable.evaluateName;
 			let expr = `'|-|'.join(map(str, ${exprName}.${property}))`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
@@ -205,7 +204,6 @@ export class PythonReader extends Reader {
 			const content = queueRepr.result.substring(1, queueRepr.result.length - 1);
 			const arr: string[] = [];
 			const parts = content.split('|-|');
-			// eslint-disable-next-line @typescript-eslint/prefer-for-of
 			for (let i = 0; i < parts.length; i++) {
 				arr.push(parts[i]);
 			}
@@ -276,7 +274,7 @@ export class PythonReader extends Reader {
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			const content = "0x" + Number(currNodeId.result).toString(16).toUpperCase()
+			const content = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
 			return content;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
@@ -363,7 +361,7 @@ export class PythonReader extends Reader {
 		return type;
 	}
 
-	public getDefaultLayout(type: string, value: string): string | undefined {
+	public getDefaultLayout(type: string, _value: string): string | undefined {
 		if (type.endsWith('[][][]')) {
 			return "array3D";
 		} else if (type.endsWith('[][]')) {
@@ -401,7 +399,7 @@ export class PythonReader extends Reader {
 		const parts = variable.name.split(" ");
 		if ((parts[0].startsWith("[") && parts[0].endsWith("]"))
 			|| (parts[0].startsWith("'") && parts[0].endsWith("'"))) {
-			const val = parts[0].substring(1, parts[0].length - 1)
+			const val = parts[0].substring(1, parts[0].length - 1);
 			const valParts = val.split(":");
 			if (valParts.length == 1 && !isNaN(parseInt(valParts[0]))) {
 				// val in integral
@@ -421,16 +419,16 @@ export class PythonReader extends Reader {
 		// for python numpy ndarray we need to convert to list 
 		// to properly extract the subarrays
 		if (variable.type === 'ndarray') {
-			const listVariable = await this.getVariable("list(" + variable.evaluateName + ")")
+			const listVariable = await this.getVariable("list(" + variable.evaluateName + ")");
 			if (listVariable) {
-				return await super.getArray3DRepr(listVariable)
+				return await super.getArray3DRepr(listVariable);
 			}
 		}
 		return await super.getArray3DRepr(variable);
 	}
 
 	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
-		let exprName = variable.evaluateName;
+		const exprName = variable.evaluateName;
 		return `Extractor.extract('${type}'
 				, '${attr}'
 				, ${exprName}

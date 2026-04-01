@@ -343,7 +343,6 @@ export class JavaReader extends Reader {
 			const content = queueRepr.result.substring(1, queueRepr.result.length - 1);
 			const arr: string[] = [];
 			const parts = content.split('|-|');
-			// eslint-disable-next-line @typescript-eslint/prefer-for-of
 			for (let i = 0; i < parts.length; i++) {
 				arr.push(parts[i]);
 			}
@@ -459,7 +458,7 @@ return mapRepr.toString();
 
 	public async getNodeId(variable: Variable): Promise<string> {
 		try {
-			let name = variable.evaluateName;
+			const name = variable.evaluateName;
 			let expr = `System.identityHashCode(${name})`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const currNodeId = await debug.activeDebugSession?.customRequest("evaluate", {
@@ -467,7 +466,7 @@ return mapRepr.toString();
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			const content = "0x" + Number(currNodeId.result).toString(16).toUpperCase()
+			const content = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
 			return content;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
@@ -480,7 +479,7 @@ return mapRepr.toString();
 	}
 	
 	public async getNodeType(variable: Variable): Promise<string> {
-		let type = variable.type.replaceAll("$",".");
+		const type = variable.type.replaceAll("$",".");
 		return type;
 	}
 
@@ -514,7 +513,7 @@ return mapRepr.toString();
 		return rawType;
 	}
 
-	public getDefaultLayout(type: string, value: string): string | undefined {
+	public getDefaultLayout(type: string, _value: string): string | undefined {
 		if (type.endsWith('[][][]')) {
 			return "array3D";
 		} else if (type.endsWith('[][]')) {
@@ -549,7 +548,7 @@ return mapRepr.toString();
 	}
 
 	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
-		let exprName = variable.evaluateName;
+		const exprName = variable.evaluateName;
 		return `Extractor.extract("${type}"
 				, "${attr}"
 				, ${exprName}

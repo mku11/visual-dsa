@@ -22,8 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { Color, Formatter, VisEdge } from "../formatters/formatter";
-import { VarNode, Node } from "../parsers/parser";
+import { Formatter } from "../formatters/formatter";
 
 export class JsFormatter extends Formatter {
 	public getHashTypes() {

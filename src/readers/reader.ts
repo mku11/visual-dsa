@@ -91,9 +91,9 @@ export class Reader {
 			lines = Reader.cachedSourceLines.get(source.path);
 			if (lines)
 				return lines;
-			let content = Reader.instance?.getSource(source.path);
+			const content = Reader.instance?.getSource(source.path);
 			if (content) {
-				lines = content.split(new RegExp("\r\n|\n"));
+				lines = content.split(new RegExp("\\r\\n|\\n"));
 				Reader.cachedSourceLines.set(source.path, lines);
 			}
 		}
@@ -143,7 +143,7 @@ export class Reader {
 							continue;
 						if (!this.isIndexed(attr, regTypeValue))
 							continue;
-						let attrValue = this.trimQuotes(attr.value);
+						const attrValue = this.trimQuotes(attr.value);
 						attrs.add(attrValue);
 					}
 					this.registeredTypes.set(type, attrs);
@@ -164,8 +164,8 @@ export class Reader {
 		return value;
 	}
 
-	async getMarkersValues(markers: string, layout: string): Promise<Array<Array<number>>> {
-		let markersValues: Array<Array<number>> = [];
+	async getMarkersValues(markers: string, layout: string): Promise<number[][]> {
+		let markersValues: number[][] = [];
 		const variable = await this.getVariable(markers);
 		if (!variable)
 			return markersValues;
@@ -175,7 +175,7 @@ export class Reader {
 			return markersValues;
 		}
 		const children = await this.getVariables(variable);
-		const childrenList: Array<number> = [];
+		const childrenList: number[] = [];
 		for (const child of children) {
 			if (this.filterVariable(child))
 				continue;
@@ -187,7 +187,7 @@ export class Reader {
 					childrenList.push(parseInt(child.value));
 			} else if (layout === "array2D" || layout === "array3D") {
 				const gChildren = await this.getVariables(child);
-				const gChildrenList: Array<number> = [];
+				const gChildrenList: number[] = [];
 				for (const gChild of gChildren) {
 					if (this.filterVariable(gChild))
 						continue;
@@ -274,7 +274,7 @@ export class Reader {
 		filter?: 'indexed' | 'named'
 	): Promise<Variable[]> {
 		try {
-			let variablesReference: number | undefined = variable?.variablesReference;
+			const variablesReference: number | undefined = variable?.variablesReference;
 			const result = await debug.activeDebugSession?.customRequest("variables", {
 				variablesReference: variablesReference,
 				filter: filter
@@ -381,11 +381,9 @@ export class Reader {
 		return this.erroredTypes.has(group + ":" + type);
 	}
 
-
-
 	public async extract(variable: Variable, type: string, attr: string, root: Variable):
 		Promise<Variable[] | undefined> {
-		let attrs: Set<string> | undefined = this.registeredTypes.get(type);
+		const attrs: Set<string> | undefined = this.registeredTypes.get(type);
 		if (!attrs)
 			return;
 		if (!attrs.has(attr))
@@ -418,7 +416,7 @@ export class Reader {
 				if (!this.isIndexed(child, result)) {
 					continue;
 				}
-				if(this.filterVariable(child)) {
+				if (this.filterVariable(child)) {
 					continue;
 				}
 				child.evaluateName = expr + "[" + idx + "]";
@@ -456,7 +454,6 @@ export class Reader {
 		Promise<string[][][] | undefined> {
 		const childrenVars = await this.getVariables(variable);
 		const children: string[][][] = [];
-		let idx = 0;
 		for (const childVar of childrenVars) {
 			if (!this.isIndexed(childVar, variable)) {
 				continue;
@@ -583,7 +580,7 @@ export interface Variable {
 	indexedVariables: number;
 	namedVariables: number;
 	memoryReference: string;
-	presentationHint: any;
+	presentationHint: { visibility: string };
 	// vsa specific
 	processed: boolean;
 }
