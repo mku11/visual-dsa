@@ -64,7 +64,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: visual-dsa-vsix
-        path: visual-dsa/visual-dsa-${{ github.ref_name }}.vsix
+        path: visual-dsa-${{ github.ref_name }}.vsix
     
     # Release
     - if: github.ref_type == 'tag'
@@ -72,4 +72,4 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         draft: true
-        files: visual-dsa/visual-dsa-${{ github.ref_name }}.vsix
+        files: visual-dsa-${{ github.ref_name }}.vsix
