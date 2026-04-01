@@ -42,7 +42,7 @@ class GraphsPrimitivesEdges {
 // custom extractor
 export class Extractor {
     // register the custom attributes to extract
-    public static register(): Array<[string, string[]]> {
+    public static register(): [string, string[]][] {
         return [
             ["Map", ["customNodes"]],
             ["Array[][]", ["customNodes", "customEdges", "customValue"]],
@@ -64,7 +64,7 @@ export class Extractor {
             }
             return nodes;
         } else if (type === "Array[][]" && attr === "customNodes") {
-            const objObject: Array<[]> = obj as Array<[]>;
+            const objObject: [][] = obj as [][];
             const rootObject: Map<string, object> = root as Map<string, object>;
             const nodes: object[] = [];
             if (objObject.length >= 2 && objObject[1]) {

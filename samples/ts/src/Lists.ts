@@ -1,5 +1,5 @@
 class Lists {
-    listOfLists: Array<Array<number>> | undefined;
+    listOfLists: number[][] | undefined;
 
     public static runMain() {
         new Lists().start();
@@ -7,18 +7,18 @@ class Lists {
 
     public start() {
         // list
-        const arrayList: Array<number> = new Array<number>();
+        const arrayList: number[] = [];
         arrayList.push(1);
         arrayList.push(2);
 
         // list of lists
-        this.listOfLists = new Array<Array<number>>();
-        const a1: Array<number> = new Array<number>();
+        this.listOfLists = [];
+        const a1: number[] = [];
         this.listOfLists.push(a1);
         a1.push(1);
         a1.push(2);
         
-        const a2: Array<number> = new Array<number>();
+        const a2: number[] = [];
         this.listOfLists.push(a2);
         a2.push(3);
         a2.push(4);

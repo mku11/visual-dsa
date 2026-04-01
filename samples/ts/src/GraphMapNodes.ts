@@ -16,8 +16,8 @@ class GraphMapNodes {
         // Layout: Graph
         // Nodes: @customNodes
         // Edges: @customEdges
-        const gmap = new Map<GraphMapNode<string>, Array<GraphMapNode<string>>>();
-        const gedges = new Map<string, number>(); // edges 
+        const gmap: Map<GraphMapNode<string>, GraphMapNode<string>[]> = new Map<GraphMapNode<string>, GraphMapNode<string>[]>();
+        const gedges: Map<string, number> = new Map<string, number>(); // edges 
         Extractor.gedges = gedges;
 
         // nodes
@@ -65,7 +65,7 @@ export class Extractor {
     // register the custom attributes to extract
     // you can select these from the ui 
     // instead of modifying your objects
-    public static register(): Array<[string, string[]]> {
+    public static register(): [string, string[]][] {
         return [
             ["Map", ["customNodes", "customValue"]],
             ["GraphMapNode", ["customNodes", "customEdges", "customValue"]],
@@ -79,14 +79,14 @@ export class Extractor {
         root: object
     ): string[] | number[] | object[] | undefined {
         if (type === "Map" && attr === "customNodes") {
-            const nodes: Array<GraphMapNode<string>> = new Array<GraphMapNode<string>>();
-            const rootObject = root as Map<GraphMapNode<string>, Array<GraphMapNode<string>>>;
+            const nodes: GraphMapNode<string>[] = [];
+            const rootObject = root as Map<GraphMapNode<string>, GraphMapNode<string>[]>;
             for (const key of rootObject.keys())
                 nodes.push(key);
             return nodes;
         } else if (type === "Map" && attr === "customValue") {
             let sb = "";
-            const objObject = obj as Map<GraphMapNode<string>, Array<GraphMapNode<string>>>;
+            const objObject = obj as Map<GraphMapNode<string>, GraphMapNode<string>[]>;
             for (const key of objObject.keys()) {
                 if (sb.length > 0)
                     sb += ",";
@@ -94,15 +94,15 @@ export class Extractor {
             }
             return [sb];
         } else if (type === "GraphMapNode" && attr === "customNodes") {
-            const rootObject = root as Map<GraphMapNode<string>, Array<GraphMapNode<string>>>;
+            const rootObject = root as Map<GraphMapNode<string>, GraphMapNode<string>[]>;
             const objObject = obj as GraphMapNode<string>;
-            const nodes: Array<GraphMapNode<string>> | undefined = rootObject.get(objObject);
+            const nodes: GraphMapNode<string>[] | undefined = rootObject.get(objObject);
             if (nodes)
                 return nodes;
         } if (type === "GraphMapNode" && attr === "customEdges") {
-            const rootObject = root as Map<GraphMapNode<string>, Array<GraphMapNode<string>>>;
+            const rootObject = root as Map<GraphMapNode<string>, GraphMapNode<string>[]>;
             const objObject = obj as GraphMapNode<string>;
-            const edges: Array<number> | undefined = [];
+            const edges: number[] | undefined = [];
             for (const child of rootObject.get(objObject) || []) {
                 const edgeKey = objObject.getValue() + "," + child.getValue();
                 const edgeValue: number | undefined = Extractor.gedges.get(edgeKey);

@@ -62,7 +62,7 @@ class Tree<T> {
 class Node<T> {
 
     public value: T;
-    public children: Array<Node<T>> = new Array<Node<T>>();
+    public children: Node<T>[] = [];
 
     public constructor(value: T) {
         this.value = value;

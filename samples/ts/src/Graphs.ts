@@ -10,11 +10,11 @@ class Graphs {
         // UI Settings
 
         // Expression: gnode0
-        
+
         // Type: GraphNode
         // Children Nodes: children[]
         // Children Edges: childrenCost[]
-        
+
         const gnode0: GraphNode<string> = new GraphNode<string>("0");
         const gnode1: GraphNode<string> = new GraphNode<string>("1");
         const gnode2: GraphNode<string> = new GraphNode<string>("2");
@@ -39,7 +39,7 @@ class Graphs {
     }
 
     static bfs(node: GraphNode<string>) {
-        const q: Array<GraphNode<string>> = new Array<GraphNode<string>>();
+        const q: GraphNode<string>[] = [];
         q.push(node);
         const v: Set<GraphNode<string>> = new Set<GraphNode<string>>();
         let steps = 0;
@@ -86,8 +86,8 @@ export class GraphNode<T> {
         return this.value;
     }
 
-    public children: Array<GraphNode<T>> = new Array<GraphNode<T>>();
-    public childrenCost: Array<number> = new Array<number>();
+    public children: GraphNode<T>[] = [];
+    public childrenCost: number[] = [];
 
     public constructor(value: T) {
         this.value = value;
