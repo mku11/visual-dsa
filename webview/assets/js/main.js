@@ -748,7 +748,7 @@ function formatBarsLayout(ctx, selectedLayout) {
         for (const bar of bars) {
             const relValue = bar / maxBar;
             let offset = idx * barSpace - barSpace * bars.length / 2 + (barSpace - barWidth);
-            ctx.fillStyle = 'blue';
+            ctx.fillStyle = '#4f7894';
             ctx.fillRect(
                 position.x + offset,
                 position.y - totalHeight / 2 + vertMargin + 4 * height
@@ -794,8 +794,8 @@ function formatPlotLayout(ctx, selectedLayout) {
         }
         gridWidth -= 2 * gridMargin;
 
-        ctx.fillStyle = 'blue';
-        ctx.strokeStyle = 'blue';
+        ctx.fillStyle = '#79c8d6';
+        ctx.strokeStyle = '#7fccda';
         const els = node.points;
         let minx = Math.min(...els.map(el => el.length == 2 ? el[0] : Math.min(el[0], el[2])));
         let maxx = Math.max(...els.map(el => el.length == 2 ? el[0] : Math.max(el[0], el[2])));
