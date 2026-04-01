@@ -14,7 +14,7 @@ name: CD.BuildPackageRelease
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "*.*.*"
 
 
 jobs: 
