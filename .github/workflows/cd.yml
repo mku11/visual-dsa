@@ -59,7 +59,7 @@ jobs:
       run: vsce package
       
     # Upload Extension
-    - if: ${{ matrix.os == 'Windows' }}
+    - if: runner.os == 'Windows'
       name: Upload Extension Package
       uses: actions/upload-artifact@v4
       with:
