@@ -14,7 +14,7 @@ and jGRASP: https://www.jgrasp.org/
 - Graph layouts support user selection of children nodes, edges, and properties from objects attributes.
 - Array layouts support markers for x, y, z axes.
 - Automatic listing of local variables
-- Hooks for extracting children nodes, and edges (ie: Extractor.getNodes() and getEdges()).
+- Hooks for extracting custom attributes (nodes,edges,properties).
 - Network graph history with code back stepping.
 - GUI option for vis-network physics (enable/disable).
 - Auto Step with delay.
