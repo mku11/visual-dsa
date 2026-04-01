@@ -61,6 +61,8 @@ There is limited support for extracting custom attributes via code using an Extr
 
 ## Development
 To modify or contribute to Visual DSA:
+- Install nodejs 21+
+- Install git
 - Clone or fork this repository.
 - Get vis-network via npm: https://www.npmjs.com/package/vis-network
 - Or download from https://unpkg.com/vis-network/standalone/umd/vis-network.min.js
