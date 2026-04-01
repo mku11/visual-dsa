@@ -1,0 +1,13 @@
+samples
+src
+.github
+.vscode
+node_modules
+eslint*
+.gitignore
+*.sh
+*.bat
+out/**/*.map
+*.json
+**.ts
+**/tsconfig.json
