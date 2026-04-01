@@ -3,7 +3,7 @@ Extension for Visualing Data Structures and Algorithms.
 Inspired by VS Code Debug Visualizer: https://github.com/hediet/vscode-debug-visualizer  
 and jGRASP: https://www.jgrasp.org/  
 
-![alt text](https://github.com/mku11/visual-dsa/blob/main/screenshots/screenshot_graph.png)
+![alt text](./screenshots/screenshot_graph.png)
 
 ## Features
 - Language support: Java, C#, TS/JS, Python.
@@ -27,9 +27,9 @@ and jGRASP: https://www.jgrasp.org/
 
 ## Quickstart
 - Load your project in VS Code
-- Set your breakpoints
-- Start debugging
 - Ctrl+Shift+P and select Visual DSA: Start session
+- Set your breakpoints in your code
+- Start debugging
 - Enter a variable or method/function call on the expression. Local variables will appear on the drop down list.
 - If you use a complex expression make sure you have working code. 
 - If you use methods/functions in the expression box make sure they return the same object with having the same name, this will force the ui to keep track of the same object.
@@ -91,10 +91,14 @@ To publish:
 vsce publish
 ```
 
-For more info see: https://code.visualstudio.com/api/working-with-extensions/publishing-extension
-
 ## Installation
-Click on Extensions on the left side in VS Code and click on the menu option "Install from VSIX".
+Download the VSIX from github releases  
+The VSIX package is built by the github workflow servers.  
+Click on Extensions on the left side in VS Code and click on the menu option "Install from VSIX".  
+Select the downloaded VSIX package.  
+Note: You will not find the official Visual DSA in the Extensions Marketplace.  
+Visual DSA is Open Source Software so you're welcome to fork, modify, and redistribute in the Extensions Marketplace.  
+Make sure you read the MIT License before doing any of the above.  
 
 ## License:
 Visual DSA is released under MIT License.  
