@@ -1,0 +1,75 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+# Build, Package, and Release
+# This workflow should only run in the main branch
+
+# Note: if you have cache misses then make sure this workflow runs in the main branch first for the same cache keys.
+name: CD.BuildPackageRelease
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+
+jobs: 
+
+  # JavaScript
+  js_build_matrix:
+    strategy:
+      matrix:
+        os: [windows-latest]
+    name: build.vsix.${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+    
+    # Git
+    - name: Checkout sources
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+        
+    # Download deps
+    - if: runner.os == 'Windows'
+      name: Setup on Windows
+      shell: bash
+      run: .\get_libs.bat
+    
+    # Install deps
+    - if: runner.os == 'Windows'
+      name: Install Dependencies
+      shell: cmd
+      run: npm install
+      
+    # Install vsce
+    - if: runner.os == 'Windows'
+      name: Package JavaScript App on Windows
+      shell: cmd
+      run: npm install -g @vscode/vsce
+      
+    # Package Extension
+    - if: runner.os == 'Windows'
+      name: Package Extension on Windows
+      shell: cmd
+      run: vsce package
+      
+    # Upload Extension
+    - if: ${{ matrix.os == 'Windows' }}
+      name: Upload Extension Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: visual-dsa-vsix
+        path: visual-dsa.${{ github.ref_name }}.vsix
+    
+    # Release
+    - if: github.ref_type == 'tag'
+      name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        draft: true
+        files: visual-dsa.${{ github.ref_name }}.vsix
