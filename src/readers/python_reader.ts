@@ -37,31 +37,10 @@ export class PythonReader extends Reader {
 	}
 
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
-		const exprName = variable.evaluateName;
-		// extractor toString
-		if (this.registeredTypes.has(variable.type)) {
-			try {
-				const expr = "Extractor.__str__(" + exprName + ")";
-				const result = await debug.activeDebugSession?.customRequest("evaluate", {
-					expression: expr,
-					frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-					context: 'repl',
-				});
-				const content = result.result.substring(1, result.result.length - 1);
-				return content;
-			} catch (ex: Error | unknown) {
-				if (ex instanceof Error) {
-					console.error("getVariableStrRepr1 Error: " + variable.evaluateName + ": " + ex.message);
-				} else {
-					console.error(ex);
-				}
-			}
-		}
-
 		let strRepr: string | undefined = undefined;
 		try {
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: "str(" + variable.evaluateName + ")",
+				expression: `str(${variable.evaluateName})`,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
