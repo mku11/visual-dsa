@@ -37,7 +37,7 @@ jobs:
     # Download deps
     - if: runner.os == 'Windows'
       name: Setup on Windows
-      shell: bash
+      shell: cmd
       run: .\get_libs.bat
     
     # Install deps
