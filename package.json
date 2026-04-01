@@ -14,7 +14,7 @@
 		"vscode": "^1.100.0"
 	},
 	"categories": [
-		"Other"
+		"Debuggers","Visualization","Education"
 	],
 	"activationEvents": [
 		"onWebviewPanel:visualDSA"
