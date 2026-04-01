@@ -93,7 +93,7 @@ export class CsReader extends Reader {
 		const type = (await this.getNodeType(variable));
 
 		try {
-			const expr = "((" + type + ") " + exprName + ").ToString()";
+			const expr = `((${type}) ${exprName}).ToString()`;
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,

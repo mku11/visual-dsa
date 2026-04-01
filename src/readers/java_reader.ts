@@ -66,11 +66,11 @@ export class JavaReader extends Reader {
 				const parent = variable.evaluateName.substring(0, index);
 				const field = variable.evaluateName.substring(index + 1, index + 2).toUpperCase()
 					+ variable.evaluateName.substring(index + 2);
-				const getterName = parent + ".get" + field + "()";
+				const getterName = `${parent}.get${field}()`;
 				try {
 					const result = await debug.activeDebugSession?.
 						customRequest("evaluate", {
-							expression: getterName + ".toString()",
+							expression: `${getterName}.toString()`,
 							frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 							context: 'repl',
 						});
