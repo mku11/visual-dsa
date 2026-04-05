@@ -36,6 +36,8 @@ import { Panel } from '../view/panel';
 import { CsFormatter } from '../formatters/cs_formatter';
 import { JsFormatter } from '../formatters/js_formatter';
 import { PythonFormatter } from '../formatters/python_formatter';
+import { CxxReader } from '../readers/cxx_reader';
+import { CxxFormatter } from '../formatters/cxx_formatter';
 
 export class Controller {
 	private visData: VisData[] = [];
@@ -133,6 +135,9 @@ export class Controller {
 		} else if (sessionType === 'debugpy') {
 			this.reader = new PythonReader();
 			this.formatter = new PythonFormatter();
+		} else if (sessionType === 'cppvsdbg') {
+			this.reader = new CxxReader();
+			this.formatter = new CxxFormatter();
 		} else {
 			this.reader = new Reader();
 			this.formatter = new Formatter();
