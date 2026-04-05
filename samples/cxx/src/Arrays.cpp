@@ -4,6 +4,7 @@
 #include <string>
 #include <ostream>
 #include <iostream>
+#include <cstdint>
 
 using namespace std;
 
@@ -11,10 +12,16 @@ class Arrays
 {
 private:
     char **arrChar2D = NULL;
+    uint8_t *data = NULL;
 
 public:
     void start()
     {
+        data = (uint8_t *)calloc(5, sizeof(uint8_t));
+        data[0] = 121;
+        data[1] = 122;
+        data[2] = 123;
+
         string arrString[5];
         arrString[1] = "one";
         arrString[2] = "two";
@@ -75,6 +82,9 @@ public:
         arr3D[1][2][3] = 3;
 
         cout << "done" << endl;
+
+        // generally you should be releasing
+        // the allocated memory
     }
 };
 
