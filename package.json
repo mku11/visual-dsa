@@ -1,7 +1,7 @@
 {
 	"name": "visual-dsa",
 	"description": "Visual DSA - Data Structure and Algorithms Visualizer",
-	"version": "0.99.0",
+	"version": "0.99.1",
 	"publisher": "mku",
 	"private": true,
 	"license": "MIT License",
