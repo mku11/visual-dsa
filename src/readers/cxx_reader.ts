@@ -74,7 +74,7 @@ export class CxxReader extends Reader {
 		const type = (await this.getNodeType(variable));
 
 		try {
-			const expr = `((${type}) ${exprName}).to_string()`;
+			const expr = `${exprName}.to_string()`;
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
