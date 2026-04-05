@@ -24,6 +24,7 @@ and jGRASP: https://www.jgrasp.org/
 - C#
 - JavaScript/TypeScript
 - Python
+- C/C++ limited support for arrays only
 
 ## Quickstart
 - Load your project in VS Code
@@ -99,6 +100,13 @@ Select the downloaded VSIX package.
 Note: You will not find the official Visual DSA in the Extensions Marketplace.  
 Visual DSA is Open Source Software so you're welcome to fork, modify, and redistribute in the Extensions Marketplace.  
 Make sure you read the MIT License before doing any of the above.  
+
+## FAQ
+Q: Array layout for c/c++ doesn't display the elements
+A: Make sure you add the length on expression like so:
+data, 3
+if you want the elements to start from another index use the indexer:
+&data[1], 2
 
 ## License:
 Visual DSA is released under MIT License.  
