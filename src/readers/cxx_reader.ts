@@ -68,11 +68,9 @@ export class CxxReader extends Reader {
 		}
 		return id;
 	}
-
+	
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
 		const exprName = variable.evaluateName;
-		const type = (await this.getNodeType(variable));
-
 		try {
 			const expr = `${exprName}.to_string()`;
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
@@ -295,9 +293,6 @@ export class CxxReader extends Reader {
 			if (variable.name === 'this') {
 				const childVariables = await this.getVariables(variable, "named");
 				for (const child of childVariables) {
-					// if (child.name === 'Class has no fields') {
-					// 	continue;
-					// }
 					child.name = child.evaluateName;
 					expVariables.push(child);
 				}
@@ -337,11 +332,11 @@ export class CxxReader extends Reader {
 	}
 
 	public getDefaultLayout(type: string, _value: string): string | undefined {
-		if (type.endsWith('[][][]')) {
+		if (type.match(new RegExp(".+\\[\\d+\\]\\[\\d+\\]\\[\\d+\\]"))) {
 			return "array3D";
-		} else if (type.endsWith('[][]')) {
+		} else if (type.match(new RegExp(".+\\[\\d+\\]\\[\\d+\\]"))) {
 			return "array2D";
-		} else if (type.endsWith('[]')) {
+		} else if (type.match(new RegExp(".+\\[\\d+\\]"))) {
 			return "array";
 		} else if (type.includes('map')) {
 			return "map";
