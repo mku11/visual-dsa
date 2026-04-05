@@ -57,6 +57,25 @@ export class CxxReader extends Reader {
 		let id = variable.value;
 		if (variable.memoryReference) {
 			id = variable.memoryReference;
+		} else {
+			try {
+				const name = variable.evaluateName;
+				let expr = `(long long) &${name}`;
+				expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+				const currNodeId = await debug.activeDebugSession?.customRequest("evaluate", {
+					expression: expr,
+					frameId: (debug.activeStackItem as DebugStackFrame).frameId,
+					context: 'repl',
+				});
+				const content = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
+				return content;
+			} catch (ex: Error | unknown) {
+				if (ex instanceof Error) {
+					console.error("Error: getCurrentNodeId  of " + variable + ": " + ex.message);
+				} else {
+					console.error(ex);
+				}
+			}
 		}
 		return id;
 	}
@@ -68,7 +87,7 @@ export class CxxReader extends Reader {
 		}
 		return id;
 	}
-	
+
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
 		const exprName = variable.evaluateName;
 		try {
