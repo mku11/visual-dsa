@@ -359,7 +359,6 @@ function setupVarOptions(varOptions) {
 }
 
 function formatLabel(text) {
-    text = text.replaceAll(" ", "");
     if (text && text.length > MAX_TYPE_CHARS)
         text = "..." + text.substring(text.length - MAX_TYPE_CHARS);
     return text;
