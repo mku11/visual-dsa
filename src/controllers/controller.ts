@@ -197,12 +197,13 @@ export class Controller {
 	}
 
 	async startVisualize() {
-		try {
-			// parse the variables into graphs
-			this.varNodes = new Map<string, Node>();
-			const variableNodes: VarNode[] = [];
-			const visited: Map<string, Node> = new Map<string, Node>();
-			for (const variableName of this.selectedVariables) {
+
+		// parse the variables into graphs
+		this.varNodes = new Map<string, Node>();
+		const variableNodes: VarNode[] = [];
+		const visited: Map<string, Node> = new Map<string, Node>();
+		for (const variableName of this.selectedVariables) {
+			try {
 				const variable = this.variables.get(variableName);
 				if (!variable) {
 					continue;
@@ -222,8 +223,12 @@ export class Controller {
 				if (node instanceof VarNode) {
 					variableNodes.push(node);
 				}
+			} catch (error) {
+				console.error(error);
 			}
+		}
 
+		try {
 			// stored all nodes
 			this.varNodes = visited;
 
