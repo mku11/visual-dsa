@@ -91,13 +91,15 @@ export class CxxReader extends Reader {
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
 		const exprName = variable.evaluateName;
 		try {
-			const expr = `${exprName}.to_string()`;
+			const strMethod = "to_string()";
+			const accessOperator = variable.type.endsWith("*") ? "->" : ".";
+			const expr = `(${exprName})${accessOperator}${strMethod}`;
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			if ((result.result.startsWith('error '))
+			if (result.type === undefined || (result.result.startsWith('error '))
 				|| (result.type && result.type.includes('Exception'))) {
 				throw new Error(result.result);
 			}
