@@ -102,11 +102,12 @@ Visual DSA is Open Source Software so you're welcome to fork, modify, and redist
 Make sure you read the MIT License before doing any of the above.  
 
 ## FAQ
-Q: Array layout for c/c++ doesn't display the elements
-A: Make sure you add the length on expression like so:
-data, 3
-if you want the elements to start from another index use the indexer:
-&data[1], 2
+Q: Array layout for c/c++ pointers doesn't display the elements
+A: Make sure you add the range for the array pointed.
+ie dispaly elements from index 0 to 5
+data,[0:5]
+for multiple dimensions arrays, specify all dimensions [x|y|z]:
+data,[0:5|0:4|0:2]
 
 ## License:
 Visual DSA is released under MIT License.  
