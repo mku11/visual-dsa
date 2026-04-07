@@ -20,6 +20,7 @@ set(CMAKE_CXX_FLAGS_DEBUG " ${CMAKE_CXX_FLAGS_DEBUG} ${VERBOSE_FLAG} ")
 
 add_executable(
         sample
+        ${SAMPLE_SRC_DIR}/Program.cpp
         ${SAMPLE_SRC_DIR}/Arrays.cpp
 )
 
