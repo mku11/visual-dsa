@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { Reader, Variable } from "../readers/reader";
+import { Range, Reader, Variable } from "../readers/reader";
 
 export class Parser {
 
@@ -294,6 +294,7 @@ export class Parser {
 
 		// create a node and get the string representation
 		const node = new Node(id, type, value);
+		node.ranges = variable.ranges;
 
 		if (variable.variablesReference > 0 && variable.evaluateName) {
 			const nodeValue: string | undefined =
@@ -582,6 +583,7 @@ export class Node {
 	public childrenEdgeValues: Map<string, Edge> = new Map<string, Edge>();
 	public markers?: number[][]; // markers for x,y,z axis
 	public markerLabelPos: [number, number][] = []; // markers label positions
+	public ranges: Range[] = [];
 	constructor(id: string, type: string | undefined, value: string | object) {
 		this.id = id;
 		this.type = type;
@@ -610,6 +612,7 @@ export class VarNode {
 	public value: string | object; // data value
 	public markers?: number[][]; // markers for x,y,z axis
 	public markerLabelPos: [number, number][] = []; // markers label positions
+	public ranges: Range[] = [];
 	constructor(id: string, type: string | undefined, value: string | Node) {
 		this.id = id;
 		this.type = type;

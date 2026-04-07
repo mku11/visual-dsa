@@ -291,8 +291,9 @@ export class Reader {
 
 	async getVariable(expr: string): Promise<Variable | undefined> {
 		try {
+			const { parsedExpr, ranges } = this.parseArrayRanges(expr);
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
-				expression: expr,
+				expression: parsedExpr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
@@ -300,11 +301,12 @@ export class Reader {
 				result.name = expr;
 			}
 			if (!result.evaluateName) {
-				result.evaluateName = expr;
+				result.evaluateName = parsedExpr;
 			}
 			if (!result.value) {
 				result.value = result.result;
 			}
+			result.ranges = ranges;
 			return result;
 		} catch (error) {
 			console.error(error);
@@ -563,6 +565,35 @@ export class Reader {
 		}
 		return plot;
 	}
+
+	/**
+	 * 
+	 * @param expr The expression that contains array ranges
+	 * @returns {parsedExpr: string, ranges: Range[]} The parsed expression and the ranges
+	 */
+	parseArrayRanges(expr: string): { parsedExpr: string, ranges: Range[] } {
+		const delimIdx = expr.lastIndexOf(",");
+		const ranges: Range[] = [];
+		if (delimIdx >= 1) {
+			const rangesPart = expr.substring(delimIdx + 1).trim();
+			if (rangesPart.startsWith("[") && rangesPart.endsWith("]")) {
+				expr = expr.substring(0, delimIdx);
+				const dimParts = rangesPart.substring(1, rangesPart.length - 1)
+					.split("|");
+				for (const dimPart of dimParts) {
+					const rangeParts = dimPart.split(":");
+					if (rangeParts.length != 2)
+						continue;
+					const start = parseInt(rangeParts[0]);
+					const end = parseInt(rangeParts[1]);
+					if (!isNaN(start) && !isNaN(end)) {
+						ranges.push(new Range(start, end - start));
+					}
+				}
+			}
+		}
+		return { parsedExpr: expr, ranges: ranges };
+	}
 }
 
 export interface Scope {
@@ -580,9 +611,10 @@ export interface Variable {
 	indexedVariables: number;
 	namedVariables: number;
 	memoryReference: string;
-	presentationHint: { visibility: string };
+	presentationHint: { visibility?: string, attributes?: string[] };
 	// vsa specific
 	processed: boolean;
+	ranges: Range[];
 }
 
 export interface StackTrace {
@@ -632,4 +664,14 @@ export interface SourceResponse extends Response {
 		content: string;
 		mimeType?: string;
 	};
+}
+
+// custom range class to assist with c/c++ pointer to array
+export class Range {
+	start = 0;
+	length = 0;
+	constructor(start: number, length: number) {
+		this.start = start;
+		this.length = length;
+	}
 }

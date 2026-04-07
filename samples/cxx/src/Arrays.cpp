@@ -5,6 +5,7 @@
 #include <ostream>
 #include <iostream>
 #include <cstdint>
+#include <list>
 
 using namespace std;
 
@@ -30,8 +31,14 @@ public:
         int arrInt[5];
         arrInt[1] = 1;
         arrInt[2] = 212;
+        arrInt[3] = 2;
 
         // 2d array
+        int arrInt2D[5][4];
+        arrInt2D[1][1] = 1;
+        arrInt2D[2][3] = 212;
+
+        // 2d array pointer
         int **arr2D = (int **)malloc(sizeof(int *) * 15);
         arr2D[0] = (int *)malloc(sizeof(int) * 3);
         arr2D[1] = (int *)malloc(sizeof(int) * 4);
@@ -41,6 +48,9 @@ public:
         arr2D[1][1] = 122;
         arr2D[2][2] = 2;
         arr2D[2][3] = 3;
+
+        int ms[2] = {1,1};
+        int ms2[3] = {2,2,1};
 
         // 2d char array
         arrChar2D = (char **)malloc(sizeof(char *) * 5);
@@ -88,8 +98,7 @@ public:
     }
 };
 
-int main(int argc, char **argv)
+void arraysRunMain(int argc, char **argv)
 {
     Arrays().start();
-    return 0;
 }

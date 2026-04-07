@@ -79,13 +79,10 @@ export class CxxReader extends Reader {
 		}
 		return id;
 	}
-
-	public getVarNodeId(variable: Variable) {
-		let id = variable.name;
-		if (id.includes(" ")) {
-			id = id.split(" ")[0];
-		}
-		return id;
+	
+	public async getNodeType(variable: Variable): Promise<string> {
+		const type = variable.type;
+		return type;
 	}
 
 	public async getVariableStrRepr(variable: Variable): Promise<string | undefined> {
@@ -149,6 +146,8 @@ export class CxxReader extends Reader {
 		try {
 			const name = variable.evaluateName;
 			let expr = `${name}`;
+			if (variable.ranges.length > 0)
+				expr = `&(${expr})[${variable.ranges[0].start}],${variable.ranges[0].length}`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
@@ -180,6 +179,8 @@ export class CxxReader extends Reader {
 		try {
 			const name = variable.evaluateName;
 			let expr = `${name}`;
+			if (variable.ranges.length > 0)
+				expr = `&(${expr})[${variable.ranges[1].start}],${variable.ranges[1].length}`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
@@ -188,11 +189,21 @@ export class CxxReader extends Reader {
 			});
 			const children = await this.getVariables(arrRepr);
 			const arr2D: string[][] = [];
-			for (const child of children) {
+			for (let child of children) {
+				// assign the child length, ragged arrays are not supported
+				if (variable.ranges !== undefined) {
+					const childExpr = `&(${child.evaluateName})[${variable.ranges[0].start}],${variable.ranges[0].length}`;
+					const childVar = await this.getVariable(childExpr);
+					if (childVar)
+						child = childVar;
+				}
 				const gChildren = await this.getVariables(child);
 				const row: string[] = [];
 				for (const gChild of gChildren) {
-					row.push(gChild.value);
+					if(gChild.presentationHint?.attributes?.includes("failedEvaluation"))
+						row.push("");
+					else
+						row.push(gChild.value);
 				}
 				arr2D.push(row);
 			}
@@ -205,6 +216,36 @@ export class CxxReader extends Reader {
 			}
 		}
 		return undefined;
+	}
+
+	public async getArray3DRepr(variable: Variable):
+		Promise<string[][][] | undefined> {
+		const name = variable.evaluateName;
+		let expr = `${name}`;
+		if (variable.ranges.length > 0)
+			expr = `&(${expr})[${variable.ranges[2].start}],${variable.ranges[2].length}`;
+		expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+		const arr3DRepr = await debug.activeDebugSession?.customRequest("evaluate", {
+			expression: expr,
+			frameId: (debug.activeStackItem as DebugStackFrame).frameId,
+			context: 'repl',
+		});
+
+		const childrenVars = await this.getVariables(arr3DRepr);
+		const children: string[][][] = [];
+		for (const childVar of childrenVars) {
+			if (!this.isIndexed(childVar, variable)) {
+				continue;
+			}
+			if (this.filterVariable(childVar)) {
+				continue;
+			}
+			childVar.ranges = variable.ranges.slice(0,2);
+			const array2Drepr = await this.getArray2DRepr(childVar);
+			if (array2Drepr)
+				children.push(array2Drepr);
+		}
+		return children;
 	}
 
 	public async getQueueRepr(variable: Variable): Promise<string[] | undefined> {
