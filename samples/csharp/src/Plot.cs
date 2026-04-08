@@ -41,7 +41,7 @@ internal class Plot
         // register the custom attributes to extract
         // you can select these from the ui 
         // instead of modifying your objects
-        public static object[] Register()
+        public static object[] RegisterAttrs()
         {
             return [
                 new object[]{"int?[]",

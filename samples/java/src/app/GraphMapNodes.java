@@ -52,7 +52,7 @@ public class GraphMapNodes {
         // register the custom attributes to extract
         // you can select these from the ui
         // instead of modifying your objects
-        public static Object[] register() {
+        public static Object[] registerAttrs() {
             return new Object[] {
                     new Object[] { "HashMap",
                             new String[] { "customNodes", "customValue" } },

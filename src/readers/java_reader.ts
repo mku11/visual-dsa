@@ -540,7 +540,7 @@ return mapRepr.toString();
 	}
 
 	public getRegisterMethod() {
-		return "Extractor.register()";
+		return "Extractor.registerAttrs()";
 	}
 
 	public hasChildren(ch: Variable): boolean {

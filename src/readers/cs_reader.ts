@@ -388,7 +388,7 @@ export class CsReader extends Reader {
 	}
 
 	public getRegisterMethod() {
-		return "Extractor.Register()";
+		return "Extractor.RegisterAttrs()";
 	}
 
 	public hasChildren(ch: Variable): boolean {

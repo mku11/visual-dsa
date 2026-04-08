@@ -65,7 +65,7 @@ export class Extractor {
     // register the custom attributes to extract
     // you can select these from the ui 
     // instead of modifying your objects
-    public static register(): [string, string[]][] {
+    public static registerAttrs(): [string, string[]][] {
         return [
             ["Map", ["customNodes", "customValue"]],
             ["GraphMapNode", ["customNodes", "customEdges", "customValue"]],

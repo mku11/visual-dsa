@@ -58,7 +58,7 @@ internal class GraphMapNodes
         // register the custom attributes to extract
         // you can select these from the ui 
         // instead of modifying your objects
-        public static object[] Register()
+        public static object[] RegisterAttrs()
         {
             return [
                 new object[]{"System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>",

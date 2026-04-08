@@ -42,7 +42,7 @@ class GraphsPrimitivesEdges {
 // custom extractor
 export class Extractor {
     // register the custom attributes to extract
-    public static register(): [string, string[]][] {
+    public static registerAttrs(): [string, string[]][] {
         return [
             ["Map", ["customNodes"]],
             ["Array[][]", ["customNodes", "customEdges", "customValue"]],

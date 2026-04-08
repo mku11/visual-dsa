@@ -22,7 +22,7 @@ class GraphsPrimitivesEdges:
 class Extractor:
     # register the custom attributes
     @staticmethod
-    def register() -> list[list[str, list[str]]]:
+    def register_attrs() -> list[list[str, list[str]]]:
         return [
             ["dict", ["customNodes"]],
             ["str", ["customNodes", "customEdges"]],

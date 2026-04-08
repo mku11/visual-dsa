@@ -35,7 +35,7 @@ class Arrays:
 class Extractor:
     # register the types
     @staticmethod
-    def register() -> list[list[str, list[str]]]:
+    def register_attrs() -> list[list[str, list[str]]]:
         return [
             ["list[]", ["points"]],
             ["list[][]", ["lines"]],

@@ -430,7 +430,7 @@ mapRepr;
 	}
 
 	public getRegisterMethod() {
-		return "Extractor.register()";
+		return "Extractor.registerAttrs()";
 	}
 
 	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {

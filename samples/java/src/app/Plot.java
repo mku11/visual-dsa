@@ -40,7 +40,7 @@ class Extractor {
     // register the custom attributes to extract
     // you can select these from the ui
     // instead of modifying your Objects
-    public static Object[] register() {
+    public static Object[] registerAttrs() {
         return new Object[] {
                 new Object[] { "Integer[]",
                         new String[] { "points" } },

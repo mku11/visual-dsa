@@ -371,7 +371,7 @@ export class PythonReader extends Reader {
 	}
 
 	public getRegisterMethod() {
-		return "Extractor.register()";
+		return "Extractor.register_attrs()";
 	}
 
 	public isIndexed(variable: Variable, parent: Variable): boolean {
