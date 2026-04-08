@@ -83,9 +83,7 @@ public:
         lines.push_back(vector<int>({5, -1, 6, 8}));
         lines.push_back(vector<int>({-4, -1, 2, 3}));
         lines.push_back(vector<int>({3, 4, 5, 6}));
-
-        // auto a = extract("std::vector<int>", "points", &arrInt, &arrInt);
-        auto b = extract("std::vector<std::vector<int>>", "lines", &(points), &(points));
+        
         cout << "done" << endl;
     }
 };
