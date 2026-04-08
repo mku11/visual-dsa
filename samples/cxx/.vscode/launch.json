@@ -56,6 +56,20 @@
 			"environment": [],
 			"console": "externalTerminal",
 			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "Graphs",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/sample.exe",
+			"args": [
+				"Graphs"
+			],
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
 		}
 	]
 }

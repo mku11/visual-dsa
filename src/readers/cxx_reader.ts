@@ -148,7 +148,7 @@ export class CxxReader extends Reader {
 		try {
 			const edgeValues: string[] = [];
 			const exprName = variable.evaluateName;
-			let expr = ""; //`string.Join("|-|",System.Linq.Enumerable.Select(${exprName}.${property}, (xRepr)=>xRepr!=null?xRepr.ToString():"null"));`;
+			let expr = `${exprName}.${property}`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
@@ -159,9 +159,15 @@ export class CxxReader extends Reader {
 				|| (edgesListVar.type && edgesListVar.type.endsWith('Exception'))) {
 				throw new Error(edgesListVar.result);
 			}
-			const edgeVars: string[] = edgesListVar.result.substring(1, edgesListVar.result.length - 1).split("|-|");
+			const edgeVars = await this.getVariables(edgesListVar, "indexed");
 			for (const edgeVar of edgeVars) {
-				edgeValues.push(edgeVar);
+				if (!this.isIndexed(edgeVar, edgesListVar)) {
+					continue;
+				}
+				if (this.filterVariable(edgeVar)) {
+					continue;
+				}
+				edgeValues.push(edgeVar.value);
 			}
 			return edgeValues;
 		} catch (ex: Error | unknown) {
@@ -492,7 +498,7 @@ export class CxxReader extends Reader {
 	}
 
 	public hasChildren(ch: Variable): boolean {
-		return ch.value.includes("Count = ");
+		return ch.value.includes("size=");
 	}
 
 	public isIndexed(variable: Variable, parent: Variable): boolean {

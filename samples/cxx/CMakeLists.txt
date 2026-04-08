@@ -23,8 +23,8 @@ add_executable(
         ${SAMPLE_SRC_DIR}/Program.cpp
         ${SAMPLE_SRC_DIR}/Arrays.cpp
         ${SAMPLE_SRC_DIR}/DoublyLinkedLists.cpp
-        ${SAMPLE_SRC_DIR}/GraphMapNodes.cpp
         ${SAMPLE_SRC_DIR}/Plot.cpp
+        ${SAMPLE_SRC_DIR}/Graphs.cpp
 )
 
 find_library(MATH_LIBRARY m)
