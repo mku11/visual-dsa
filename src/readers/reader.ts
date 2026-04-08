@@ -30,7 +30,6 @@ export class Reader {
 	protected registeredTypes: Map<string, Set<string>> = new Map<string, Set<string>>();
 	protected registered = false;
 	protected static instance?: Reader;
-	protected extractorMethod = this.getRegisterMethod();
 	protected static cachedSourceLines: Map<string, string[]> = new Map<string, string[]>();
 
 	constructor() {
@@ -105,7 +104,7 @@ export class Reader {
 			return;
 		}
 		try {
-			const expr = this.extractorMethod;
+			const expr = this.getRegisterMethod();
 			const regTypes = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
@@ -117,42 +116,46 @@ export class Reader {
 			if (regTypes.type && regTypes.type.endsWith('Exception')) {
 				throw new Error(regTypes.result);
 			}
-			if (regTypes.variablesReference > 0) {
-				const regTypeValues = await this.getVariables(regTypes, "indexed");
-				for (const regTypeValue of regTypeValues) {
-					if (this.filterVariable(regTypeValue))
-						continue;
-					const children: Variable[] = await this.getVariables(regTypeValue, "indexed");
-					const parts: Variable[] = [];
-					for (const child of children) {
-						if (this.filterVariable(child))
-							continue;
-						if (!this.isIndexed(child, regTypeValue))
-							continue;
-						parts.push(child);
-						if (parts.length == 2)
-							break;
-					}
-					if (parts.length != 2)
-						continue;
-					const attrs: Set<string> = new Set<string>();
-					const type = this.trimQuotes(parts[0].value);
-					const attrChildren: Variable[] = await this.getVariables(parts[1], "indexed");
-					for (const attr of attrChildren) {
-						if (this.filterVariable(attr))
-							continue;
-						if (!this.isIndexed(attr, regTypeValue))
-							continue;
-						const attrValue = this.trimQuotes(attr.value);
-						attrs.add(attrValue);
-					}
-					this.registeredTypes.set(type, attrs);
-				}
-			}
+			await this.parseRegisteredTypes(regTypes);
 		} catch (error) {
 			console.error(error);
 		}
 		this.registered = true;
+	}
+	
+	async parseRegisteredTypes(regTypes: Variable) {
+		if (regTypes.variablesReference > 0) {
+			const regTypeValues = await this.getVariables(regTypes, "indexed");
+			for (const regTypeValue of regTypeValues) {
+				if (this.filterVariable(regTypeValue))
+					continue;
+				const children: Variable[] = await this.getVariables(regTypeValue, "indexed");
+				const parts: Variable[] = [];
+				for (const child of children) {
+					if (this.filterVariable(child))
+						continue;
+					if (!this.isIndexed(child, regTypeValue))
+						continue;
+					parts.push(child);
+					if (parts.length == 2)
+						break;
+				}
+				if (parts.length != 2)
+					continue;
+				const attrs: Set<string> = new Set<string>();
+				const type = this.trimQuotes(parts[0].value);
+				const attrChildren: Variable[] = await this.getVariables(parts[1], "indexed");
+				for (const attr of attrChildren) {
+					if (this.filterVariable(attr))
+						continue;
+					if (!this.isIndexed(attr, regTypeValue))
+						continue;
+					const attrValue = this.trimQuotes(attr.value);
+					attrs.add(attrValue);
+				}
+				this.registeredTypes.set(type, attrs);
+			}
+		}
 	}
 
 	trimQuotes(value: string) {
@@ -535,7 +538,7 @@ export class Reader {
 	}
 
 	public getRegisterMethod() {
-		return "Extractor.register()";
+		return "Extractor.registerAttrs()";
 	}
 
 	public hasChildren(ch: Variable): boolean {

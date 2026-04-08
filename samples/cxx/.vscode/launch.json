@@ -6,7 +6,37 @@
 			"type": "cppvsdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/sample.exe",
-			"args": ["Arrays"],
+			"args": [
+				"Arrays"
+			],
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "DoublyLinkedLists",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/sample.exe",
+			"args": [
+				"DoublyLinkedLists"
+			],
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "GraphMapNodes",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/sample.exe",
+			"args": [
+				"GraphMapNodes"
+			],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],

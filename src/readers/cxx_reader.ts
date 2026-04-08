@@ -40,6 +40,12 @@ export class CxxReader extends Reader {
 		// exclude built-in variables
 		if (variable.name === "null"
 			|| variable.value === "null"
+			|| variable.name === "[allocator]"
+			|| variable.name === "[comparator]"
+			|| variable.name === "[Raw View]"
+			|| variable.name === "[Raw"
+			|| variable.name === "[hash_function]"
+			|| variable.name === "[key_eq]"
 			|| !variable.type) {
 			return true;
 		}
@@ -79,9 +85,36 @@ export class CxxReader extends Reader {
 		}
 		return id;
 	}
-	
+
 	public async getNodeType(variable: Variable): Promise<string> {
-		const type = variable.type;
+		let type = variable.type;
+		// remove long types
+		const removeTypes: string[] = [",std::allocator", ",std::hash", ",std::equal_to"];
+		let ridx = 0;
+		while (ridx < removeTypes.length) {
+			const idx = type.indexOf(removeTypes[ridx]);
+			if (idx == -1) {
+				ridx++;
+				continue;
+			}
+			let found = false;
+			let angleBraces = 0;
+			let i = idx + removeTypes[ridx].length;
+			while (true) {
+				if (type[i] == '<') {
+					angleBraces++;
+					found = true;
+				}
+				else if (type[i] == '>') {
+					angleBraces--;
+					found = true;
+				}
+				if (angleBraces == 0 && found)
+					break;
+				i++;
+			}
+			type = type.substring(0, idx) + type.substring(i + 1);
+		}
 		return type;
 	}
 
@@ -200,7 +233,7 @@ export class CxxReader extends Reader {
 				const gChildren = await this.getVariables(child);
 				const row: string[] = [];
 				for (const gChild of gChildren) {
-					if(gChild.presentationHint?.attributes?.includes("failedEvaluation"))
+					if (gChild.presentationHint?.attributes?.includes("failedEvaluation"))
 						row.push("");
 					else
 						row.push(gChild.value);
@@ -240,7 +273,7 @@ export class CxxReader extends Reader {
 			if (this.filterVariable(childVar)) {
 				continue;
 			}
-			childVar.ranges = variable.ranges.slice(0,2);
+			childVar.ranges = variable.ranges.slice(0, 2);
 			const array2Drepr = await this.getArray2DRepr(childVar);
 			if (array2Drepr)
 				children.push(array2Drepr);
@@ -387,6 +420,16 @@ export class CxxReader extends Reader {
 		return type.startsWith('set');
 	}
 
+	public isMap(type: string): boolean {
+		return type.startsWith('std::map')
+			|| type.startsWith('std::unordered_map');
+	}
+
+	public isPair(type: string): boolean {
+		return type.startsWith('std::pair');
+	}
+
+
 	getRawType(variable: Variable) {
 		const idx = variable.type.indexOf("[");
 		const rawType = variable.type.substring(0, idx);
@@ -420,7 +463,7 @@ export class CxxReader extends Reader {
 	}
 
 	public getRegisterMethod() {
-		return "Extractor.Register()";
+		return "extractorRegisterAttrs()";
 	}
 
 	public hasChildren(ch: Variable): boolean {
@@ -435,15 +478,119 @@ export class CxxReader extends Reader {
 				return true;
 			}
 		}
+		if (this.isMap(parent.type) && this.isPair(variable.type))
+			return true;
 		return super.isIndexed(variable, parent);
+	}
+
+	public async registerTypes() {
+		if (this.registered) {
+			return;
+		}
+		try {
+			const expr = this.getRegisterMethod();
+			const mapsSize: Variable | undefined = await this.getVariable(`(${expr}).size`);
+			if (!mapsSize)
+				return;
+			const size = parseInt(mapsSize.value);
+			for (let i = 0; i < size; i++) {
+				const mapVariable: Variable | undefined = await this.getVariable(`(${this.getRegisterMethod()}).maps[${i}]`);
+				if (!mapVariable)
+					continue;
+				if (this.filterVariable(mapVariable))
+					continue;
+
+				const typeVariable: Variable | undefined = await this.getVariable(`${mapVariable.evaluateName}.type`);
+				const attrsVariable: Variable | undefined = await this.getVariable(`${mapVariable.evaluateName}.attrs`);
+				const attrsSize: Variable | undefined = await this.getVariable(`${mapVariable.evaluateName}.size`);
+				if (!typeVariable || !attrsVariable || !attrsSize)
+					continue;
+				const attrs: Set<string> = new Set<string>();
+				let type = typeVariable.value;
+				const idx = type.indexOf(" ");
+				if (idx >= 0) {
+					type = type.substring(idx + 1);
+				}
+				type = this.trimQuotes(type);
+
+				const attrSize = parseInt(attrsSize.value);
+				for (let j = 0; j < attrSize; j++) {
+					const attr: Variable | undefined = await this.getVariable(`${attrsVariable.evaluateName}[${j}]`);
+					if (!attr)
+						continue;
+					if (this.filterVariable(attr))
+						continue;
+					const attrValue = this.trimQuotes(attr.value.split(" ")[1]);
+					attrs.add(attrValue);
+				}
+				this.registeredTypes.set(type, attrs);
+			}
+		} catch (error) {
+			console.error(error);
+		}
+		this.registered = true;
 	}
 
 	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
 		const exprName = variable.evaluateName;
-		return `Extractor.extract("${type}"
+		const objRef = !type.endsWith("*") ? "&" : "";
+		const rootRef = !root.type.endsWith("*") ? "&" : "";
+		return `extract("${type}"
 				, "${attr}"
-				, ${exprName}
-				, ${root.evaluateName}
+				, ${objRef}(${exprName})
+				, ${rootRef}(${root.evaluateName})
 				)`;
+	}
+
+	public async extract(variable: Variable, type: string, attr: string, root: Variable):
+		Promise<Variable[] | undefined> {
+		const attrs: Set<string> | undefined = this.registeredTypes.get(type);
+		if (!attrs)
+			return;
+		if (!attrs.has(attr))
+			return;
+		try {
+			let expr: string = this.getExtractCall(variable, type, attr, root);
+			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+
+			const extractSize: Variable | undefined = await this.getVariable(`(${expr}).size`);
+			if (!extractSize)
+				return;
+			if ((extractSize.value.startsWith('error '))
+				|| (extractSize.type && extractSize.type.includes('Exception'))) {
+				throw new Error(extractSize.value);
+			}
+			if (extractSize.type === undefined) {
+				return undefined;
+			}
+			if (extractSize.type.endsWith('Exception')) {
+				throw new Error(extractSize.value);
+			}
+			if (extractSize.value === 'null' || extractSize.value === 'undefined') {
+				return undefined;
+			}
+			const size = parseInt(extractSize.value);
+			const nodes: Variable[] = [];
+			for (let i = 0; i < size; i++) {
+				const objExpr = `(${expr}).objects[${i}]`;
+				const objectVariable: Variable | undefined = await this.getVariable(`${objExpr}`);
+				if (!objectVariable)
+					continue;
+				if (this.filterVariable(objectVariable))
+					continue;
+				objectVariable.evaluateName = objExpr;
+				objectVariable.name = String(i);
+				nodes.push(objectVariable);
+			}
+			return nodes;
+		} catch (ex: Error | unknown) {
+			if (ex instanceof Error) {
+				console.error("extractor Error: " + variable.evaluateName
+					+ " " + type + " " + attr
+					+ ": " + ex);
+			} else {
+				console.error(ex);
+			}
+		}
 	}
 }

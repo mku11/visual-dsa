@@ -93,7 +93,7 @@ public:
 
         cout << "done" << endl;
 
-        // generally you should be releasing
+        // generally this is where you should be releasing
         // the allocated memory
     }
 };

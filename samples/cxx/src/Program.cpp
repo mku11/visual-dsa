@@ -2,10 +2,12 @@
 #include <cstring>
 
 extern void arraysRunMain(int argc, char **argv);
+extern void doublyLinkedListsRunMain(int argc, char **argv);
+extern void graphMapNodesRunMain(int argc, char **argv);
 
 int main(int argc, char **argv)
 {
-    if (argc == 0 || strcmp(argv[1],"Arrays") == 0)
+    if (argc == 0 || strcmp(argv[1], "Arrays") == 0)
         arraysRunMain(argc, argv);
     // else if (args[0] == "Lists")
     //     Lists.RunMain(args);
@@ -19,10 +21,10 @@ int main(int argc, char **argv)
     //     LinkedLists.RunMain(args);
     // else if (args[0] == "Primitives")
     //     Primitives.RunMain(args);
-    // else if (args[0] == "GraphMapNodes")
-    //     GraphMapNodes.RunMain(args);
-    // else if (args[0] == "DoublyLinkedLists")
-    //     DoublyLinkedLists.RunMain(args);
+    else if (strcmp(argv[1], "GraphMapNodes") == 0)
+        graphMapNodesRunMain(argc, argv);
+    else if (strcmp(argv[1], "DoublyLinkedLists") == 0)
+        doublyLinkedListsRunMain(argc, argv);
     // else if (args[0] == "Queues")
     //     Queues.RunMain(args);
     // else if (args[0] == "Plot")

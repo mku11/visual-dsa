@@ -22,6 +22,8 @@ add_executable(
         sample
         ${SAMPLE_SRC_DIR}/Program.cpp
         ${SAMPLE_SRC_DIR}/Arrays.cpp
+        ${SAMPLE_SRC_DIR}/DoublyLinkedLists.cpp
+        ${SAMPLE_SRC_DIR}/GraphMapNodes.cpp
 )
 
 find_library(MATH_LIBRARY m)
