@@ -56,7 +56,7 @@ and jGRASP: https://www.jgrasp.org/
 
 ## Custom attributes using Extractor
 There is limited support for extracting custom attributes via code using an Extractor class.
-- The extractor class methods are called internally for each node type you assign them using the Extractor.register() method.
+- The extractor class methods are called internally for each node type you assign them using the Extractor.registerAttrs() method.
 - You can extract data by implementing the Extractor.extract() method. Return types supported are arrays of objects.
 - See samples for more details.
 
