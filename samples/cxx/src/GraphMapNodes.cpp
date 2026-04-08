@@ -61,16 +61,15 @@ typedef struct Objects
 
 // FIXME: the MSVC C/C++ debugger does not allow nested function calls.
 Objects extract(
-    char *type,
-    char *attr,
+    string type,
+    string attr,
     void *obj,
     void *root)
 {
     cout << "extract: " << type << ", " << attr << endl;
-    if (!strcmp(type, "std::unordered_map<std::string,std::pair<GraphMapNode<std::string>,std::vector<GraphMapNode<std::string>>>> *") && !strcmp(attr, "customNodes"))
+    if (type == "std::unordered_map<std::string,std::pair<GraphMapNode<std::string>,std::vector<GraphMapNode<std::string>>>> *" && attr == "customNodes")
     {
-        unordered_map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>> *rootObject =
-            (unordered_map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>> *)root;
+        auto *rootObject = (unordered_map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>> *)root;
         GraphMapNode<string> nodes[1024];
         int i = 0;
         for (auto kv : *rootObject)
@@ -80,10 +79,9 @@ Objects extract(
         }
         return {nodes, (int)rootObject->size()};
     }
-    else if (!strcmp(type, "GraphMapNode<std::string>") && !strcmp(attr, "customNodes"))
+    else if (type == "GraphMapNode<std::string>" && attr == "customNodes")
     {
-        unordered_map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>> *rootObject =
-            (unordered_map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>> *)root;
+        auto *rootObject = (unordered_map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>> *)root;
         GraphMapNode<string> *objObject = (GraphMapNode<string> *)obj;
         GraphMapNode<string> nodes[1024];
         int i = 0;
@@ -106,7 +104,7 @@ public:
         // auto a = extractorRegisterAttrs();
         // graph with hashmap node
         // map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>> *aa = new map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>>();
-        unordered_map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>> *gmap = new unordered_map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>>();
+        auto *gmap = new unordered_map<string, pair<GraphMapNode<string>, vector<GraphMapNode<string>>>>();
         unordered_map<string, int> *gedges = new unordered_map<string, int>();
         extractEdges = gedges;
 

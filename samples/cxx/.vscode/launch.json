@@ -42,6 +42,20 @@
 			"environment": [],
 			"console": "externalTerminal",
 			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "Plot",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/sample.exe",
+			"args": [
+				"Plot"
+			],
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
 		}
 	]
 }

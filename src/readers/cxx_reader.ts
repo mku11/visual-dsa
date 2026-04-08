@@ -46,6 +46,7 @@ export class CxxReader extends Reader {
 			|| variable.name === "[Raw"
 			|| variable.name === "[hash_function]"
 			|| variable.name === "[key_eq]"
+			|| variable.name === "[capacity]"
 			|| !variable.type) {
 			return true;
 		}
@@ -179,7 +180,7 @@ export class CxxReader extends Reader {
 		try {
 			const name = variable.evaluateName;
 			let expr = `${name}`;
-			if (variable.ranges.length > 0)
+			if (variable.ranges && variable.ranges.length > 0)
 				expr = `&(${expr})[${variable.ranges[0].start}],${variable.ranges[0].length}`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
@@ -191,9 +192,15 @@ export class CxxReader extends Reader {
 				|| (arrRepr.type && arrRepr.type.includes('Exception'))) {
 				throw new Error(arrRepr.result);
 			}
-			const children = await this.getVariables(arrRepr);
+			const children = await this.getVariables(arrRepr, "indexed");
 			const arr: string[] = [];
 			for (const child of children) {
+				if (!this.isIndexed(child, variable)) {
+					continue;
+				}
+				if (this.filterVariable(child)) {
+					continue;
+				}
 				arr.push(child.value);
 			}
 			return arr;
@@ -212,7 +219,7 @@ export class CxxReader extends Reader {
 		try {
 			const name = variable.evaluateName;
 			let expr = `${name}`;
-			if (variable.ranges.length > 0)
+			if (variable.ranges && variable.ranges.length > 0)
 				expr = `&(${expr})[${variable.ranges[1].start}],${variable.ranges[1].length}`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
@@ -223,6 +230,13 @@ export class CxxReader extends Reader {
 			const children = await this.getVariables(arrRepr);
 			const arr2D: string[][] = [];
 			for (let child of children) {
+				if (!this.isIndexed(child, variable)) {
+					continue;
+				}
+				if (this.filterVariable(child)) {
+					continue;
+				}
+
 				// assign the child length, ragged arrays are not supported
 				if (variable.ranges !== undefined) {
 					const childExpr = `&(${child.evaluateName})[${variable.ranges[0].start}],${variable.ranges[0].length}`;
@@ -233,6 +247,13 @@ export class CxxReader extends Reader {
 				const gChildren = await this.getVariables(child);
 				const row: string[] = [];
 				for (const gChild of gChildren) {
+					if (!this.isIndexed(gChild, child)) {
+						continue;
+					}
+					if (this.filterVariable(gChild)) {
+						continue;
+					}
+
 					if (gChild.presentationHint?.attributes?.includes("failedEvaluation"))
 						row.push("");
 					else
@@ -398,7 +419,7 @@ export class CxxReader extends Reader {
 	}
 
 	public isList(type: string): boolean {
-		return type.startsWith('vector');
+		return type.startsWith('std::vector');
 	}
 
 	public isArray(type: string): boolean {
@@ -406,7 +427,7 @@ export class CxxReader extends Reader {
 	}
 
 	public isLinkedList(type: string): boolean {
-		return type.startsWith('list');
+		return type.startsWith('std::list');
 	}
 
 	public isIterable(type: string): boolean {
@@ -417,7 +438,7 @@ export class CxxReader extends Reader {
 	}
 
 	public isSet(type: string): boolean {
-		return type.startsWith('set');
+		return type.startsWith('std::set');
 	}
 
 	public isMap(type: string): boolean {
@@ -437,15 +458,19 @@ export class CxxReader extends Reader {
 	}
 
 	public getDefaultLayout(type: string, _value: string): string | undefined {
-		if (type.match(new RegExp(".+\\[\\d+\\]\\[\\d+\\]\\[\\d+\\]"))) {
+		if (type.match(new RegExp(".+\\[\\d+\\]\\[\\d+\\]\\[\\d+\\]"))
+			|| type.startsWith("std::vector<std::vector<std::vector<")
+		) {
 			return "array3D";
-		} else if (type.match(new RegExp(".+\\[\\d+\\]\\[\\d+\\]"))) {
+		} else if (type.match(new RegExp(".+\\[\\d+\\]\\[\\d+\\]"))
+			|| type.startsWith("std::vector<std::vector<")) {
 			return "array2D";
-		} else if (type.match(new RegExp(".+\\[\\d+\\]"))) {
+		} else if (type.match(new RegExp(".+\\[\\d+\\]"))
+			|| type.startsWith("std::vector")) {
 			return "array";
-		} else if (type.includes('map')) {
+		} else if (type.startsWith('std::map')) {
 			return "map";
-		} else if (type.includes('set')) {
+		} else if (type.startsWith('std::set')) {
 			return "set";
 		} else if (type.includes('queue')) {
 			return "queue";
@@ -483,114 +508,67 @@ export class CxxReader extends Reader {
 		return super.isIndexed(variable, parent);
 	}
 
-	public async registerTypes() {
-		if (this.registered) {
-			return;
-		}
-		try {
-			const expr = this.getRegisterMethod();
-			const mapsSize: Variable | undefined = await this.getVariable(`(${expr}).size`);
-			if (!mapsSize)
-				return;
-			const size = parseInt(mapsSize.value);
-			for (let i = 0; i < size; i++) {
-				const mapVariable: Variable | undefined = await this.getVariable(`(${this.getRegisterMethod()}).maps[${i}]`);
-				if (!mapVariable)
-					continue;
-				if (this.filterVariable(mapVariable))
-					continue;
-
-				const typeVariable: Variable | undefined = await this.getVariable(`${mapVariable.evaluateName}.type`);
-				const attrsVariable: Variable | undefined = await this.getVariable(`${mapVariable.evaluateName}.attrs`);
-				const attrsSize: Variable | undefined = await this.getVariable(`${mapVariable.evaluateName}.size`);
-				if (!typeVariable || !attrsVariable || !attrsSize)
-					continue;
-				const attrs: Set<string> = new Set<string>();
-				let type = typeVariable.value;
-				const idx = type.indexOf(" ");
-				if (idx >= 0) {
-					type = type.substring(idx + 1);
-				}
-				type = this.trimQuotes(type);
-
-				const attrSize = parseInt(attrsSize.value);
-				for (let j = 0; j < attrSize; j++) {
-					const attr: Variable | undefined = await this.getVariable(`${attrsVariable.evaluateName}[${j}]`);
-					if (!attr)
-						continue;
-					if (this.filterVariable(attr))
-						continue;
-					const attrValue = this.trimQuotes(attr.value.split(" ")[1]);
-					attrs.add(attrValue);
-				}
-				this.registeredTypes.set(type, attrs);
-			}
-		} catch (error) {
-			console.error(error);
-		}
-		this.registered = true;
-	}
-
 	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
 		const exprName = variable.evaluateName;
 		const objRef = !type.endsWith("*") ? "&" : "";
 		const rootRef = !root.type.endsWith("*") ? "&" : "";
-		return `extract("${type}"
-				, "${attr}"
-				, ${objRef}(${exprName})
-				, ${rootRef}(${root.evaluateName})
-				)`;
+		return `extract(
+			"${type}",
+			"${attr}",
+			${objRef}(${exprName}),
+			${rootRef}(${root.evaluateName})
+		)`;
 	}
 
-	public async extract(variable: Variable, type: string, attr: string, root: Variable):
-		Promise<Variable[] | undefined> {
-		const attrs: Set<string> | undefined = this.registeredTypes.get(type);
-		if (!attrs)
-			return;
-		if (!attrs.has(attr))
-			return;
-		try {
-			let expr: string = this.getExtractCall(variable, type, attr, root);
-			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+	// public async extract(variable: Variable, type: string, attr: string, root: Variable):
+	// 	Promise<Variable[] | undefined> {
+	// 	const attrs: Set<string> | undefined = this.registeredTypes.get(type);
+	// 	if (!attrs)
+	// 		return;
+	// 	if (!attrs.has(attr))
+	// 		return;
+	// 	try {
+	// 		let expr: string = this.getExtractCall(variable, type, attr, root);
+	// 		expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 
-			const extractSize: Variable | undefined = await this.getVariable(`(${expr}).size`);
-			if (!extractSize)
-				return;
-			if ((extractSize.value.startsWith('error '))
-				|| (extractSize.type && extractSize.type.includes('Exception'))) {
-				throw new Error(extractSize.value);
-			}
-			if (extractSize.type === undefined) {
-				return undefined;
-			}
-			if (extractSize.type.endsWith('Exception')) {
-				throw new Error(extractSize.value);
-			}
-			if (extractSize.value === 'null' || extractSize.value === 'undefined') {
-				return undefined;
-			}
-			const size = parseInt(extractSize.value);
-			const nodes: Variable[] = [];
-			for (let i = 0; i < size; i++) {
-				const objExpr = `(${expr}).objects[${i}]`;
-				const objectVariable: Variable | undefined = await this.getVariable(`${objExpr}`);
-				if (!objectVariable)
-					continue;
-				if (this.filterVariable(objectVariable))
-					continue;
-				objectVariable.evaluateName = objExpr;
-				objectVariable.name = String(i);
-				nodes.push(objectVariable);
-			}
-			return nodes;
-		} catch (ex: Error | unknown) {
-			if (ex instanceof Error) {
-				console.error("extractor Error: " + variable.evaluateName
-					+ " " + type + " " + attr
-					+ ": " + ex);
-			} else {
-				console.error(ex);
-			}
-		}
-	}
+	// 		const extractSize: Variable | undefined = await this.getVariable(`(${expr}).size`);
+	// 		if (!extractSize)
+	// 			return;
+	// 		if ((extractSize.value.startsWith('error '))
+	// 			|| (extractSize.type && extractSize.type.includes('Exception'))) {
+	// 			throw new Error(extractSize.value);
+	// 		}
+	// 		if (extractSize.type === undefined) {
+	// 			return undefined;
+	// 		}
+	// 		if (extractSize.type.endsWith('Exception')) {
+	// 			throw new Error(extractSize.value);
+	// 		}
+	// 		if (extractSize.value === 'null' || extractSize.value === 'undefined') {
+	// 			return undefined;
+	// 		}
+	// 		const size = parseInt(extractSize.value);
+	// 		const nodes: Variable[] = [];
+	// 		for (let i = 0; i < size; i++) {
+	// 			const objExpr = `(${expr}).objects[${i}]`;
+	// 			const objectVariable: Variable | undefined = await this.getVariable(`${objExpr}`);
+	// 			if (!objectVariable)
+	// 				continue;
+	// 			if (this.filterVariable(objectVariable))
+	// 				continue;
+	// 			objectVariable.evaluateName = objExpr;
+	// 			objectVariable.name = String(i);
+	// 			nodes.push(objectVariable);
+	// 		}
+	// 		return nodes;
+	// 	} catch (ex: Error | unknown) {
+	// 		if (ex instanceof Error) {
+	// 			console.error("extractor Error: " + variable.evaluateName
+	// 				+ " " + type + " " + attr
+	// 				+ ": " + ex);
+	// 		} else {
+	// 			console.error(ex);
+	// 		}
+	// 	}
+	// }
 }

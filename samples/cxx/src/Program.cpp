@@ -4,6 +4,7 @@
 extern void arraysRunMain(int argc, char **argv);
 extern void doublyLinkedListsRunMain(int argc, char **argv);
 extern void graphMapNodesRunMain(int argc, char **argv);
+extern void plotRunMain(int argc, char **argv);
 
 int main(int argc, char **argv)
 {
@@ -27,6 +28,6 @@ int main(int argc, char **argv)
         doublyLinkedListsRunMain(argc, argv);
     // else if (args[0] == "Queues")
     //     Queues.RunMain(args);
-    // else if (args[0] == "Plot")
-    //     Plot.RunMain(args);
+    else if (strcmp(argv[1], "Plot") == 0)
+        plotRunMain(argc, argv);
 }

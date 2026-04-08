@@ -134,8 +134,6 @@ export class Reader {
 				for (const child of children) {
 					if (this.filterVariable(child))
 						continue;
-					if (!this.isIndexed(child, regTypeValue))
-						continue;
 					parts.push(child);
 					if (parts.length == 2)
 						break;
