@@ -16,6 +16,7 @@ class Primitives
         char y = 'a';
 
         string z = "test";
+        Console.WriteLine(x + "," + y + "," + z);
         Console.WriteLine("done");
     }
 }

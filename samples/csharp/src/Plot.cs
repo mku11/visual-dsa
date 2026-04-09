@@ -34,7 +34,6 @@ internal class Plot
         Console.WriteLine("done");
     }
 
-
     // custom extractor
     static class Extractor
     {
@@ -51,45 +50,34 @@ internal class Plot
             ];
         }
 
-        public static object[] Extract(
-            string type,
-            string attr,
-            object obj,
+        public static List<int[]> Extract_points(
+            int?[] obj,
             object root)
         {
-            Console.WriteLine("extract: " + type + ", " + attr);
-            if (type == "int?[]" && attr == "points")
+            // convert list of numbers to list of points (i,xi)
+            List<int[]> nodes = new List<int[]>();
+            for (int i = 0; i < obj.Length; i++)
             {
-                // convert list of numbers to list of points (i,xi)
-                int?[] objObject = obj as int?[];
-                List<int[]> nodes = new List<int[]>();
-                for (int i = 0; i < objObject.Length; i++)
-                {
-                    if (objObject[i] != null)
-                    {
-                        nodes.Add([i, (int)objObject[i]]);
-                    }
-                }
-                return nodes.ToArray();
+                if (obj[i] == null)
+                    continue;
+                nodes.Add([i, (int)obj[i]]);
             }
-            else if (type == "System.Collections.Generic.List<System.Collections.Generic.List<int>>"
-             && attr == "lines")
+            return nodes;
+        }
+
+        public static List<int[]> Extract_lines(
+            List<List<int>> obj, object root)
+        {
+            // convert list of points to list of lines
+            List<int[]> nodes = new List<int[]>();
+            for (int i = 0; i < obj.Count - 1; i++)
             {
-                // convert list of points to list of lines
-                List<List<int>> objObject = obj as List<List<int>>;
-                List<int[]> nodes = new List<int[]>();
-                for (int i = 0; i < objObject.Count - 1; i++)
-                {
-                    nodes.Add([
-                        objObject[i][0],
-                            objObject[i][1],
-                            objObject[i + 1][0],
-                            objObject[i + 1][1]
-                    ]);
-                }
-                return nodes.ToArray();
+                nodes.Add([
+                    obj[i][0], obj[i][1],
+                    obj[i + 1][0], obj[i + 1][1]
+                ]);
             }
-            return null;
+            return nodes;
         }
     }
 }

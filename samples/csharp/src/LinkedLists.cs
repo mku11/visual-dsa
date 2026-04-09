@@ -18,12 +18,12 @@ internal class LinkedLists
         linkedList.Append("3");
         linkedList.Append("4");
 
-        LinkedListCustom<string>.LinkedListNode<string> head = linkedList.Head;
+        LinkedListNode<string> head = linkedList.Head;
         while (head != null)
         {
             if (head.Value.Equals("3"))
             {
-                head.insertNext(new LinkedListCustom<string>.LinkedListNode<string>("5"));
+                head.insertNext(new LinkedListNode<string>("5"));
                 break;
             }
             head = head.Next;
@@ -60,28 +60,29 @@ public class LinkedListCustom<T>
             m.Next = new LinkedListNode<T>(value);
         }
     }
+}
 
-    public class LinkedListNode<T>
+public class LinkedListNode<T>
+{
+
+    public T Value { get; private set; }
+    public LinkedListNode<T> Next { get; internal set; }
+
+    public void insertNext(LinkedListNode<T> node)
     {
+        LinkedListNode<T> t = this.Next;
+        this.Next = node;
+        node.Next = t;
+    }
 
-        public T Value { get; private set; }
-        public LinkedListNode<T> Next { get; internal set; }
+    public LinkedListNode(T value)
+    {
+        this.Value = value;
+    }
 
-        public void insertNext(LinkedListNode<T> node)
-        {
-            LinkedListNode<T> t = this.Next;
-            this.Next = node;
-            node.Next = t;
-        }
-
-        public LinkedListNode(T value)
-        {
-            this.Value = value;
-        }
-
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
+    public override string ToString()
+    {
+        return Value.ToString();
     }
 }
+

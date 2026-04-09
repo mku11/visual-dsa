@@ -41,9 +41,7 @@ internal class GraphMapNodes
 
     class GraphMapNode<T>
     {
-
         public T Value { get; private set; }
-
         public GraphMapNode(T value)
         {
             this.Value = value;
@@ -62,73 +60,66 @@ internal class GraphMapNodes
         {
             return [
                 new object[]{"System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>",
-                    new string[]{"customNodes", "customValue"}},
+                    new string[]{"dictCustomNodes", "dictCustomValue"}},
                 new object[] {"GraphMapNodes.GraphMapNode<string>",
-                    new string[]{"customNodes", "customEdges", "customValue"}}
+                    new string[]{"nodeCustomNodes", "nodeCustomEdges", "nodeCustomValue"}}
             ];
         }
 
-        public static object[] Extract(
-            string type,
-            string attr,
-            object obj,
-            object root)
+        public static List<GraphMapNode<string>> Extract_dictCustomNodes(
+            Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> obj,
+            Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
         {
-            Console.WriteLine("extract: " + type + ", " + attr);
-            if (type == "System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>"
-             && attr == "customNodes")
-            {
-                Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
-                    root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
-                List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
-                if (rootObject.Keys.Count > 0)
-                    nodes.Add(rootObject.Keys.First());
-                return nodes.ToArray();
-            }
-            else if (type == "System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>"
-            && attr == "customValue")
-            {
-                StringBuilder sb = new StringBuilder();
-                var nodeObj = obj as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
-                foreach (GraphMapNode<string> key in nodeObj.Keys)
-                {
-                    sb.Append(key.Value);
-                    sb.Append(",");
-                }
-                return new string[] { sb.ToString() };
-            }
+            List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
+            if (root.Keys.Count > 0)
+                nodes.Add(root.Keys.First());
+            return nodes;
+        }
 
-            else if (type == "GraphMapNodes.GraphMapNode<string>" && attr == "customNodes")
-            {
-                Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
-                    root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
-                GraphMapNode<string> objObject = obj as GraphMapNode<string>;
-                List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
-                if (rootObject.ContainsKey(objObject))
-                    nodes.AddRange(rootObject[objObject]);
-                return nodes.ToArray();
-            }
-            if (type == "GraphMapNodes.GraphMapNode<string>" && attr == "customEdges")
-            {
-                Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> rootObject =
-                    root as Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>>;
-                GraphMapNode<string> objObject = obj as GraphMapNode<string>;
 
-                List<int> edges = new List<int>();
-                foreach (GraphMapNode<string> child in rootObject[objObject])
-                {
-                    string edgeKey = objObject.Value + "," + child.Value;
-                    int edgeValue = Extractor.gedges[edgeKey];
-                    edges.Add(edgeValue);
-                }
-                return edges.Select(x => (object)x).ToArray();
-            }
-            else if (type == "GraphMapNodes.GraphMapNode<string>" && attr == "customValue")
+        public static string[] Extract_dictCustomValue(
+            Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> obj,
+            Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
+        {
+
+            StringBuilder sb = new StringBuilder();
+            foreach (GraphMapNode<string> key in obj.Keys)
             {
-                GraphMapNode<string> objObject = obj as GraphMapNode<string>;
-                return new string[] { objObject.Value.ToString() };
+                sb.Append(key.Value);
+                sb.Append(",");
             }
-            return null;
+            return [sb.ToString()];
+        }
+
+        public static List<GraphMapNode<string>> Extract_nodeCustomNodes(
+            GraphMapNode<string> obj,
+            Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
+        {
+            List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
+            if (root.ContainsKey(obj))
+                nodes.AddRange(root[obj]);
+            return nodes;
+        }
+
+        public static List<int> Extract_nodeCustomEdges(
+            GraphMapNode<string> obj,
+            Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
+        {
+            List<int> edges = new List<int>();
+            foreach (GraphMapNode<string> child in root[obj])
+            {
+                string edgeKey = obj.Value + "," + child.Value;
+                int edgeValue = gedges[edgeKey];
+                edges.Add(edgeValue);
+            }
+            return edges;
+        }
+
+        public static string[] Extract_nodeCustomValue(
+            GraphMapNode<string> obj,
+            Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
+        {
+            return [obj.Value];
         }
     }
 }
