@@ -421,6 +421,8 @@ mapRepr;
 			return "tree";
 		} else if (type.endsWith('Graph')) {
 			return "graph";
+		} else {
+			return "none";
 		}
 	}
 

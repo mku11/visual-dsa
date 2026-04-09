@@ -477,9 +477,9 @@ return mapRepr.toString();
 		}
 		return "";
 	}
-	
+
 	public async getNodeType(variable: Variable): Promise<string> {
-		const type = variable.type.replaceAll("$",".");
+		const type = variable.type.replaceAll("$", ".");
 		return type;
 	}
 
@@ -536,6 +536,8 @@ return mapRepr.toString();
 			return "tree";
 		} else if (type.endsWith('Graph')) {
 			return "graph";
+		} else {
+			return "none";
 		}
 	}
 

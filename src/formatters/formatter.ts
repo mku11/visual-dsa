@@ -82,7 +82,7 @@ export class Formatter {
 		if (!node) {
 			return;
 		}
-		const layout = layouts.get("id:" + node.id!) ?? layouts.get("type:" + node.type!) ?? "graph";
+		const layout = layouts.get("id:" + node.id!) ?? layouts.get("type:" + node.type!) ?? "none";
 		const orientation = orientations.get("id:" + node.id!) ?? orientations.get("type:" + node.type!) ?? "horizontal";
 		let visNode: VisNode | undefined = undefined;
 		if (visited.has(node.id)) {

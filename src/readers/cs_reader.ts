@@ -384,6 +384,8 @@ export class CsReader extends Reader {
 			return "linkedlist";
 		} else if (type.includes('List')) {
 			return "array";
+		} else {
+			return "none";
 		}
 	}
 

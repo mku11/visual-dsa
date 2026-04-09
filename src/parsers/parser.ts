@@ -268,7 +268,7 @@ export class Parser {
 		const filterProperties = filtersProperties.get("id:" + id) ?? filtersProperties.get("type:" + type) ?? new Set();
 		const filterPlot = filtersPlot.get("id:" + id) ?? filtersPlot.get("type:" + type) ?? new Set();
 		const useMarkers = markers.get("id:" + id) ?? markers.get("type:" + type) ?? "";
-		const layout = layouts.get("id:" + id) ?? layouts.get("type:" + type) ?? "graph";
+		const layout = layouts.get("id:" + id) ?? layouts.get("type:" + type) ?? "none";
 
 		// check if this is the variable node
 		let varNode: VarNode | Node | undefined;

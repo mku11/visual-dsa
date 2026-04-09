@@ -363,6 +363,8 @@ export class PythonReader extends Reader {
 			return "tree";
 		} else if (type.toLowerCase().includes('graph')) {
 			return "graph";
+		} else {
+			return "none";
 		}
 	}
 

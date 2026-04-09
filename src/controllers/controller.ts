@@ -389,7 +389,7 @@ export class Controller {
 			Array.from(this.selectedProperties.get("id:" + this.selectedObject) ?? this.selectedProperties.get("type:" + selectedType) ?? []).sort(),
 			Array.from(this.parser.getPlot().get(selectedType) ?? []).sort(),
 			Array.from(this.selectedPlot.get("id:" + this.selectedObject) ?? this.selectedPlot.get("type:" + selectedType) ?? []).sort(),
-			this.selectedLayout.get("id:" + this.selectedObject) ?? this.selectedLayout.get("type:" + selectedType) ?? "graph",
+			this.selectedLayout.get("id:" + this.selectedObject) ?? this.selectedLayout.get("type:" + selectedType) ?? "none",
 			this.selectedOrientation.get("id:" + this.selectedObject) ?? this.selectedOrientation.get("type:" + selectedType) ?? "horizontal",
 			this.selectedMarkers.get("id:" + this.selectedObject) ?? this.selectedMarkers.get("type:" + selectedType) ?? ""
 		);

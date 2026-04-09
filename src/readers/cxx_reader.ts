@@ -494,6 +494,8 @@ export class CxxReader extends Reader {
 			return "linkedlist";
 		} else if (type.includes('List')) {
 			return "array";
+		} else {
+			return "none";
 		}
 	}
 
