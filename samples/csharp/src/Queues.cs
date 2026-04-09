@@ -46,32 +46,8 @@ internal class Queues
             string node = pq.Dequeue();
             Console.WriteLine(node);
         }
-
-        List<(string,int)> list = System.Linq.Enumerable.Select(pq.UnorderedItems, 
-            (xRepr)=>xRepr).OrderBy((x)=>x.Item2).ToList();
-        list.Sort(0, pq.UnorderedItems.Count, 
-            System.Collections.Generic.Comparer<(string,int)>.
-                Create((a,b)=>a.Item2 - b.Item2));
         
         Console.WriteLine("done");
-    }
-}
-
-
-class PriorityNode<T, P>
-{
-    public T value;
-    public P priority;
-
-    public PriorityNode(T value, P prio)
-    {
-        this.value = value;
-        this.priority = prio;
-    }
-
-    public String toString()
-    {
-        return this.priority + ":" + this.value;
     }
 }
 
