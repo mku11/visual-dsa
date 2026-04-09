@@ -433,7 +433,7 @@ mapRepr;
 		return "Extractor.registerAttrs()";
 	}
 
-	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
+	public async getExtractCall(variable: Variable, type: string, attr: string, root: Variable): Promise<string> {
 		const exprName = variable.evaluateName;
 		return `Extractor.extract('${type}'
 				, '${attr}'

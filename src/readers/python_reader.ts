@@ -406,7 +406,7 @@ export class PythonReader extends Reader {
 		return await super.getArray3DRepr(variable);
 	}
 
-	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
+	public async getExtractCall(variable: Variable, type: string, attr: string, root: Variable): Promise<string> {
 		const exprName = variable.evaluateName;
 		return `Extractor.extract('${type}'
 				, '${attr}'

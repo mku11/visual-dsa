@@ -392,7 +392,7 @@ export class Reader {
 		if (!attrs.has(attr))
 			return;
 		try {
-			let expr: string = this.getExtractCall(variable, type, attr, root);
+			let expr: string = await this.getExtractCall(variable, type, attr, root);
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
@@ -439,7 +439,7 @@ export class Reader {
 		}
 	}
 
-	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
+	public async getExtractCall(variable: Variable, type: string, attr: string, root: Variable): Promise<string> {
 		return "";
 	}
 

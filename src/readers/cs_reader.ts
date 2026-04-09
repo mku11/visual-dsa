@@ -406,7 +406,7 @@ export class CsReader extends Reader {
 		return super.isIndexed(variable, parent);
 	}
 
-	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
+	public async getExtractCall(variable: Variable, type: string, attr: string, root: Variable): Promise<string> {
 		const exprName = variable.evaluateName;
 		return `Extractor.Extract("${type}"
 				, "${attr}"

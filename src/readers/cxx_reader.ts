@@ -61,9 +61,8 @@ export class CxxReader extends Reader {
 	}
 
 	public async getNodeId(variable: Variable): Promise<string> {
-		let id = variable.value;
 		if (variable.memoryReference) {
-			id = variable.memoryReference;
+			return variable.memoryReference;
 		} else {
 			try {
 				const name = variable.evaluateName;
@@ -74,8 +73,7 @@ export class CxxReader extends Reader {
 					frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 					context: 'repl',
 				});
-				const content = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
-				return content;
+				variable.memoryReference = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
 			} catch (ex: Error | unknown) {
 				if (ex instanceof Error) {
 					console.error("Error: getCurrentNodeId  of " + variable + ": " + ex.message);
@@ -84,7 +82,7 @@ export class CxxReader extends Reader {
 				}
 			}
 		}
-		return id;
+		return variable.memoryReference;
 	}
 
 	public async getNodeType(variable: Variable): Promise<string> {
@@ -514,67 +512,29 @@ export class CxxReader extends Reader {
 		return super.isIndexed(variable, parent);
 	}
 
-	public getExtractCall(variable: Variable, type: string, attr: string, root: Variable): string {
-		const exprName = variable.evaluateName;
-		const objRef = !type.endsWith("*") ? "&" : "";
-		const rootRef = !root.type.endsWith("*") ? "&" : "";
-		return `extract(
+	public async getExtractCall(variable: Variable, type: string, attr: string, root: Variable): Promise<string> {
+		// for cxx nested function calls are not supported so we need to cast the objects
+		// from the memory ref
+
+		// if the objects are pointers then we use the reference
+		let objRef = !type.endsWith("*") ? "&" : "";
+		let rootRef = !root.type.endsWith("*") ? "&" : "";
+
+		let exprName = variable.evaluateName;
+		if (exprName.startsWith("extract_")) {
+			exprName = await this.getNodeId(variable);
+			objRef = ""; // we don't reference
+		}
+		let rootExprName = root.evaluateName;
+		if (rootExprName.startsWith("extract_")) {
+			rootExprName = await this.getNodeId(root);
+			rootRef = ""; // we don't reference
+		}
+		return `extract_${attr}(
 			"${type}",
 			"${attr}",
 			${objRef}(${exprName}),
-			${rootRef}(${root.evaluateName})
+			${rootRef}(${rootExprName})
 		)`;
 	}
-
-	// public async extract(variable: Variable, type: string, attr: string, root: Variable):
-	// 	Promise<Variable[] | undefined> {
-	// 	const attrs: Set<string> | undefined = this.registeredTypes.get(type);
-	// 	if (!attrs)
-	// 		return;
-	// 	if (!attrs.has(attr))
-	// 		return;
-	// 	try {
-	// 		let expr: string = this.getExtractCall(variable, type, attr, root);
-	// 		expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
-
-	// 		const extractSize: Variable | undefined = await this.getVariable(`(${expr}).size`);
-	// 		if (!extractSize)
-	// 			return;
-	// 		if ((extractSize.value.startsWith('error '))
-	// 			|| (extractSize.type && extractSize.type.includes('Exception'))) {
-	// 			throw new Error(extractSize.value);
-	// 		}
-	// 		if (extractSize.type === undefined) {
-	// 			return undefined;
-	// 		}
-	// 		if (extractSize.type.endsWith('Exception')) {
-	// 			throw new Error(extractSize.value);
-	// 		}
-	// 		if (extractSize.value === 'null' || extractSize.value === 'undefined') {
-	// 			return undefined;
-	// 		}
-	// 		const size = parseInt(extractSize.value);
-	// 		const nodes: Variable[] = [];
-	// 		for (let i = 0; i < size; i++) {
-	// 			const objExpr = `(${expr}).objects[${i}]`;
-	// 			const objectVariable: Variable | undefined = await this.getVariable(`${objExpr}`);
-	// 			if (!objectVariable)
-	// 				continue;
-	// 			if (this.filterVariable(objectVariable))
-	// 				continue;
-	// 			objectVariable.evaluateName = objExpr;
-	// 			objectVariable.name = String(i);
-	// 			nodes.push(objectVariable);
-	// 		}
-	// 		return nodes;
-	// 	} catch (ex: Error | unknown) {
-	// 		if (ex instanceof Error) {
-	// 			console.error("extractor Error: " + variable.evaluateName
-	// 				+ " " + type + " " + attr
-	// 				+ ": " + ex);
-	// 		} else {
-	// 			console.error(ex);
-	// 		}
-	// 	}
-	// }
 }
