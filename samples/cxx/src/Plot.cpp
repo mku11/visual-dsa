@@ -28,13 +28,8 @@ vector<pair<string, vector<string>>> extractorRegisterAttrs()
 
 // The extract functions will be of format extract_{attr} and
 // will be called automatically by the debugger to extract the data
-vector<vector<int>> extract_points(
-    char *type,
-    char *attr,
-    void *obj,
-    void *root)
+vector<vector<int>> extract_points(void *obj, void *root)
 {
-    cout << "extract: " << type << ", " << attr << endl;
     // convert list of numbers to list of points (i,xi)
     vector<int> *objObject = (vector<int> *)obj;
     vector<vector<int>> nodes = vector<vector<int>>();
@@ -47,13 +42,8 @@ vector<vector<int>> extract_points(
     return nodes;
 }
 
-vector<vector<int>> extract_lines(
-    char *type,
-    char *attr,
-    void *obj,
-    void *root)
+vector<vector<int>> extract_lines(void *obj, void *root)
 {
-    cout << "extract: " << type << ", " << attr << endl;
     // convert list of points to list of lines
     vector<vector<int>> *objObject = (vector<vector<int>> *)obj;
     vector<vector<int>> nodes = vector<vector<int>>();
