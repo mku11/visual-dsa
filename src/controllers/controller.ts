@@ -339,7 +339,11 @@ export class Controller {
 				continue;
 			}
 			console.log("updateTypes: " + variable.name);
-			await this.parser.updateTypes(variable, variable, 0, visitedTypes);
+			try {
+				await this.parser.updateTypes(variable, variable, 0, visitedTypes);
+			} catch (ex) {
+				console.error(ex);
+			}
 		}
 		this.setDefaultLayouts();
 	}
