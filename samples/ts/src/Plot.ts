@@ -1,6 +1,6 @@
-class Arrays {
+class Plot {
     static runMain() {
-        new Arrays().start();
+        new Plot().start();
     }
 
     start() {
@@ -60,29 +60,28 @@ export class Extractor {
         ];
     }
 
-    public static extract(
-        type: string,
-        attr: string,
-        obj: object
+    public static extract_points(
+        obj: number[],
+        root: object
     ): number[][] | undefined {
-        if (type === "Array[]" && attr === "points") {
-            const nodes: number[][] = [];
-            const objObject = obj as number[];
-            for (let i = 0; i < objObject.length; i++) {
-                if (objObject[i])
-                    nodes.push([i, objObject[i]]);
-            }
-            return nodes;
+        const nodes: number[][] = [];
+        for (let i = 0; i < obj.length; i++) {
+            if (obj[i])
+                nodes.push([i, obj[i]]);
         }
-        else if (type === "Array[][]" && attr === "lines") {
-            const nodes: number[][] = [];
-            const objObject = obj as number[][];
-            for (let i = 0; i < objObject.length - 1; i++) {
-                nodes.push(objObject[i].concat(objObject[i + 1]));
-            }
-            return nodes;
+        return nodes;
+    }
+
+    public static extract_lines(
+        obj: number[][],
+        root: object
+    ): number[][] | undefined {
+        const nodes: number[][] = [];
+        for (let i = 0; i < obj.length - 1; i++) {
+            nodes.push(obj[i].concat(obj[i + 1]));
         }
+        return nodes;
     }
 }
 
-Arrays.runMain();
+Plot.runMain();

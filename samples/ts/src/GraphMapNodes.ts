@@ -67,53 +67,60 @@ export class Extractor {
     // instead of modifying your objects
     public static registerAttrs(): [string, string[]][] {
         return [
-            ["Map", ["customNodes", "customValue"]],
-            ["GraphMapNode", ["customNodes", "customEdges", "customValue"]],
+            ["Map", ["mapCustomNodes", "mapCustomValue"]],
+            ["GraphMapNode", ["nodeCustomNodes", "nodeCustomEdges", "nodeCustomValue"]],
         ];
     }
 
-    public static extract(
-        type: string,
-        attr: string,
+    public static extract_mapCustomNodes(
         obj: object,
-        root: object
-    ): string[] | number[] | object[] | undefined {
-        if (type === "Map" && attr === "customNodes") {
-            const nodes: GraphMapNode<string>[] = [];
-            const rootObject = root as Map<GraphMapNode<string>, GraphMapNode<string>[]>;
-            for (const key of rootObject.keys())
-                nodes.push(key);
-            return nodes;
-        } else if (type === "Map" && attr === "customValue") {
-            let sb = "";
-            const objObject = obj as Map<GraphMapNode<string>, GraphMapNode<string>[]>;
-            for (const key of objObject.keys()) {
-                if (sb.length > 0)
-                    sb += ",";
-                sb += key.getValue();
-            }
-            return [sb];
-        } else if (type === "GraphMapNode" && attr === "customNodes") {
-            const rootObject = root as Map<GraphMapNode<string>, GraphMapNode<string>[]>;
-            const objObject = obj as GraphMapNode<string>;
-            const nodes: GraphMapNode<string>[] | undefined = rootObject.get(objObject);
-            if (nodes)
-                return nodes;
-        } if (type === "GraphMapNode" && attr === "customEdges") {
-            const rootObject = root as Map<GraphMapNode<string>, GraphMapNode<string>[]>;
-            const objObject = obj as GraphMapNode<string>;
-            const edges: number[] | undefined = [];
-            for (const child of rootObject.get(objObject) || []) {
-                const edgeKey = objObject.getValue() + "," + child.getValue();
-                const edgeValue: number | undefined = Extractor.gedges.get(edgeKey);
-                if (edgeValue)
-                    edges?.push(edgeValue);
-            }
-            return edges;
-        } else if (type === "GraphMapNode" && attr === "customValue") {
-            const objObject = obj as GraphMapNode<string>;
-            return [String(objObject.getValue())];
+        root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
+    ): GraphMapNode<string>[] {
+        const nodes: GraphMapNode<string>[] = [];
+        for (const key of root.keys())
+            nodes.push(key);
+        return nodes;
+    }
+
+    public static extract_mapCustomValue(
+        obj: Map<GraphMapNode<string>, GraphMapNode<string>[]>,
+        root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
+    ): string[] {
+        let sb = "";
+        for (const key of obj.keys()) {
+            if (sb.length > 0)
+                sb += ",";
+            sb += key.getValue();
         }
+        return [sb];
+    }
+
+    public static extract_nodeCustomNodes(
+        obj: GraphMapNode<string>,
+        root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
+    ): GraphMapNode<string>[] {
+        return root.get(obj) || [];
+    }
+
+    public static extract_nodeCustomEdges(
+        obj: GraphMapNode<string>,
+        root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
+    ): number[] {
+        const edges: number[] = [];
+        for (const child of root.get(obj) || []) {
+            const edgeKey = obj.getValue() + "," + child.getValue();
+            const edgeValue: number | undefined = Extractor.gedges.get(edgeKey);
+            if (edgeValue)
+                edges?.push(edgeValue);
+        }
+        return edges;
+    }
+
+    public static extract_nodeCustomValue(
+        obj: GraphMapNode<string>,
+        root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
+    ): string[] {
+        return [String(obj.getValue())];
     }
 }
 
