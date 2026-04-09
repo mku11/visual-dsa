@@ -372,7 +372,7 @@ function updateVarOptions(data) {
     selectedObjectType = data.selectedObjectType;
 
     elementName.innerText = data.selectedObject;
-    elementType.innerText = formatLabel(data.selectedObjectType);
+    elementType.innerText = data.selectedObjectType;
 
     nodesSelect.innerHTML = "";
     for (let node of data.nodes) {

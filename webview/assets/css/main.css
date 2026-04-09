@@ -361,6 +361,7 @@ button[name="remove-markers"] {
 #object-name {
 	width: 100%;
 	float: right;
+	max-width: 120px;
 }
 
 #object-type-container {
@@ -377,6 +378,8 @@ button[name="remove-markers"] {
 #object-type {
 	width: 100%;
 	float: right;
+	word-wrap: break-word;
+	max-width: 140px;
 }
 
 #attributes-header {
