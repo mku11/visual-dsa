@@ -1,7 +1,5 @@
 from __future__ import annotations
-from typing import TypeVar, Generic
-from collections import deque
-from queue import Queue
+from typing import Any, TypeVar, Generic
 
 T = TypeVar("T")
 
@@ -56,60 +54,71 @@ class Extractor:
     @staticmethod
     def register_attrs() -> list[list[str, list[str]]]:
         return [
-            ["dict", ["customNodes", "customValue"]],
-            ["GraphMapNode", ["customNodes", "customEdges", "customValue"]],
+            ["dict", ["dictCustomNodes", "dictCustomValue"]],
+            ["GraphMapNode", ["nodeCustomNodes", "nodeCustomEdges", "nodeCustomValue"]],
         ]
 
     @staticmethod
-    def extract(
-        type: str, attr: str, obj: object, root: object
-    ) -> list[str] | list[int] | list[object] | None:
+    def extract_dictCustomNodes(
+        obj: dict[
+            GraphMapNodes.GraphMapNode[str], list[GraphMapNodes.GraphMapNode[str]]
+        ],
+        root: dict[
+            GraphMapNodes.GraphMapNode[str], list[GraphMapNodes.GraphMapNode[str]]
+        ],
+    ) -> list[GraphMapNodes.GraphMapNode[str]]:
+        nodes: list[GraphMapNodes.GraphMapNode[str]] = []
+        for key in root:
+            nodes.append(key)
+        return nodes
 
-        print("extract:", type, attr)
-        if type == "dict" and attr == "customNodes":
-            nodes: list[GraphMapNodes.GraphMapNode[str]] = []
-            for key in root:
-                nodes.append(key)
-                break
-            return nodes
-        elif type == "dict" and attr == "customValue":
-            sb = ""
-            objObject: dict[
-                GraphMapNodes.GraphMapNode[str],
-                list[GraphMapNodes.GraphMapNode[str]],
-            ] = obj
-            for key in objObject.keys():
-                if len(sb) > 0:
-                    sb += ","
-                sb += key.get_value()
-            return [sb]
-        elif type == "GraphMapNode" and attr == "customNodes":
-            rootObject: dict[
-                GraphMapNodes.GraphMapNode[str],
-                list[GraphMapNodes.GraphMapNode[str]],
-            ] = root
-            objObject: GraphMapNodes.GraphMapNode[str] = obj
-            nodes: list[GraphMapNodes.GraphMapNode[str]] | None = rootObject.get(
-                objObject
-            )
-            if nodes:
-                return nodes
-        elif type == "GraphMapNode" and attr == "customEdges":
-            rootObject: dict[
-                GraphMapNodes.GraphMapNode[str],
-                list[GraphMapNodes.GraphMapNode[str]],
-            ] = root
-            objObject: GraphMapNodes.GraphMapNode[str] = obj
-            edges: list[int] | None = []
-            for child in rootObject.get(objObject, []):
-                edgeKey = (objObject, child)
-                edgeValue: int | None = Extractor.gedges.get(edgeKey)
-                if edgeValue:
-                    edges.append(edgeValue)
-            return edges
-        elif type == "GraphMapNode" and attr == "customValue":
-            objObject: GraphMapNodes.GraphMapNode[str] = obj
-            return [str(objObject.get_value())]
+    @staticmethod
+    def extract_dictCustomValue(
+        obj: dict[
+            GraphMapNodes.GraphMapNode[str],
+            list[GraphMapNodes.GraphMapNode[str]],
+        ],
+        root: Any
+    ) -> list[str]:
+        sb = ""
+        for key in obj.keys():
+            if len(sb) > 0:
+                sb += ","
+            sb += key.get_value()
+        return [sb]
+
+    @staticmethod
+    def extract_nodeCustomNodes(
+        obj: GraphMapNodes.GraphMapNode[str],
+        root: dict[
+            GraphMapNodes.GraphMapNode[str],
+            list[GraphMapNodes.GraphMapNode[str]],
+        ],
+    ) -> list[GraphMapNodes.GraphMapNode[str]]:
+        return root.get(obj, [])
+
+    @staticmethod
+    def extract_nodeCustomEdges(
+        obj: GraphMapNodes.GraphMapNode[str],
+        root: dict[
+            GraphMapNodes.GraphMapNode[str],
+            list[GraphMapNodes.GraphMapNode[str]],
+        ],
+    ) -> list[str]:
+        edges: list[int] | None = []
+        for child in root.get(obj, []):
+            edgeKey = (obj, child)
+            edgeValue: int | None = Extractor.gedges.get(edgeKey)
+            if edgeValue:
+                edges.append(edgeValue)
+        return edges
+
+    @staticmethod
+    def extract_nodeCustomValue(
+        obj: GraphMapNodes.GraphMapNode[str],
+        root: Any
+    ) -> list[str]:
+        return [str(obj.get_value())]
 
 
 GraphMapNodes.run_main()

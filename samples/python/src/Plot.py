@@ -42,24 +42,19 @@ class Extractor:
         ]
 
     @staticmethod
-    def extract(
-        type: str, attr: str, obj: object, root: object
-    ) -> list[str] | list[int] | list[object] | None:
+    def extract_points(obj: list[int], root: Any) -> list[int]:
+        nodes: list[list[int]] = []
+        for i in range(len(obj)):
+            if obj[i]:
+                nodes.append([i, int(obj[i])])
+        return nodes
 
-        print("extract:", type, attr)
-        if type == "list[]" and attr == "points":
-            objObject: list[list[str]] = obj
-            nodes: list[list[int]] = []
-            for i in range(len(objObject)):
-                if objObject[i]:
-                    nodes.append([i, int(objObject[i])])
-            return nodes
-        elif type == "list[][]" and attr == "lines":
-            objObject: str = obj
-            nodes: list[list[int]] = []
-            for i in range(len(obj) - 1):
-                nodes.append(obj[i] + obj[i + 1])
-            return nodes
+    @staticmethod
+    def extract_lines(obj: list[int], root: Any) -> list[list[int]]:
+        nodes: list[list[int]] = []
+        for i in range(len(obj) - 1):
+            nodes.append(obj[i] + obj[i + 1])
+        return nodes
 
 
 Arrays.run_main()
