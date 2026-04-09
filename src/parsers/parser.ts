@@ -457,6 +457,7 @@ export class Parser {
 					head = ch;
 				} else {
 					if (!child.children.has(chId)) {
+						child.children.clear();
 						child.children.set(chId, ch);
 						const edge = new Edge(node.id + "->" + chId, node.id, chId,
 							"", rootVariable.name);

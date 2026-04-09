@@ -490,7 +490,7 @@ export class CxxReader extends Reader {
 			return "tree";
 		} else if (type.includes('Graph')) {
 			return "graph";
-		} else if (type.includes('LinkedList')) {
+		} else if (type.startsWith('std::list') || type.includes('LinkedList')) {
 			return "linkedlist";
 		} else if (type.includes('List')) {
 			return "array";
