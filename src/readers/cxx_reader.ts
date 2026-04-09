@@ -326,7 +326,7 @@ export class CxxReader extends Reader {
 			const interChildren = await this.getVariables(arrRepr, "indexed");
 			let container;
 			for (const child of interChildren) {
-				if(child.type.startsWith("std::deque")
+				if (child.type.startsWith("std::deque")
 					|| child.type.startsWith("std::vector")) {
 					container = child;
 					break;
@@ -390,27 +390,43 @@ export class CxxReader extends Reader {
 
 	public async getQueueNodes(variable: Variable): Promise<Variable[] | undefined> {
 		try {
-			let name = variable.evaluateName;
-			let expr = ""; //`System.Linq.Enumerable.Select(${name}, (xRepr)=>xRepr!=null?xRepr.ToString():"null")`;
-			let queueNodesList = await debug.activeDebugSession?.customRequest("evaluate", {
+			const name = variable.evaluateName;
+			let expr = `${name}`;
+			if (variable.ranges && variable.ranges.length > 0)
+				expr = `&(${expr})[${variable.ranges[0].start}],${variable.ranges[0].length}`;
+			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			if ((queueNodesList.result.startsWith('error '))
-				|| (queueNodesList.type && queueNodesList.type.includes('Exception'))) {
-				if (variable.type.includes("PriorityQueue")) {
-					name += ".UnorderedItems";
-					expr = `System.Linq.Enumerable.Select(${name}, (xRepr)=>xRepr).OrderBy((xRepr1)=>xRepr1.Item2).ToList()`;
-					queueNodesList = await debug.activeDebugSession?.customRequest("evaluate", {
-						expression: expr,
-						frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-						context: 'repl',
-					});
+			if ((arrRepr.result.startsWith('error '))
+				|| (arrRepr.type && arrRepr.type.includes('Exception'))) {
+				throw new Error(arrRepr.result);
+			}
+			const interChildren = await this.getVariables(arrRepr, "indexed");
+			let container;
+			for (const child of interChildren) {
+				if (child.type.startsWith("std::deque")
+					|| child.type.startsWith("std::vector")) {
+					container = child;
+					break;
 				}
 			}
-			const nodes = await this.getVariables(queueNodesList);
-			return nodes;
+			if (!container)
+				return;
+			const children = await this.getVariables(container, "indexed");
+			const arr: Variable[] = [];
+			for (const child of children) {
+				if (!this.isIndexed(child, variable)) {
+					continue;
+				}
+				if (this.filterVariable(child)) {
+					continue;
+				}
+				arr.push(child);
+			}
+			return arr;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
 				console.error("Error: getQueueNodes of " + variable + ": " + ex.message);
@@ -418,6 +434,7 @@ export class CxxReader extends Reader {
 				console.error(ex);
 			}
 		}
+		return undefined;
 	}
 
 	public async expandVariables(variables: Variable[]): Promise<Variable[]> {
