@@ -32,7 +32,7 @@ internal class Trees
         Console.WriteLine("done");
     }
 
-    private static void visitTree(Node<String> node, Node<String> root)
+    private static void visitTree(Node<string> node, Node<string> root)
     {
         if (node == null)
         {
