@@ -434,11 +434,9 @@ mapRepr;
 	}
 
 	public async getExtractCall(variable: Variable, type: string, attr: string, root: Variable): Promise<string> {
-		const exprName = variable.evaluateName;
-		return `Extractor.extract('${type}'
-				, '${attr}'
-				, ${exprName}
-				, ${root.evaluateName}
-				)`;
+		return `Extractor.extract_${attr}(
+			${variable.evaluateName},
+			${root.evaluateName}
+		)`;
 	}
 }

@@ -531,8 +531,6 @@ export class CxxReader extends Reader {
 			rootRef = ""; // we don't reference
 		}
 		return `extract_${attr}(
-			"${type}",
-			"${attr}",
 			${objRef}(${exprName}),
 			${rootRef}(${rootExprName})
 		)`;

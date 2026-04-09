@@ -76,7 +76,7 @@ export class CsReader extends Reader {
 		let type = variable.type;
 		if (type.startsWith("object {") && type.endsWith("}")) {
 			type = type.split(" ")[1];
-			type = type.substring(1,type.length-1);
+			type = type.substring(1, type.length - 1);
 		}
 		return type;
 	}
@@ -407,11 +407,9 @@ export class CsReader extends Reader {
 	}
 
 	public async getExtractCall(variable: Variable, type: string, attr: string, root: Variable): Promise<string> {
-		const exprName = variable.evaluateName;
-		return `Extractor.Extract("${type}"
-				, "${attr}"
-				, ${exprName}
-				, ${root.evaluateName}
-				)`;
+		return `Extractor.Extract_${attr}(
+			${variable.evaluateName},
+			${root.evaluateName}
+		)`;
 	}
 }
