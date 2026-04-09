@@ -82,9 +82,6 @@ public:
         lines.push_back(vector<int>({-4, -1, 2, 3}));
         lines.push_back(vector<int>({3, 4, 5, 6}));
 
-        // auto aa = (std::vector<std::vector<int>> *) extract("std::vector<std::vector<int>>", "lines", &(points), &(points));
-        // auto aa1 = reinterpret_cast<std::vector<std::vector<int>> *>(extract("std::vector<std::vector<int>>", "lines", &(points), &(points)));
-        // auto bb = extract("std::vector<std::vector<int>>", "lines", &(points), &(points));
         cout << "done" << endl;
     }
 };
