@@ -49,36 +49,33 @@ class Extractor {
         };
     }
 
-    public static Object[] extract(
-            String type,
-            String attr,
-            Object obj,
-            Object root) {
-        System.out.println("extract: " + type + ", " + attr);
-        if (type.equals("Integer[]") && attr.equals("points")) {
-            // convert list of numbers to list of points (i,xi)
-            Integer[] objObject = (Integer[]) obj;
-            List<int[]> nodes = new ArrayList<int[]>();
-            for (int i = 0; i < objObject.length; i++) {
-                if (objObject[i] != null) {
-                    nodes.add(new int[] { i, (int) objObject[i] });
-                }
+    public static List<int[]> extract_points(
+            Integer[] obj,
+            Integer[] root) {
+        // convert list of numbers to list of points (i,xi)
+        Integer[] objObject = (Integer[]) obj;
+        List<int[]> nodes = new ArrayList<int[]>();
+        for (int i = 0; i < objObject.length; i++) {
+            if (objObject[i] != null) {
+                nodes.add(new int[] { i, (int) objObject[i] });
             }
-            return nodes.toArray();
-        } else if (type.equals("ArrayList") && attr.equals("lines")) {
-            // convert list of points to list of lines
-            List<List<Integer>> objObject = (List<List<Integer>>) obj;
-            List<int[]> nodes = new ArrayList<int[]>();
-            for (int i = 0; i < objObject.size() - 1; i++) {
-                nodes.add(new int[] {
-                        objObject.get(i).get(0),
-                        objObject.get(i).get(1),
-                        objObject.get(i + 1).get(0),
-                        objObject.get(i + 1).get(1)
-                });
-            }
-            return nodes.toArray();
         }
-        return null;
+        return nodes;
+    }
+
+    public static List<int[]> extract_lines(
+            List<List<Integer>> obj,
+            List<List<Integer>> root) {
+        // convert list of points to list of lines
+        List<int[]> nodes = new ArrayList<int[]>();
+        for (int i = 0; i < obj.size() - 1; i++) {
+            nodes.add(new int[] {
+                    obj.get(i).get(0),
+                    obj.get(i).get(1),
+                    obj.get(i + 1).get(0),
+                    obj.get(i + 1).get(1)
+            });
+        }
+        return nodes;
     }
 }

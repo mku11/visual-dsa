@@ -55,55 +55,57 @@ public class GraphMapNodes {
         public static Object[] registerAttrs() {
             return new Object[] {
                     new Object[] { "HashMap",
-                            new String[] { "customNodes", "customValue" } },
+                            new String[] { "mapCustomNodes", "mapCustomValue" } },
                     new Object[] { "GraphMapNodes.GraphMapNode",
-                            new String[] { "customNodes", "customEdges", "customValue" } }
+                            new String[] { "nodeCustomNodes", "nodeCustomEdges", "nodeCustomValue" } }
             };
         }
 
-        public static Object[] extract(
-                String type,
-                String attr,
-                Object obj,
-                Object root) {
-            System.out.println("extract: " + type + ", " + attr);
-            if (type.equals("HashMap") && attr.equals("customNodes")) {
-                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> rootObject = (HashMap<GraphMapNode<String>, List<GraphMapNode<String>>>) root;
-                List<GraphMapNode<String>> nodes = new ArrayList<GraphMapNode<String>>();
-                if (rootObject.keySet().size() > 0)
-                    nodes.addAll(rootObject.keySet());
-                return nodes.toArray();
-            } else if (type .equals( "HashMap") && attr .equals( "customValue")) {
-                StringBuilder sb = new StringBuilder();
-                var nodeObj = (HashMap<GraphMapNode<String>, List<GraphMapNode<String>>>) obj;
-                for (GraphMapNode<String> key : nodeObj.keySet()) {
-                    sb.append(key.getValue());
-                    sb.append(",");
-                }
-                return new String[] { sb.toString() };
-            } else if (type .equals( "GraphMapNodes.GraphMapNode") && attr .equals( "customNodes")) {
-                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> rootObject = (HashMap<GraphMapNode<String>, List<GraphMapNode<String>>>) root;
-                GraphMapNode<String> objObject = (GraphMapNode<String>) obj;
-                List<GraphMapNode<String>> nodes = new ArrayList<GraphMapNode<String>>();
-                if (rootObject.containsKey(objObject))
-                    nodes.addAll(rootObject.get(objObject));
-                return nodes.toArray();
-            } else if (type .equals( "GraphMapNodes.GraphMapNode") && attr .equals( "customEdges")) {
-                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> rootObject = (HashMap<GraphMapNode<String>, List<GraphMapNode<String>>>) root;
-                GraphMapNode<String> objObject = (GraphMapNode<String>) obj;
+        public static GraphMapNode<String>[] extract_mapCustomNodes(
+                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> obj,
+                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> root) {
+            List<GraphMapNode<String>> nodes = new ArrayList<GraphMapNode<String>>();
+            if (root.keySet().size() > 0)
+                nodes.addAll(root.keySet());
+            return nodes.toArray(new GraphMapNode[0]);
+        }
 
-                List<String> edges = new ArrayList<String>();
-                for (GraphMapNode<String> child : rootObject.get(objObject)) {
-                    String edgeKey = objObject.getValue() + "," + child.getValue();
-                    int edgeValue = Extractor.gedges.get(edgeKey);
-                    edges.add(String.valueOf(edgeValue));
-                }
-                return edges.toArray();
-            } else if (type .equals( "GraphMapNodes.GraphMapNode") && attr .equals( "customValue")) {
-                GraphMapNode<String> objObject = (GraphMapNode<String>) obj;
-                return new String[] { objObject.getValue().toString() };
+        public static String[] extract_mapCustomValue(
+                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> obj,
+                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> root) {
+            StringBuilder sb = new StringBuilder();
+            for (GraphMapNode<String> key : root.keySet()) {
+                sb.append(key.getValue());
+                sb.append(",");
             }
-            return null;
+            return new String[] { sb.toString() };
+        }
+
+        public static GraphMapNode<String>[] extract_nodeCustomNodes(
+                GraphMapNode<String> obj,
+                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> root) {
+            List<GraphMapNode<String>> nodes = new ArrayList<GraphMapNode<String>>();
+            if (root.containsKey(obj))
+                nodes.addAll(root.get(obj));
+            return nodes.toArray(new GraphMapNode[0]);
+        }
+
+        public static String[] extract_nodeCustomEdges(
+                GraphMapNode<String> obj,
+                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> root) {
+            List<String> edges = new ArrayList<String>();
+            for (GraphMapNode<String> child : root.get(obj)) {
+                String edgeKey = obj.getValue() + "," + child.getValue();
+                int edgeValue = Extractor.gedges.get(edgeKey);
+                edges.add(String.valueOf(edgeValue));
+            }
+            return edges.toArray(new String[0]);
+        }
+
+        public static String[] extract_nodeCustomValue(
+                GraphMapNode<String> obj,
+                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> root) {
+            return new String[] { obj.getValue().toString() };
         }
     }
 }

@@ -27,12 +27,6 @@
 		},
 		{
 			"type": "java",
-			"name": "GraphsPrimitivesEdges",
-			"request": "launch",
-			"mainClass": "app.GraphsPrimitivesEdges"
-		},
-		{
-			"type": "java",
 			"name": "Arrays",
 			"request": "launch",
 			"mainClass": "app.Arrays"
