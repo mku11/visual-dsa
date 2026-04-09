@@ -309,44 +309,51 @@ export class CxxReader extends Reader {
 
 	public async getQueueRepr(variable: Variable): Promise<string[] | undefined> {
 		try {
-			let name = variable.evaluateName;
-			let expr = ""; //`string.Join("|-|",System.Linq.Enumerable.Select(${name}, (xRepr)=>xRepr!=null?xRepr.ToString():"null"))`;
-			let queueRepr = await debug.activeDebugSession?.customRequest("evaluate", {
+			const name = variable.evaluateName;
+			let expr = `${name}`;
+			if (variable.ranges && variable.ranges.length > 0)
+				expr = `&(${expr})[${variable.ranges[0].start}],${variable.ranges[0].length}`;
+			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			if ((queueRepr.result.startsWith('error '))
-				|| (queueRepr.type && queueRepr.type.includes('Exception'))) {
-				if (variable.type.includes("PriorityQueue")) {
-					name += ".UnorderedItems";
-					expr = `string.Join("|-|", System.Linq.Enumerable.Select(${name}, (xRepr)=>xRepr).OrderBy((xRepr1)=>xRepr1.Item2).ToList())`;
-					queueRepr = await debug.activeDebugSession?.customRequest("evaluate", {
-						expression: expr,
-						frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-						context: 'repl',
-					});
+			if ((arrRepr.result.startsWith('error '))
+				|| (arrRepr.type && arrRepr.type.includes('Exception'))) {
+				throw new Error(arrRepr.result);
+			}
+			const interChildren = await this.getVariables(arrRepr, "indexed");
+			let container;
+			for (const child of interChildren) {
+				if(child.type.startsWith("std::deque")
+					|| child.type.startsWith("std::vector")) {
+					container = child;
+					break;
 				}
 			}
-
-			if ((queueRepr.result.startsWith('error '))
-				|| (queueRepr.type && queueRepr.type.includes('Exception'))) {
-				throw new Error(queueRepr.result);
-			}
-			const content = queueRepr.result.substring(1, queueRepr.result.length - 1);
+			if (!container)
+				return;
+			const children = await this.getVariables(container, "indexed");
 			const arr: string[] = [];
-			const parts = content.split('|-|');
-			for (let i = 0; i < parts.length; i++) {
-				arr.push(parts[i]);
+			for (const child of children) {
+				if (!this.isIndexed(child, variable)) {
+					continue;
+				}
+				if (this.filterVariable(child)) {
+					continue;
+				}
+				arr.push(child.value);
 			}
 			return arr;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
-				console.error("Error: getQueueRepr of " + variable + ": " + ex.message);
+				console.error("Error: Array Repr of " + variable + ": " + ex.message);
 			} else {
 				console.error(ex);
 			}
 		}
+		return undefined;
 	}
 
 	public async getMapRepr(variable: Variable): Promise<string[][] | undefined> {
