@@ -44,6 +44,36 @@ add_executable(
         ${SAMPLE_SRC_DIR}/Plot.cpp
 )
 
+add_executable(
+        hashes
+        ${SAMPLE_SRC_DIR}/Hashes.cpp
+)
+
+add_executable(
+        linkedlists
+        ${SAMPLE_SRC_DIR}/LinkedLists.cpp
+)
+
+add_executable(
+        lists
+        ${SAMPLE_SRC_DIR}/Lists.cpp
+)
+
+add_executable(
+        primitives
+        ${SAMPLE_SRC_DIR}/Primitives.cpp
+)
+
+add_executable(
+        queues
+        ${SAMPLE_SRC_DIR}/Queues.cpp
+)
+
+add_executable(
+        trees
+        ${SAMPLE_SRC_DIR}/Trees.cpp
+)
+
 find_library(MATH_LIBRARY m)
 if(MATH_LIBRARY)
     target_link_libraries(sample PUBLIC ${MATH_LIBRARY})

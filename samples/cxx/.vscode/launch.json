@@ -55,6 +55,72 @@
 			"environment": [],
 			"console": "externalTerminal",
 			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "Hashes",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/hashes.exe",
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "LinkedLists",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/linkedlists.exe",
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "Lists",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/lists.exe",
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "Primitives",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/primitives.exe",
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "Queues",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/queues.exe",
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
+		},
+		{
+			"name": "Trees",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/Debug/trees.exe",
+			"stopAtEntry": false,
+			"cwd": "${fileDirname}",
+			"environment": [],
+			"console": "externalTerminal",
+			"preLaunchTask": "CMake: build"
 		}
 	]
 }
