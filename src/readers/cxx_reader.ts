@@ -29,6 +29,8 @@ export class CxxReader extends Reader {
 	private static excludeVariableTypes = new Set([
 		"object", "object[]"
 	]);
+	private static removeTypes: string[] = [",std::allocator", ",std::hash", ",std::equal_to", ",std::less"];
+
 	constructor() {
 		super();
 	}
@@ -88,17 +90,16 @@ export class CxxReader extends Reader {
 	public async getNodeType(variable: Variable): Promise<string> {
 		let type = variable.type;
 		// remove long types
-		const removeTypes: string[] = [",std::allocator", ",std::hash", ",std::equal_to"];
 		let ridx = 0;
-		while (ridx < removeTypes.length) {
-			const idx = type.indexOf(removeTypes[ridx]);
+		while (ridx < CxxReader.removeTypes.length) {
+			const idx = type.indexOf(CxxReader.removeTypes[ridx]);
 			if (idx == -1) {
 				ridx++;
 				continue;
 			}
 			let found = false;
 			let angleBraces = 0;
-			let i = idx + removeTypes[ridx].length;
+			let i = idx + CxxReader.removeTypes[ridx].length;
 			while (true) {
 				if (type[i] == '<') {
 					angleBraces++;
@@ -351,19 +352,24 @@ export class CxxReader extends Reader {
 	public async getMapRepr(variable: Variable): Promise<string[][] | undefined> {
 		try {
 			const name = variable.evaluateName;
-			let expr = ""; //`string.Join((char) 10,System.Linq.Enumerable.Select(${name}, (xRepr)=>xRepr.Key.ToString() + "|-|" + xRepr.Value.ToString()));`;
+			let expr = `${name}`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
-			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
+			const mapRepr = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			const content = arrRepr.result.substring(1, arrRepr.result.length - 1);
+			const pairs: Variable[] = await this.getVariables(mapRepr, "indexed");
 			const entries: string[][] = [];
-			const lines = content.split('\\n');
-			for (let i = 0; i < lines.length; i++) {
-				const parts = lines[i].split('|-|');
-				entries.push(parts);
+			for (const pair of pairs) {
+				if (!this.isIndexed(pair, mapRepr)) {
+					continue;
+				}
+				if (this.filterVariable(pair)) {
+					continue;
+				}
+				const pairValue: Variable[] = await this.getVariables(pair, "indexed");
+				entries.push([pairValue[0].value, pairValue[1].value]);
 			}
 			return entries;
 		} catch (ex: Error | unknown) {
