@@ -294,7 +294,7 @@ export class Parser {
 
 		// create a node and get the string representation
 		const node = new Node(id, type, value);
-		if(variable.ranges)
+		if (variable.ranges)
 			node.ranges = variable.ranges;
 
 		if (variable.variablesReference > 0 && variable.evaluateName) {
