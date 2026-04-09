@@ -19,16 +19,28 @@ export class Queues {
             console.log(node);
         }
 
-        // Queue with value and priority number
-        const qo: QueueNode<string, number>[] = [];
-        qo.push(new QueueNode<string, number>("1", 1));
-        qo.push(new QueueNode<string, number>("3", 3));
-        qo.push(new QueueNode<string, number>("2", 2));
-        qo.push(new QueueNode<string, number>("4", 4));
+        // queue with nodes
+        const qo: QueueNode<string,number>[] = [];
+        qo.push(new QueueNode("1", 1));
+        qo.push(new QueueNode("3", 3));
+        qo.push(new QueueNode("2", 2));
+        qo.push(new QueueNode("4", 4));
 
         while (qo.length > 0) {
-            const node: QueueNode<string, number> | undefined = qo.shift();
-            console.log(node?.value + ":" + node?.data);
+            const node: string | undefined = q.shift();
+            console.log(node);
+        }
+
+        // Queue with value and priority number
+        const pq: PriorityNode<string, number>[] = [];
+        pq.push(new PriorityNode<string, number>("1", 1));
+        pq.push(new PriorityNode<string, number>("3", 3));
+        pq.push(new PriorityNode<string, number>("2", 2));
+        pq.push(new PriorityNode<string, number>("4", 4));
+
+        while (qo.length > 0) {
+            const node: PriorityNode<string, number> | undefined = pq.shift();
+            console.log(node?.value + ":" + node?.priority);
         }
     }
 }
