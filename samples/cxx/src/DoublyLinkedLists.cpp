@@ -92,7 +92,7 @@ public:
     }
 };
 
-void doublyLinkedListsRunMain(int argc, char **argv)
+void main(int argc, char **argv)
 {
     DoublyLinkedLists().start();
 }

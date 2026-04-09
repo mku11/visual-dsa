@@ -103,7 +103,7 @@ public:
     }
 };
 
-void graphsRunMain(int argc, char **argv)
+void main(int argc, char **argv)
 {
     Graphs().start();
 }

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18.1)
 
 #### PROJECT ####
-project(sample)
+project(samples)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -19,12 +19,29 @@ endif()
 set(CMAKE_CXX_FLAGS_DEBUG " ${CMAKE_CXX_FLAGS_DEBUG} ${VERBOSE_FLAG} ")
 
 add_executable(
-        sample
-        ${SAMPLE_SRC_DIR}/Program.cpp
+        arrays
         ${SAMPLE_SRC_DIR}/Arrays.cpp
+)
+
+add_executable(
+        doublylinkedlists
         ${SAMPLE_SRC_DIR}/DoublyLinkedLists.cpp
-        ${SAMPLE_SRC_DIR}/Plot.cpp
+)
+
+
+add_executable(
+        graphs
         ${SAMPLE_SRC_DIR}/Graphs.cpp
+)
+
+add_executable(
+        graphmapnodes
+        ${SAMPLE_SRC_DIR}/GraphMapNodes.cpp
+)
+
+add_executable(
+        plot
+        ${SAMPLE_SRC_DIR}/Plot.cpp
 )
 
 find_library(MATH_LIBRARY m)

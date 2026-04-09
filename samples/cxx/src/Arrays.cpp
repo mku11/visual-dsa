@@ -98,7 +98,7 @@ public:
     }
 };
 
-void arraysRunMain(int argc, char **argv)
+void main(int argc, char **argv)
 {
     Arrays().start();
 }

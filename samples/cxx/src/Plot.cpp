@@ -12,49 +12,57 @@ using namespace std;
 // register the custom attributes to extract
 // you can select these from the ui
 // instead of modifying your objects
+// this function will be called automatically by the debugger
 vector<pair<string, vector<string>>> extractorRegisterAttrs()
 {
-    return vector<std::pair<string, vector<string>>>({                                                                                   // vector of
-                                                      std::pair<string, vector<string>>("std::vector<int>", vector<string>({"points"})), // type and attrs
-                                                      std::pair<string, vector<string>>("std::vector<std::vector<int>>", vector<string>({"lines"}))});
+    // attribute and return type
+    auto attr1 = vector<string>({"points"});
+    // associate with a parent type
+    auto type1 = pair<string, vector<string>>("std::vector<int>", attr1);
+
+    auto attr2 = vector<string>({"lines"});
+    auto type2 = pair<string, vector<string>>("std::vector<std::vector<int>>", attr2);
+
+    return vector<pair<string, vector<string>>>({type1, type2});
 }
 
-vector<vector<int>> extract(
+// The extract functions will be of format extract_{attr} and
+// will be called automatically by the debugger to extract the data
+vector<vector<int>> extract_points(
     char *type,
     char *attr,
     void *obj,
     void *root)
 {
     cout << "extract: " << type << ", " << attr << endl;
-    if (!strcmp(type, "std::vector<int>") && !strcmp(attr, "points"))
+    // convert list of numbers to list of points (i,xi)
+    vector<int> *objObject = (vector<int> *)obj;
+    vector<vector<int>> nodes = vector<vector<int>>();
+    for (int i = 0; i < objObject->size(); i++)
     {
-        // convert list of numbers to list of points (i,xi)
-        vector<int> *objObject = (vector<int> *)obj;
-        vector<vector<int>> nodes = vector<vector<int>>();
-        for (int i = 0; i < objObject->size(); i++)
-        {
-            if ((*objObject)[i] != NULL)
-            {
-                nodes.push_back(vector<int>({i, (int)(*objObject)[i]}));
-            }
-        }
-        return nodes;
+        if ((*objObject)[i] == NULL)
+            continue;
+        nodes.push_back(vector<int>({i, (int)(*objObject)[i]}));
     }
-    else if (!strcmp(type, "std::vector<std::vector<int>>") && !strcmp(attr, "lines"))
-    {
-        // convert list of points to list of lines
-        vector<vector<int>> *objObject = (vector<vector<int>> *)obj;
-        vector<vector<int>> nodes = vector<vector<int>>();
-        for (int i = 0; i < objObject->size() - 1; i++)
-        {
-            nodes.push_back({(*objObject)[i][0],
-                             (*objObject)[i][1],
-                             (*objObject)[i + 1][0],
-                             (*objObject)[i + 1][1]});
-        }
-        return nodes;
-    }
-    return vector<vector<int>>();
+    return nodes;
+}
+
+vector<vector<int>> extract_lines(
+    char *type,
+    char *attr,
+    void *obj,
+    void *root)
+{
+    cout << "extract: " << type << ", " << attr << endl;
+    // convert list of points to list of lines
+    vector<vector<int>> *objObject = (vector<vector<int>> *)obj;
+    vector<vector<int>> nodes = vector<vector<int>>();
+    for (int i = 0; i < objObject->size() - 1; i++)
+        nodes.push_back({(*objObject)[i][0],
+                         (*objObject)[i][1],
+                         (*objObject)[i + 1][0],
+                         (*objObject)[i + 1][1]});
+    return nodes;
 }
 
 class Plot
@@ -83,12 +91,15 @@ public:
         lines.push_back(vector<int>({5, -1, 6, 8}));
         lines.push_back(vector<int>({-4, -1, 2, 3}));
         lines.push_back(vector<int>({3, 4, 5, 6}));
-        
+
+        // auto aa = (std::vector<std::vector<int>> *) extract("std::vector<std::vector<int>>", "lines", &(points), &(points));
+        // auto aa1 = reinterpret_cast<std::vector<std::vector<int>> *>(extract("std::vector<std::vector<int>>", "lines", &(points), &(points)));
+        // auto bb = extract("std::vector<std::vector<int>>", "lines", &(points), &(points));
         cout << "done" << endl;
     }
 };
 
-void plotRunMain(int argc, char **argv)
+void main(int argc, char **argv)
 {
     Plot().start();
 }

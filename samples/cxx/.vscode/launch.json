@@ -5,10 +5,7 @@
 			"name": "Arrays",
 			"type": "cppvsdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/Debug/sample.exe",
-			"args": [
-				"Arrays"
-			],
+			"program": "${workspaceFolder}/build/Debug/arrays.exe",
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
@@ -19,10 +16,7 @@
 			"name": "DoublyLinkedLists",
 			"type": "cppvsdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/Debug/sample.exe",
-			"args": [
-				"DoublyLinkedLists"
-			],
+			"program": "${workspaceFolder}/build/Debug/doublylinkedlists.exe",
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
@@ -33,10 +27,7 @@
 			"name": "GraphMapNodes",
 			"type": "cppvsdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/Debug/sample.exe",
-			"args": [
-				"GraphMapNodes"
-			],
+			"program": "${workspaceFolder}/build/Debug/graphmapnodes.exe",
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
@@ -47,10 +38,7 @@
 			"name": "Plot",
 			"type": "cppvsdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/Debug/sample.exe",
-			"args": [
-				"Plot"
-			],
+			"program": "${workspaceFolder}/build/Debug/plot.exe",
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
@@ -61,10 +49,7 @@
 			"name": "Graphs",
 			"type": "cppvsdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/Debug/sample.exe",
-			"args": [
-				"Graphs"
-			],
+			"program": "${workspaceFolder}/build/Debug/graphs.exe",
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
