@@ -256,8 +256,8 @@ export class Parser {
 		if (!this.nodeTypeLayouts.has(type)) {
 			const layout = this.reader.getDefaultLayout(type, value);
 			if (layout) {
-				this.nodeTypeLayouts.set("type:" + type, layout);
-				if (!layouts.get(type)) {
+				this.nodeTypeLayouts.set(type, layout);
+				if (!layouts.get("type:" + type)) {
 					layouts.set("type:" + type, layout);
 				}
 			}
