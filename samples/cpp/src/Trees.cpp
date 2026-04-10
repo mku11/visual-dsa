@@ -61,6 +61,9 @@ public:
         visitTree(tree->root, tree->root);
 
         cout << "done" << endl;
+
+        // generally this is where you should be releasing
+        // the allocated memory
     }
 
 private:

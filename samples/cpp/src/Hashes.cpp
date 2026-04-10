@@ -25,7 +25,11 @@ public:
 
         for (std::pair<string, int> el : h1)
             cout << el.first << ":" << el.second << endl;
+
         cout << "done" << endl;
+        
+        // generally this is where you should be releasing
+        // the allocated memory
     }
 };
 

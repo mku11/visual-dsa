@@ -87,6 +87,9 @@ public:
         linkedList2->push_back("4");
 
         cout << "done" << endl;
+
+        // generally this is where you should be releasing
+        // the allocated memory
     }
 };
 

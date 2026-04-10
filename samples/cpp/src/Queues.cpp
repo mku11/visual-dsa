@@ -102,6 +102,9 @@ public:
         }
 
         cout << "done" << endl;
+
+        // generally this is where you should be releasing
+        // the allocated memory
     }
 };
 
