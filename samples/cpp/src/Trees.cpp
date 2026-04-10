@@ -56,7 +56,7 @@ public:
         node4->add(node5);
         node4->add(node6);
 
-        // // wrap to a tree
+        // wrap to a tree
         Tree<string> *tree = new Tree<string>(root);
         visitTree(tree->root, tree->root);
 
