@@ -41,6 +41,7 @@ export class CxxReader extends Reader {
 		}
 		// exclude built-in variables
 		if (variable.name === "null"
+			|| variable.value === undefined
 			|| variable.value === "null"
 			|| variable.name === "[allocator]"
 			|| variable.name === "[comparator]"
@@ -49,6 +50,8 @@ export class CxxReader extends Reader {
 			|| variable.name === "[hash_function]"
 			|| variable.name === "[key_eq]"
 			|| variable.name === "[capacity]"
+			|| variable.value === "0x0000000000000000 <NULL>"
+			|| variable.value.includes("value=???")
 			|| !variable.type) {
 			return true;
 		}
@@ -147,7 +150,8 @@ export class CxxReader extends Reader {
 		try {
 			const edgeValues: string[] = [];
 			const exprName = variable.evaluateName;
-			let expr = `${exprName}.${property}`;
+			const accessOperator = variable.type.endsWith("*") ? "->" : ".";
+			let expr = `(${exprName})${accessOperator}${property}`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const edgesListVar = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
@@ -206,7 +210,13 @@ export class CxxReader extends Reader {
 				if (this.filterVariable(child)) {
 					continue;
 				}
-				arr.push(child.value);
+				if (child.value.includes("Error reading characters of string"))
+					arr.push("");
+				else if (child.type === 'char *' && child.value.includes(' ')) {
+					const idx = child.value.indexOf(' ');
+					arr.push(child.value.substring(idx + 1));
+				} else
+					arr.push(child.value);
 			}
 			return arr;
 		} catch (ex: Error | unknown) {
@@ -529,6 +539,17 @@ export class CxxReader extends Reader {
 
 	public hasChildren(ch: Variable): boolean {
 		return ch.value.includes("size=");
+	}
+
+	public getIndex(variable: Variable): number | undefined {
+		let name = variable.name;
+		if (name.startsWith("[") && name.endsWith("]")) {
+			name = name.substring(1, name.length - 1);
+		}
+		const idx = parseInt(name);
+		if (isNaN(idx))
+			return undefined;
+		return idx;
 	}
 
 	public isIndexed(variable: Variable, parent: Variable): boolean {
