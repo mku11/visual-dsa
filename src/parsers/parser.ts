@@ -63,7 +63,7 @@ export class Parser {
 		orientations: Map<string, string>
 	): Promise<VarNode | undefined> {
 		console.log("parse graph: " + variable.name);
-		const graph = await this.getGraph(variable, variable,
+		const graph = await this.getGraph(variable, variable, variable,
 			0, visited,
 			filtersNodes, filtersEdges, filtersProperties, filtersPlot,
 			markers, layouts, orientations);
@@ -227,6 +227,7 @@ export class Parser {
 	}
 
 	async getGraph(variable: Variable,
+		prevVariable: Variable,
 		rootVariable: Variable,
 		level: number,
 		visited: Map<string, Node | VarNode>,
@@ -438,7 +439,7 @@ export class Parser {
 		for (const child of nodesChildren) {
 			const childNode: VarNode | Node | undefined =
 				await this.getGraph(
-					child, rootVariable, level + 1,
+					child, variable, rootVariable, level + 1,
 					visited,
 					filtersNodes,
 					filtersEdges,
@@ -456,8 +457,10 @@ export class Parser {
 			}
 		}
 
-		// if its a linked list we linked the nodes
-		if (layout == 'linkedlist' && node.children.size > 1) {
+		// if this is a built-in linked list (provided by the language's standard lib)
+		// then we force-link the nodes, but not if it's a doubly linked list (has backlinks)
+		if (layout == 'linkedlist' && node.children.size > 1 
+			&& !node.children.has(await this.reader.getNodeId(prevVariable))) {
 			let child: Node | undefined = undefined;
 			let head: Node | undefined = undefined;
 			for (const [chId, ch] of node.children.entries()) {
