@@ -2,6 +2,26 @@ package app;
 
 import java.util.LinkedList;
 
+// UI settings
+// Expression: linkedList
+//   Type: LinkedListCustom
+//     Layout: Linked List
+//     Nodes: head
+//     Save: Object Type Attributes
+//   Type: LinkedListCustom.LinkedListNode
+//     Layout: Linked List
+//     Nodes: next
+//     Properties: value
+//     Save: Object Type Attributes
+
+// Expression: linkedList2
+//   Type: LinkedList
+//     Layout: Linked List
+//     Save: Object Type Attributes
+//   Type: String
+//     Layout: Linked List
+//     Properties: value
+//     Save: Object Type Attributes
 public class LinkedLists {
 
     public static void main(String[] args) {

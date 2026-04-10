@@ -2,6 +2,16 @@ package app;
 
 import java.util.ArrayList;
 
+// UI settings
+// Expression: arrayList
+//   Type: ArrayList
+//     Layout: Array
+//     Save: Object Attributes
+
+// Expression: this.listOfLists
+//   Type: ArrayList
+//     Layout: Array2D
+//     Save: Object Attributes
 public class Lists {
     ArrayList<ArrayList<Integer>> listOfLists;
     public static void main(String[] args) {

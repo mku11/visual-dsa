@@ -4,6 +4,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+// UI settings
+// Expression: gmap
+//   Type: HashMap
+//     Layout: Graph
+//     Nodes: @mapCustomNodes
+//     Properties: @mapCustomValue (optional)
+//     Save: Object Attributes
+//   Type: GraphMapNodes.GraphMapNode
+//     Layout: Graph
+//     Nodes: @nodeCustomNodes
+//     Edges: @nodeCustomEdges
+//     Properties: @nodeCustomValue (optional)
+//     Save: Object Type Attributes
 public class GraphMapNodes {
 
     public static void main(String[] args) {

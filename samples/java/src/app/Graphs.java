@@ -5,6 +5,19 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
+
+// UI settings
+// Expression: graph
+//   Type: Graphs.Graph
+//     Layout: Graph
+//     Nodes: root
+//     Save: Object Type Attributes
+//   Type: Graphs.GraphNode
+//     Layout: Graph
+//     Nodes: children[]
+//     Edges: childrenCost[]
+//     Properties: value
+//     Save: Object Type Attributes
 public class Graphs {
 
     public static void main(String[] args) {

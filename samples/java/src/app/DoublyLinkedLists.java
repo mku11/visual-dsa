@@ -1,5 +1,17 @@
 package app;
 
+// UI settings
+// Expression: linkedList
+//   Type: DoublyLinkedLists.DoublyLinkedList
+//     Layout: Linked List
+//     Nodes: head
+//     Save: Object Type Attributes
+//   Type: DoublyLinkedLists.Node
+//     Layout: Linked List
+//     Nodes: next,prev (ctrl+click to select mutliple)
+//     Properties: value
+//     Save: Object Type Attributes
+
 public class DoublyLinkedLists {
 
     public static void main(String[] args) {
@@ -24,8 +36,8 @@ public class DoublyLinkedLists {
 
     private static class DoublyLinkedList<T> {
 
-        private Node<T> head;
-        private Node<T> tail;
+        protected Node<T> head;
+        protected Node<T> tail;
 
         public Node<T> getHead() {
             return head;
@@ -49,9 +61,9 @@ public class DoublyLinkedLists {
 
     private static class Node<T> {
 
-        private T value;
-        private Node<T> next;
-        private Node<T> prev;
+        protected T value;
+        protected Node<T> next;
+        protected Node<T> prev;
 
         public Node(T value) {
             this.value = value;

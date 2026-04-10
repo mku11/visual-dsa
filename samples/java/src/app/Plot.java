@@ -3,6 +3,32 @@ package app;
 import java.util.ArrayList;
 import java.util.List;
 
+// UI settings
+// Expression: arrInt
+//   Type: Integer[]
+//     Layout: Plot
+//     Points: @points
+//     Save: Object Attributes
+
+// Expression: points
+//   Type: ArrayList
+//     Layout: Plot
+//     Save: Object Attributes
+
+// Expression: points
+//   Type: ArrayList
+//     Layout: Plot
+//     Points: @lines
+//     Save: Object Attributes
+
+// Expression: lines
+//   Type: ArrayList
+//     Layout: Plot
+//     Save: Object Attributes
+
+// Note: format for plotting:
+// To plot points: [[x1,y1],[x2,y2],...]
+// To plot lines: [[x1,y1,x2,y2],[x3,y3,x4,y4],...]
 public class Plot {
     public static void main(String[] args) {
         new Plot().start();

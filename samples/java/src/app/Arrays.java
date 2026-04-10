@@ -1,5 +1,30 @@
 package app;
 
+// UI settings
+// Expression: arrString
+//   Type: String[]
+//     Layout: Array
+//     Save: Object Attributes
+
+// Expression: arrInt
+//   Type: int[]
+//     Layout: Array
+//     Markers: [0,1]
+//     Save: Object Attributes
+
+// Expression: arr2D
+//   Type: int[][]
+//     Layout: Array2D
+//     Markers: [[0,1],[1,2]]
+//     Save: Object Attributes
+
+// Expression: arr3D
+//   Type: int[][][]
+//     Layout: Array3D
+//     Markers: [[0,1,0],[1,2,1]]
+//     Save: Object Attributes
+
+// Note: Format for markers: [[x1,y1,z1],[x2,y2,z2]...]
 public class Arrays {
     char[][] arrChar2D;
 
@@ -8,9 +33,6 @@ public class Arrays {
     }
 
     public void start() {
-        Arrays[] classes = new Arrays[2];
-        classes[0] = new Arrays();
-        classes[1] = new Arrays();
 
         String[] arrString = new String[5];
         arrString[1] = "one";

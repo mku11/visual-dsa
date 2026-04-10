@@ -5,6 +5,15 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
+// UI settings
+// Expression: h1
+//   Type: HashMap
+//     Layout: Map
+//     Save: Object Attributes
+// Expression: hs1
+//   Type: HashSet
+//     Layout: Set
+//     Save: Object Attributes
 public class Hashes {
     public static void main(String[] args) {
         new Hashes().start();

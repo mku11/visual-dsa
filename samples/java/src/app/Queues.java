@@ -4,6 +4,12 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+// UI settings
+// Expression: q
+//   Type: LinkedList
+//     Layout: Queue
+//     Save: Object Attributes
+
 public class Queues {
 
     public static void main(String[] args) {
@@ -39,6 +45,8 @@ public class Queues {
             PriorityNode<String, Integer> node = pq.remove();
             System.out.println(node.value + ":" + node.priority);
         }
+
+        System.out.println("done");
     }
 }
 
