@@ -122,7 +122,7 @@ export class Reader {
 		}
 		this.registered = true;
 	}
-	
+
 	async parseRegisteredTypes(regTypes: Variable) {
 		if (regTypes.variablesReference > 0) {
 			const regTypeValues = await this.getVariables(regTypes, "indexed");
@@ -168,8 +168,11 @@ export class Reader {
 	async getMarkersValues(markers: string, layout: string): Promise<number[][]> {
 		let markersValues: number[][] = [];
 		const variable = await this.getVariable(markers);
-		if (!variable)
-			return markersValues;
+		if (!variable || variable.value === 'Unable to evaluate expression') {
+			// we attempt to parse the array
+			return this.parseMarkers(markers);
+		}
+		// seems to be a valid expression
 		if (variable?.variablesReference == 0) {
 			if (!isNaN(parseInt(variable.value)))
 				markersValues.push([parseInt(variable.value)]);
@@ -211,6 +214,13 @@ export class Reader {
 		if (childrenList.length > 0)
 			markersValues = [childrenList as [number, number, number]];
 		return markersValues;
+	}
+
+	parseMarkers(markers: string): number[][] | PromiseLike<number[][]> {
+		const arr = JSON.parse(markers);
+		if (typeof (arr[0]) === 'number')
+			return [arr];
+		return arr;
 	}
 
 	getRegisteredTypes() {
@@ -292,7 +302,7 @@ export class Reader {
 
 	async getVariable(expr: string): Promise<Variable | undefined> {
 		try {
-			const { parsedExpr, ranges } = this.parseArrayRanges(expr);
+			const { parsedExpr, ranges } = await this.parseRanges(expr);
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: parsedExpr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
@@ -543,6 +553,14 @@ export class Reader {
 		return false;
 	}
 
+	public getIndex(variable: Variable): number | undefined {
+		const idx = parseInt(variable.name.substring(1,
+			variable.name.length - 1));
+		if (isNaN(idx))
+			return undefined;
+		return idx;
+	}
+
 	public isIndexed(variable: Variable, parent: Variable): boolean {
 		return !isNaN(parseInt(variable.name));
 	}
@@ -572,7 +590,7 @@ export class Reader {
 	 * @param expr The expression that contains array ranges
 	 * @returns {parsedExpr: string, ranges: Range[]} The parsed expression and the ranges
 	 */
-	parseArrayRanges(expr: string): { parsedExpr: string, ranges: Range[] } {
+	async parseRanges(expr: string): Promise<{ parsedExpr: string, ranges: Range[] }> {
 		const delimIdx = expr.lastIndexOf(",");
 		const ranges: Range[] = [];
 		if (delimIdx >= 1) {
@@ -585,8 +603,18 @@ export class Reader {
 					const rangeParts = dimPart.split(":");
 					if (rangeParts.length != 2)
 						continue;
-					const start = parseInt(rangeParts[0]);
-					const end = parseInt(rangeParts[1]);
+					let start = parseInt(rangeParts[0]);
+					if (isNaN(start)) {
+						const startVariable: Variable | undefined = await this.getVariable(rangeParts[0]);
+						if (startVariable)
+							start = parseInt(startVariable.value);
+					}
+					let end = parseInt(rangeParts[1]);
+					if (isNaN(end)) {
+						const endVariable: Variable | undefined = await this.getVariable(rangeParts[1]);
+						if (endVariable)
+							end = parseInt(endVariable.value);
+					}
 					if (!isNaN(start) && !isNaN(end)) {
 						ranges.push(new Range(start, end - start));
 					}
