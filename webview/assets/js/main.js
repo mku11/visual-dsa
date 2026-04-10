@@ -642,6 +642,10 @@ function setupNetworkListeners(selectedLayout) {
     network.on('selectNode', function (e) {
         onSelectedNode(e);
     });
+
+    network.on('deselectNode', function (e) {
+        onSelectedNode(e);
+    });
 }
 
 function formatLabels(ctx, diffType, color) {
