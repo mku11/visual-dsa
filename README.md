@@ -24,7 +24,8 @@ and jGRASP: https://www.jgrasp.org/
 - C#
 - JavaScript/TypeScript
 - Python
-- C/C++ limited support for arrays only
+- C++
+- C limited support
 
 ## Quickstart
 - Load your project in VS Code
