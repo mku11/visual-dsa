@@ -416,7 +416,7 @@ export class Parser {
 				else if ((layout == 'graph' || layout == 'tree' || layout == 'linkedlist')
 					&& this.reader.isIndexed(ch, variable) && filterNodes.size == 0
 				) {
-					if (variable.ranges.length == 0)
+					if (variable.ranges === undefined || variable.ranges.length == 0)
 						nodesChildren.push(ch);
 					else {
 						const start = variable.ranges[0].start;
