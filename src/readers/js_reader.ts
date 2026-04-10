@@ -271,13 +271,15 @@ mapRepr;
 	}
 
 	public async getNodeId(variable: Variable): Promise<string> {
-		let id: string | undefined = variable.value;
-		id = await this.getCurrentNodeId(variable);
+		if (variable.memoryReference)
+			return variable.memoryReference;
+		let id = await this.getCurrentNodeId(variable);
 		if (!id) {
 			id = await this.generateNodeId();
 			await this.setNodeId(variable, id);
+			variable.memoryReference = id;
 		}
-		return id;
+		return variable.memoryReference;
 	}
 
 	public async generateNodeId(): Promise<string> {

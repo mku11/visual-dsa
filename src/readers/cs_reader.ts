@@ -57,11 +57,7 @@ export class CsReader extends Reader {
 	}
 
 	public async getNodeId(variable: Variable): Promise<string> {
-		let id = variable.value;
-		if (variable.memoryReference) {
-			id = variable.memoryReference;
-		}
-		return id;
+		return variable.memoryReference;
 	}
 
 	public getVarNodeId(variable: Variable) {

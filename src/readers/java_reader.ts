@@ -457,6 +457,8 @@ return mapRepr.toString();
 	}
 
 	public async getNodeId(variable: Variable): Promise<string> {
+		if (variable.memoryReference)
+			return variable.memoryReference;
 		try {
 			const name = variable.evaluateName;
 			let expr = `System.identityHashCode(${name})`;
@@ -466,8 +468,7 @@ return mapRepr.toString();
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			const content = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
-			return content;
+			variable.memoryReference = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
 				console.error("Error: getNodeId  of " + variable + ": " + ex.message);
@@ -475,7 +476,7 @@ return mapRepr.toString();
 				console.error(ex);
 			}
 		}
-		return "";
+		return variable.memoryReference;
 	}
 
 	public async getNodeType(variable: Variable): Promise<string> {

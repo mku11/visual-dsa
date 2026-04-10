@@ -66,25 +66,23 @@ export class CxxReader extends Reader {
 	}
 
 	public async getNodeId(variable: Variable): Promise<string> {
-		if (variable.memoryReference) {
+		if (variable.memoryReference)
 			return variable.memoryReference;
-		} else {
-			try {
-				const name = variable.evaluateName;
-				let expr = `(long long) &${name}`;
-				expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
-				const currNodeId = await debug.activeDebugSession?.customRequest("evaluate", {
-					expression: expr,
-					frameId: (debug.activeStackItem as DebugStackFrame).frameId,
-					context: 'repl',
-				});
-				variable.memoryReference = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
-			} catch (ex: Error | unknown) {
-				if (ex instanceof Error) {
-					console.error("Error: getCurrentNodeId  of " + variable + ": " + ex.message);
-				} else {
-					console.error(ex);
-				}
+		try {
+			const name = variable.evaluateName;
+			let expr = `(long long) &${name}`;
+			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
+			const currNodeId = await debug.activeDebugSession?.customRequest("evaluate", {
+				expression: expr,
+				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
+				context: 'repl',
+			});
+			variable.memoryReference = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
+		} catch (ex: Error | unknown) {
+			if (ex instanceof Error) {
+				console.error("Error: getCurrentNodeId  of " + variable + ": " + ex.message);
+			} else {
+				console.error(ex);
 			}
 		}
 		return variable.memoryReference;

@@ -244,6 +244,8 @@ export class PythonReader extends Reader {
 	}
 
 	public async getNodeId(variable: Variable): Promise<string> {
+		if (variable.memoryReference)
+			return variable.memoryReference;
 		try {
 			const name = variable.evaluateName;
 			let expr = `id(${name})`;
@@ -253,8 +255,7 @@ export class PythonReader extends Reader {
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
-			const content = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
-			return content;
+			variable.memoryReference = "0x" + Number(currNodeId.result).toString(16).toUpperCase();
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
 				console.error("Error: getCurrentNodeId  of " + variable + ": " + ex.message);
@@ -262,7 +263,7 @@ export class PythonReader extends Reader {
 				console.error(ex);
 			}
 		}
-		return "";
+		return variable.memoryReference;
 	}
 
 	public filterVariable(variable: Variable) {
