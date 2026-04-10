@@ -166,6 +166,8 @@ export class Reader {
 	}
 
 	async getMarkersValues(markers: string, layout: string): Promise<number[][]> {
+		if (markers.length == 0)
+			return [];
 		let markersValues: number[][] = [];
 		const variable = await this.getVariable(markers);
 		if (!variable || variable.value === 'Unable to evaluate expression') {
@@ -216,11 +218,18 @@ export class Reader {
 		return markersValues;
 	}
 
-	parseMarkers(markers: string): number[][] | PromiseLike<number[][]> {
-		const arr = JSON.parse(markers);
-		if (typeof (arr[0]) === 'number')
-			return [arr];
-		return arr;
+	parseMarkers(markers: string): number[][] {
+		if (markers.length == 0)
+			return [];
+		try {
+			const arr = JSON.parse(markers);
+			if (typeof (arr[0]) === 'number')
+				return [arr];
+			return arr;
+		} catch (ex) {
+			console.error(ex);
+			return [];
+		}
 	}
 
 	getRegisteredTypes() {
