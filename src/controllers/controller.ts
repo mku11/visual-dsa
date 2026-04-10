@@ -245,8 +245,10 @@ export class Controller {
 
 	getDiff(data: VisData, prevData: VisData) {
 		const diffData: VisDiffData = new VisDiffData();
-		this.setDiffNodes(prevData, data, diffData);
-		this.setDiffEdges(prevData, data, diffData);
+		if(prevData) {
+			this.setDiffNodes(prevData, data, diffData);
+			this.setDiffEdges(prevData, data, diffData);
+		}
 		return diffData;
 	}
 
