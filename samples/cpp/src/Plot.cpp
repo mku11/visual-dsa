@@ -28,30 +28,32 @@ vector<pair<string, vector<string>>> extractorRegisterAttrs()
 
 // The extract functions will be of format extract_{attr} and
 // will be called automatically by the debugger to extract the data
-vector<vector<int>> extract_points(void *obj, void *root)
+vector<vector<int>> extract_points(
+    vector<int> *obj,
+    vector<int> *root)
 {
     // convert list of numbers to list of points (i,xi)
-    vector<int> *objObject = (vector<int> *)obj;
     vector<vector<int>> nodes = vector<vector<int>>();
-    for (int i = 0; i < objObject->size(); i++)
+    for (int i = 0; i < obj->size(); i++)
     {
-        if ((*objObject)[i] == NULL)
+        if ((*obj)[i] == NULL)
             continue;
-        nodes.push_back(vector<int>({i, (int)(*objObject)[i]}));
+        nodes.push_back(vector<int>({i, (int)(*obj)[i]}));
     }
     return nodes;
 }
 
-vector<vector<int>> extract_lines(void *obj, void *root)
+vector<vector<int>> extract_lines(
+    vector<vector<int>> *obj,
+    vector<vector<int>> *root)
 {
     // convert list of points to list of lines
-    vector<vector<int>> *objObject = (vector<vector<int>> *)obj;
     vector<vector<int>> nodes = vector<vector<int>>();
-    for (int i = 0; i < objObject->size() - 1; i++)
-        nodes.push_back({(*objObject)[i][0],
-                         (*objObject)[i][1],
-                         (*objObject)[i + 1][0],
-                         (*objObject)[i + 1][1]});
+    for (int i = 0; i < obj->size() - 1; i++)
+        nodes.push_back({(*obj)[i][0],
+                         (*obj)[i][1],
+                         (*obj)[i + 1][0],
+                         (*obj)[i + 1][1]});
     return nodes;
 }
 

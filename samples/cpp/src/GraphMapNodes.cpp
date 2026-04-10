@@ -48,8 +48,6 @@ vector<pair<string, vector<string>>> extractorRegisterAttrs()
 }
 
 vector<GraphMapNode<string> *> extract_mapCustomNodes(
-    char *type,
-    char *attr,
     unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *obj,
     unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *root)
 {
@@ -62,8 +60,6 @@ vector<GraphMapNode<string> *> extract_mapCustomNodes(
 }
 
 vector<GraphMapNode<string> *> extract_nodeCustomNodes(
-    char *type,
-    char *attr,
     GraphMapNode<string> *obj,
     unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *root)
 {
@@ -77,8 +73,6 @@ vector<GraphMapNode<string> *> extract_nodeCustomNodes(
 }
 
 vector<int> extract_nodeCustomEdges(
-    char *type,
-    char *attr,
     GraphMapNode<string> *obj,
     unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *root)
 {
