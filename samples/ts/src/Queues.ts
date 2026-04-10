@@ -42,6 +42,8 @@ export class Queues {
             const node: PriorityNode<string, number> | undefined = pq.shift();
             console.log(node?.value + ":" + node?.priority);
         }
+        
+        console.log("done");
     }
 }
 

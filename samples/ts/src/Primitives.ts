@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 class Primitives {
     public static runMain() {
         let x = 1;
@@ -9,6 +8,7 @@ class Primitives {
         x1 = 55;
         x1 = 3;
 
+        console.log(x, x1);
         console.log("done");
     }
 }

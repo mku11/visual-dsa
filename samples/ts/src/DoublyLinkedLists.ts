@@ -20,6 +20,8 @@ class DoublyLinkedLists {
             }
             node = node.getNext();
         }
+
+        console.log("done");
     }
 }
 

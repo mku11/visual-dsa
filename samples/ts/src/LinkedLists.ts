@@ -27,6 +27,8 @@ class LinkedLists {
             }
             node = node.getNext();
         }
+
+        console.log("done");
     }
 }
 

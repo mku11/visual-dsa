@@ -36,6 +36,8 @@ class Graphs {
         gnode2.add(new GraphNode<string>("7"), 13);
 
         Graphs.bfs(gnode0);
+
+        console.log("done");
     }
 
     static bfs(node: GraphNode<string>) {
