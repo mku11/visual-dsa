@@ -402,7 +402,7 @@ export class Parser {
 				if (filterNodes.has(ch.name)) {
 					nodesChildren.push(ch);
 				} else if (filterNodes.has(ch.name + "[]")) {
-					if (this.reader.hasChildren(ch) && ch.variablesReference > 0) {
+					if (ch.variablesReference > 0) {
 						const grandChildren: Variable[] = await this.reader.getVariables(ch, "indexed");
 						for (let grandChild of grandChildren) {
 							if (this.reader.filterVariable(grandChild)) {
@@ -416,7 +416,16 @@ export class Parser {
 				else if ((layout == 'graph' || layout == 'tree' || layout == 'linkedlist')
 					&& this.reader.isIndexed(ch, variable) && filterNodes.size == 0
 				) {
-					nodesChildren.push(ch);
+					if (variable.ranges.length == 0)
+						nodesChildren.push(ch);
+					else {
+						const start = variable.ranges[0].start;
+						const end = start + variable.ranges[0].length;
+						const idx: number | undefined = this.reader.getIndex(ch);
+						if (idx !== undefined && start <= idx && idx < end) {
+							nodesChildren.push(ch);
+						}
+					}
 				}
 
 				if (filterProperties.has(ch.name)) {
