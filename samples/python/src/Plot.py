@@ -1,6 +1,33 @@
 from typing import Any
 
 
+# UI settings
+# Expression: arrInt
+#   Type: list[]
+#     Layout: Plot
+#     Points: @points
+#     Save: Object Attributes
+
+# Expression: points
+#   Type: list[][]
+#     Layout: Plot
+#     Save: Object Attributes
+
+# Expression: points
+#   Type: list[][]
+#     Layout: Plot
+#     Points: @lines
+#     Save: Object Attributes
+
+# Expression: lines
+#   Type: list[][]
+#     Layout: Plot
+#     Save: Object Attributes
+
+# Note: format for plotting:
+# To plot points: [[x1,y1],[x2,y2],...]
+# To plot lines: [[x1,y1,x2,y2],[x3,y3,x4,y4],...]
+
 class Arrays:
     @staticmethod
     def run_main():

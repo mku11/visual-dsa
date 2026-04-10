@@ -4,6 +4,26 @@ from collections import deque
 
 T = TypeVar("T")
 
+
+# UI settings
+# Expression: linkedList
+#   Type: LinkedListCustom
+#     Layout: Linked List
+#     Nodes: head
+#     Save: Object Type Attributes
+#   Type: LinkedListNode
+#     Layout: Linked List
+#     Nodes: next
+#     Properties: value
+#     Save: Object Type Attributes
+
+# Expression: linkedList2
+#   Type: deque
+#     Layout: Linked List
+#     Save: Object Type Attributes
+#   Type: str
+#     Layout: Linked List
+#     Save: Object Type Attributes
 class LinkedLists:
 
     @staticmethod

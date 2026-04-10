@@ -1,3 +1,13 @@
+
+# UI settings
+# Expression: h1
+#   Type: dict
+#     Layout: Map
+#     Save: Object Attributes
+# Expression: hs1
+#   Type: HashSet
+#     Layout: Set
+#     Save: Object Attributes
 class Hashes():
     @staticmethod
     def run_main():

@@ -1,3 +1,27 @@
+
+# UI settings
+
+# Expression: arrString
+#   Type: list[]
+#     Layout: Array
+#     Save: Object Attributes
+
+# Expression: arrayList
+#   Type: list[]
+#     Layout: Array
+#     Save: Object Attributes
+
+# Expression: listOfLists
+#   Type: list[][]
+#     Layout: Array2D
+#     Save: Object Attributes
+
+# Expression: arr3D
+#   Type: ndarray[][][]
+#     Layout: Array3D
+#     Markers: [[0,1,0],[1,2,1]]
+#     Save: Object Attributes
+
 class Lists:
     listOfLists = None
 

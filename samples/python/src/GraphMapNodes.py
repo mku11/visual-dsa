@@ -3,7 +3,19 @@ from typing import Any, TypeVar, Generic
 
 T = TypeVar("T")
 
-
+# UI settings
+# Expression: gmap
+#   Type: dict
+#     Layout: Graph
+#     Nodes: @dictCustomNodes
+#     Properties: @dictCustomValue (optional)
+#     Save: Object Attributes
+#   Type: GraphMapNode
+#     Layout: Graph
+#     Nodes: @nodeCustomNodes
+#     Edges: @nodeCustomEdges
+#     Properties: @nodeCustomValue (optional)
+#     Save: Object Type Attributes
 class GraphMapNodes:
 
     @staticmethod

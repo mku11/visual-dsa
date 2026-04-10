@@ -6,6 +6,11 @@ T = TypeVar("T")
 S = TypeVar("S")
 P = TypeVar("P")
 
+# UI settings
+# Expression: q
+#   Type: Queue
+#     Layout: Queue
+#     Save: Object Attributes
 
 class Queues:
 

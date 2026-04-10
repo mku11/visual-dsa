@@ -1,6 +1,28 @@
 import numpy as np
 
 
+# UI settings
+
+# Expression: arrInt
+#   Type: ndarray[]
+#     Layout: Array
+#     Markers: [0,1]
+#     Save: Object Attributes
+
+# Expression: arr2D
+#   Type: ndarray[][]
+#     Layout: Array2D
+#     Markers: [[0,1],[1,2]]
+#     Save: Object Attributes
+
+# Expression: arr3D
+#   Type: ndarray[][][]
+#     Layout: Array3D
+#     Markers: [[0,1,0],[1,2,1]]
+#     Save: Object Attributes
+
+
+# Note: Format for markers: [[x1,y1,z1],[x2,y2,z2]...]
 class Arrays:
 
     @staticmethod
@@ -8,6 +30,7 @@ class Arrays:
         Arrays().start()
 
     def start(self):
+
         # byte array
         arrInt: bytearray = bytearray([0] * 5)
         arrInt[1] = 1
@@ -38,4 +61,6 @@ class Arrays:
         arr3D[1][2][3] = 3
 
         print("done")
+
+
 Arrays().runMain()

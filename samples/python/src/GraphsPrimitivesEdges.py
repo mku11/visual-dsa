@@ -1,6 +1,16 @@
 from typing import Any
 
-
+# UI settings
+# Expression: gmap
+#   Type: dict
+#     Layout: Graph
+#     Nodes: @dictCustomNodes
+#     Save: Object Attributes
+#   Type: str
+#     Layout: Graph
+#     Nodes: @nodeCustomNodes
+#     Edges: @nodeCustomEdges
+#     Save: Object Type Attributes
 class GraphsPrimitivesEdges:
     @staticmethod
     def run_main():

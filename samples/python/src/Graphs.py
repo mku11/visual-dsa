@@ -5,7 +5,18 @@ from queue import Queue
 
 T = TypeVar("T")
 
-
+# UI settings
+# Expression: graph
+#   Type: Graph
+#     Layout: Graph
+#     Nodes: root
+#     Save: Object Type Attributes
+#   Type: GraphNode
+#     Layout: Graph
+#     Nodes: children[]
+#     Edges: childrenCost[]
+#     Properties: value
+#     Save: Object Type Attributes
 class Graphs:
 
     @staticmethod
