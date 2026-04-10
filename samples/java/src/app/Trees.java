@@ -38,9 +38,7 @@ public class Trees {
 }
 
 class Tree<T> {
-
-    public Node<T> root;
-
+    protected Node<T> root;
     public Tree(Node<T> root) {
         this.root = root;
     }
@@ -48,8 +46,8 @@ class Tree<T> {
 
 class Node<T> {
 
-    public T value;
-    public ArrayList<Node<T>> children = new ArrayList<>();
+    protected T value;
+    protected ArrayList<Node<T>> children = new ArrayList<>();
 
     public Node(T value) {
         this.value = value;

@@ -59,7 +59,7 @@ public class Graphs {
 
     static class Graph<T> {
 
-        private GraphNode<T> root;
+        protected GraphNode<T> root;
 
         public Graph(GraphNode<T> root) {
             this.root = root;
@@ -72,14 +72,13 @@ public class Graphs {
 
     static class GraphNode<T> {
 
-        private T value;
-
+        protected T value;
         public T getValue() {
             return value;
         }
 
-        public ArrayList<GraphNode<T>> children = new ArrayList<>();
-        public ArrayList<Integer> childrenCost = new ArrayList<>();
+        protected ArrayList<GraphNode<T>> children = new ArrayList<>();
+        protected ArrayList<Integer> childrenCost = new ArrayList<>();
 
         public GraphNode(T value) {
             this.value = value;

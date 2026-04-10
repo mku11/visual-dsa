@@ -44,8 +44,8 @@ public class Queues {
 
 
 class PriorityNode<T, P> {
-    public T value;
-    public P priority;
+    protected T value;
+    protected P priority;
 
     public PriorityNode(T value, P prio) {
         this.value = value;
@@ -58,8 +58,8 @@ class PriorityNode<T, P> {
 }
 
 class QueueNode<T, S> {
-    public T value;
-    public S data;
+    protected T value;
+    protected S data;
 
     public QueueNode(T value, S data) {
         this.value = value;

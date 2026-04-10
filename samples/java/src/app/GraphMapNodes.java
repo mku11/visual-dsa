@@ -34,7 +34,7 @@ public class GraphMapNodes {
 
     public static class GraphMapNode<T> {
 
-        private T value;
+        protected T value;
 
         public T getValue() {
             return value;

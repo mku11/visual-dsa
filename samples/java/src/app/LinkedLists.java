@@ -18,11 +18,11 @@ public class LinkedLists {
 
         LinkedListCustom.LinkedListNode<String> head = linkedList.getHead();
         while (head != null) {
-            if (head.getValue().equals("3")) {
+            if (head.value.equals("3")) {
                 head.insertNext(new LinkedListCustom.LinkedListNode<>("5"));
                 break;
             }
-            head = head.getNext();
+            head = head.next;
         }
 
         // JDK linked list
@@ -38,8 +38,7 @@ public class LinkedLists {
 
 class LinkedListCustom<T> {
 
-    private LinkedListNode<T> head;
-
+    protected LinkedListNode<T> head;
     public LinkedListNode<T> getHead() {
         return head;
     }
@@ -58,16 +57,8 @@ class LinkedListCustom<T> {
 
     public static class LinkedListNode<T> {
 
-        private T value;
-        private LinkedListNode<T> next;
-
-        public T getValue() {
-            return value;
-        }
-
-        public LinkedListNode<T> getNext() {
-            return next;
-        }
+        protected T value;
+        protected LinkedListNode<T> next;
 
         public void insertNext(LinkedListNode<T> node) {
             LinkedListNode<T> t = this.next;
