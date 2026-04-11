@@ -279,6 +279,7 @@ mapRepr;
 			await this.setNodeId(variable, id);
 			variable.memoryReference = id;
 		}
+		variable.memoryReference = id;
 		return variable.memoryReference;
 	}
 
