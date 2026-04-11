@@ -3,15 +3,37 @@
 #include <string.h>
 #include <stdint.h>
 
+// UI settings
+// Expression: arrString
+//   Type: char *[5]
+//     Layout: Array
+//     Save: Object Attributes
+
+// Expression: arrInt
+//   Type: int[5]
+//     Layout: Array
+//     Markers: [0,1]
+//     Save: Object Attributes
+
+// Expression: arr2D,[0:10|0:5]
+//   Type: int * *
+//     Layout: Array2D
+//     Markers: [[0,1],[1,2]]
+//     Save: Object Attributes
+
+// Expression: arr3D,[0:4|0:5|0:2]
+//   Type: int * * *
+//     Layout: Array3D
+//     Markers: [[0,1,0],[1,2,1]]
+//     Save: Object Attributes
+
+// Note: Ranges format (for each dimension separate with '|' ): 
+// <variable>,[startX:endX|startY:endY|startZ:endZ]
+// Ranges are required for pointers to arrays
 char **arrChar2D = NULL;
 uint8_t *data = NULL;
 void main(int argc, char **argv)
 {
-    data = (uint8_t *)calloc(5, sizeof(uint8_t));
-    data[0] = 121;
-    data[1] = 122;
-    data[2] = 123;
-
     char *arrString[5];
     arrString[1] = "one";
     arrString[2] = "two";
@@ -28,7 +50,7 @@ void main(int argc, char **argv)
     arrInt2D[2][3] = 212;
 
     // 2d array pointer
-    int **arr2D = (int **)malloc(sizeof(int *) * 15);
+    int **arr2D = (int **)malloc(sizeof(int *) * 10);
     arr2D[0] = (int *)malloc(sizeof(int) * 3);
     arr2D[1] = (int *)malloc(sizeof(int) * 4);
     arr2D[2] = (int *)malloc(sizeof(int) * 4);

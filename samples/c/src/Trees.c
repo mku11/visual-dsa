@@ -4,6 +4,18 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// UI settings
+// Expression: tree
+//   Type: Tree *
+//     Layout: Tree
+//     Nodes: root
+//     Save: Object Type Attributes
+//   Type: Node *
+//     Layout: Tree
+//     Nodes: children[]
+//     Properties: value
+//     Save: Object Type Attributes
+
 // nodes
 typedef struct Node
 {

@@ -4,6 +4,23 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+
+// UI settings
+
+// Expression: points
+//   Type: int[4][2]
+//     Layout: Plot
+//     Save: Object Attributes
+
+// Expression: lines
+//   Type: int[4][4]
+//     Layout: Plot
+//     Save: Object Attributes
+
+// Note: format for plotting:
+// To plot points: [[x1,y1],[x2,y2],...]
+// To plot lines: [[x1,y1,x2,y2],[x3,y3,x4,y4],...]
+
 void main(int argc, char **argv)
 {
     // list of points

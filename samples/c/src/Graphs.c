@@ -4,6 +4,19 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// UI settings
+// Expression: graph
+//   Type: Graph *
+//     Layout: Graph
+//     Nodes: root
+//     Save: Object Type Attributes
+//   Type: GraphNode *
+//     Layout: Graph
+//     Nodes: children[]
+//     Edges: childrenCost[]
+//     Properties: value
+//     Save: Object Type Attributes
+
 // Graph
 typedef struct GraphNode
 {
