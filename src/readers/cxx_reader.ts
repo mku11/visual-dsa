@@ -90,14 +90,16 @@ export class CxxReader extends Reader {
 
 	public async getNodeType(variable: Variable): Promise<string> {
 		let type = variable.type;
+		if(!type)
+			return type;
 		// remove long types
 		let ridx = 0;
 		while (ridx < CxxReader.removeTypes.length) {
-			const idx = type.indexOf(CxxReader.removeTypes[ridx]);
-			if (idx == -1) {
+			if(!type.includes(CxxReader.removeTypes[ridx])) {
 				ridx++;
 				continue;
 			}
+			const idx = type.indexOf(CxxReader.removeTypes[ridx]);
 			let found = false;
 			let angleBraces = 0;
 			let i = idx + CxxReader.removeTypes[ridx].length;
