@@ -15,7 +15,7 @@
 //     Markers: [0,1]
 //     Save: Object Attributes
 
-// Expression: arr2D,[0:10|0:5]
+// Expression: arr2D,[0:5|0:10]
 //   Type: int * *
 //     Layout: Array2D
 //     Markers: [[0,1],[1,2]]
