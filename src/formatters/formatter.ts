@@ -28,8 +28,8 @@ import { Range } from "../readers/reader";
 export class Formatter {
 	static readonly MAX_STR_LEN = 60;
 	static readonly BARS_ROWS = 10;
-	static readonly PLOT_ROWS = 20;
-	static readonly PLOT_COLS = 40;
+	static readonly PLOT_ROWS = 40;
+	static readonly PLOT_COLS = 80;
 	static graphLayouts = new Set<string>(["graph", "tree", "linkedlist"]);
 	static barLayouts = new Set<string>(["bars"]);
 	static plotLayouts = new Set<string>(["plot"]);
