@@ -287,8 +287,8 @@ export class Parser {
 					varNode.markers = markers;
 				}
 			}
+			visited.set(varNodeId, varNode);
 			if (variable.variablesReference == 0) {
-				visited.set(varNodeId, varNode);
 				return varNode;
 			}
 		}
