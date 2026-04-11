@@ -1,5 +1,18 @@
 using System;
 using System.Collections.Generic;
+
+// UI settings
+// Expression: graph
+//   Type: Graphs.Graph<string>
+//     Layout: Graph
+//     Nodes: Root
+//     Save: Object Type Attributes
+//   Type: Graphs.GraphNode<string>
+//     Layout: Graph
+//     Nodes: children[]
+//     Edges: childrenCost[]
+//     Properties: value
+//     Save: Object Type Attributes
 internal class Graphs
 {
     public static void RunMain(string[] args)

@@ -1,7 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+
+// UI settings
+// Expression: q
+//   Type: System.Collections.Generic.Queue<string>
+//     Layout: Queue
+//     Save: Object Attributes
 
 internal class Queues
 {

@@ -1,6 +1,26 @@
 using System;
 using System.Collections.Generic;
 
+// UI settings
+// Expression: linkedList
+//   Type: LinkedListCustom<string>
+//     Layout: Linked List
+//     Nodes: Head
+//     Save: Object Type Attributes
+//   Type: LinkedListNode<string>
+//     Layout: Linked List
+//     Nodes: Next
+//     Properties: Value
+//     Save: Object Type Attributes
+
+// Expression: linkedList2
+//   Type: System.Collections.Generic.LinkedList<string>
+//     Layout: Linked List
+//     Save: Object Type Attributes
+//   Type: string
+//     Layout: Linked List
+//     Properties: value
+//     Save: Object Type Attributes
 internal class LinkedLists
 {
 

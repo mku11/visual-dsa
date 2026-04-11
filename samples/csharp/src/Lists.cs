@@ -1,6 +1,16 @@
 using System;
 using System.Collections.Generic;
 
+// UI settings
+// Expression: arrayList
+//   Type: System.Collections.Generic.List<int>
+//     Layout: Array
+//     Save: Object Attributes
+
+// Expression: this.listOfLists
+//   Type: System.Collections.Generic.List<System.Collections.Generic.List<int>>
+//     Layout: Array2D
+//     Save: Object Attributes
 internal class Lists
 {
     List<List<int>> listOfLists;

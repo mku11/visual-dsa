@@ -1,5 +1,16 @@
 using System;
-using System.Collections.Generic;
+
+// UI settings
+// Expression: linkedList
+//   Type: DoublyLinkedLists.DoublyLinkedList<string>
+//     Layout: Linked List
+//     Nodes: Head
+//     Save: Object Type Attributes
+//   Type: DoublyLinkedLists.Node<string>
+//     Layout: Linked List
+//     Nodes: Next,Prev (ctrl+click to select mutliple)
+//     Properties: value
+//     Save: Object Type Attributes
 
 public class DoublyLinkedLists
 {
@@ -29,6 +40,8 @@ public class DoublyLinkedLists
             }
             node = node.Next;
         }
+
+        Console.WriteLine("done");
     }
 
     class DoublyLinkedList<T>

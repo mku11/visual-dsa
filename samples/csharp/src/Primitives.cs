@@ -1,5 +1,15 @@
 using System;
 
+// UI settings
+// Expression: x
+//   Type: int
+//     Layout: None
+//     Save: Object Attributes
+
+// Expression: x1
+//   Type: float
+//     Layout: None
+//     Save: Object Attributes
 class Primitives
 {
     public static void RunMain(string[] args)
@@ -13,10 +23,11 @@ class Primitives
         x = 2;
         x = 3;
 
-        char y = 'a';
+        float x1 = 1.1f;
+        x1 = 2.2f;
+        x1 = 3.3f;
 
-        string z = "test";
-        Console.WriteLine(x + "," + y + "," + z);
+        Console.WriteLine(x + "," + x1);
         Console.WriteLine("done");
     }
 }

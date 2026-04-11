@@ -1,6 +1,17 @@
 using System;
 using System.Collections.Generic;
 
+// UI settings
+// Expression: tree
+//   Type: Tree<string>
+//     Layout: Tree
+//     Nodes: Root
+//     Save: Object Type Attributes
+//   Type: Node<string>
+//     Layout: Tree
+//     Nodes: children[]
+//     Properties: Value
+//     Save: Object Type Attributes
 internal class Trees
 {
     public static void RunMain(string[] args)

@@ -1,13 +1,41 @@
 using System;
 
-class Arrays {
+// UI settings
+// Expression: arrString
+//   Type: string[]
+//     Layout: Array
+//     Save: Object Attributes
+
+// Expression: arrInt
+//   Type: int[]
+//     Layout: Array
+//     Markers: [0,1]
+//     Save: Object Attributes
+
+// Expression: arr2D
+//   Type: int[][]
+//     Layout: Array2D
+//     Markers: [[0,1],[1,2]]
+//     Save: Object Attributes
+
+// Expression: arr3D
+//   Type: int[][][]
+//     Layout: Array3D
+//     Markers: [[0,1,0],[1,2,1]]
+//     Save: Object Attributes
+
+// Note: Format for markers: [[x1,y1,z1],[x2,y2,z2]...]
+class Arrays
+{
     char[][] arrChar2D;
 
-    public static void RunMain(string[] args) {
+    public static void RunMain(string[] args)
+    {
         new Arrays().Start();
     }
 
-    public void Start() {
+    public void Start()
+    {
         string[] arrString = new string[5];
         arrString[1] = "one";
         arrString[2] = "two";
@@ -18,7 +46,7 @@ class Arrays {
         arrInt[2] = 212;
 
         // // // 2d array
-        int[][] arr2D = new int[15][];
+        int[][] arr2D = new int[10][];
         arr2D[0] = new int[3];
         arr2D[1] = new int[4];
         arr2D[2] = new int[4];
@@ -70,6 +98,5 @@ class Arrays {
         arr3D[1][2][3] = 3;
 
         Console.WriteLine("done");
-
     }
 }

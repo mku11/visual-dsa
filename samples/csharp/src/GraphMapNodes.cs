@@ -3,6 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+// UI settings
+// Expression: gmap
+//   Type: System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>
+//     Layout: Graph
+//     Nodes: @dictCustomNodes
+//     Properties: @dictCustomValue (optional)
+//     Save: Object Attributes
+//   Type: GraphMapNodes.GraphMapNode<string>
+//     Layout: Graph
+//     Nodes: @nodeCustomNodes
+//     Edges: @nodeCustomEdges
+//     Properties: @nodeCustomValue (optional)
+//     Save: Object Type Attributes
 internal class GraphMapNodes
 {
 
