@@ -100,13 +100,13 @@ export class Formatter {
 					visNode.labelMarkers.push(new Diff(start, end));
 			}
 			if (Formatter.barLayouts.has(layout) && node instanceof Node) {
-				visNode.bars = (node.value as []).map(x => parseInt(x));
+				visNode.bars = (node.value as []).map(x => parseFloat(x));
 			} else if (Formatter.plotLayouts.has(layout) && node instanceof Node) {
 				if (node.value instanceof Array && node.value.length > 0) {
 					// list of lines: [[x1,y1,x2,y2],[],...]
 					// list of points: [[x1,y1],[],...]
 					visNode.points = (node.value as [][]).map(el =>
-						el.map(c => parseInt(c)));
+						el.map(c => parseFloat(c)));
 				}
 			}
 			visNode.level = level;

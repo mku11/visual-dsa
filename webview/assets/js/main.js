@@ -847,7 +847,7 @@ function formatPlotLayout(ctx, selectedLayout) {
             ctx.fill();
             ctx.textAlign = x1 > 0 ? 'right' : 'left';
             const textMargin = x1 > 0 ? -6 : 6;
-            ctx.fillText(x1 + "," + y1, textMargin + trpx(x1), trpy(y1));
+            ctx.fillText(Math.round(x1,3) + "," + Math.round(y1,3), textMargin + trpx(x1), trpy(y1));
             if (el.length == 4) {
                 // second point
                 [x2, y2] = el.slice(2)
@@ -856,7 +856,7 @@ function formatPlotLayout(ctx, selectedLayout) {
                 ctx.fill();
                 ctx.textAlign = x2 > 0 ? 'right' : 'left';
                 const textMargin = x2 > 0 ? -6 : 6;
-                ctx.fillText(x2 + "," + y2, textMargin + trpx(x2), trpy(y2));
+                ctx.fillText(Math.round(x2,3) + "," + Math.round(y2,3), textMargin + trpx(x2), trpy(y2));
 
                 // draw line
                 ctx.beginPath();
