@@ -11,6 +11,19 @@
 
 using namespace std;
 
+// UI settings
+// Expression: graph
+//   Type: Graph<std::string> *
+//     Layout: Graph
+//     Nodes: root
+//     Save: Object Type Attributes
+//   Type: GraphNode<std::string> *
+//     Layout: Graph
+//     Nodes: children[]
+//     Edges: childrenCost[]
+//     Properties: value
+//     Save: Object Type Attributes
+
 template <typename T>
 class GraphNode
 {
@@ -88,7 +101,8 @@ public:
         int size = q->size();
         while (q->size() > 0)
         {
-            GraphNode<string> *x = q->back();
+            GraphNode<string> *x = q->front();
+            q->pop();
             size--;
             for (GraphNode<string> *child : *(x->children))
             {

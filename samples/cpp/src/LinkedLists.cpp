@@ -9,6 +9,25 @@
 
 using namespace std;
 
+// UI settings
+// Expression: linkedList
+//   Type: LinkedListCustom<std::string> *
+//     Layout: Linked List
+//     Nodes: head
+//     Save: Object Type Attributes
+//   Type: LinkedListNode<std::string> *
+//     Layout: Linked List
+//     Nodes: next
+//     Properties: value
+//     Save: Object Type Attributes
+
+// Expression: linkedList2
+//   Type: std::list<std::string> *
+//     Layout: Linked List
+//     Save: Object Type Attributes
+//   Type: std::string
+//     Layout: Linked List
+//     Save: Object Type Attributes
 
 template <typename T>
 class LinkedListNode

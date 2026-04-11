@@ -10,6 +10,16 @@
 
 using namespace std;
 
+// UI settings
+// Expression: h1
+//   Type: std::map<std::string,int>
+//     Layout: Map
+//     Save: Object Attributes
+// Expression: hs1
+//   Type: std::set<std::string>
+//     Layout: Set
+//     Save: Object Attributes
+
 class Hashes
 {
 public:

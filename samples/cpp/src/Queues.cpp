@@ -9,6 +9,12 @@
 
 using namespace std;
 
+// UI settings
+// Expression: q
+//   Type: std::queue<std::string,std::deque<std::string>> *
+//     Layout: Queue
+//     Save: Object Attributes
+
 template <typename T, typename S>
 class QueueNode
 {

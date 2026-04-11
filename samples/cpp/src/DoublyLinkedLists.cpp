@@ -9,6 +9,19 @@
 
 using namespace std;
 
+
+// UI settings
+// Expression: linkedList
+//   Type: DoublyLinkedList<std::string> *
+//     Layout: Linked List
+//     Nodes: head
+//     Save: Object Type Attributes
+//   Type: Node<std::string> *
+//     Layout: Linked List
+//     Nodes: next,prev (ctrl+click to select mutliple)
+//     Properties: value
+//     Save: Object Type Attributes
+
 template <typename T>
 class Node
 {

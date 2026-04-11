@@ -9,6 +9,17 @@
 
 using namespace std;
 
+// UI settings
+// Expression: arrayList
+//   Type: std::vector<int> *
+//     Layout: Array
+//     Save: Object Attributes
+
+// Expression: this->listOfLists
+//   Type: std::vector<std::vector<int>> *
+//     Layout: Array2D
+//     Save: Object Attributes
+
 class Lists
 {
 private:

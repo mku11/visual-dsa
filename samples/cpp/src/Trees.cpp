@@ -9,6 +9,18 @@
 
 using namespace std;
 
+// UI settings
+// Expression: tree
+//   Type: Tree<std::string> *
+//     Layout: Tree
+//     Nodes: root
+//     Save: Object Type Attributes
+//   Type: Node<std::string> *
+//     Layout: Tree
+//     Nodes: children[]
+//     Properties: value
+//     Save: Object Type Attributes
+
 template <typename T>
 class Node
 {

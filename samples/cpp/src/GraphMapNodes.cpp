@@ -11,6 +11,20 @@
 
 using namespace std;
 
+// UI settings
+// Expression: gmap
+//   Type: std::unordered_map<std::string,std::pair<GraphMapNode<std::string> *,std::vector<GraphMapNode<std::string> *> *>> *
+//     Layout: Graph
+//     Nodes: @mapCustomNodes
+//     Properties: @mapCustomValue (optional)
+//     Save: Object Attributes
+//   Type: GraphMapNode<std::string> *
+//     Layout: Graph
+//     Nodes: @nodeCustomNodes
+//     Edges: @nodeCustomEdges
+//     Properties: @nodeCustomValue (optional)
+//     Save: Object Type Attributes
+
 template <typename T>
 class GraphMapNode
 {

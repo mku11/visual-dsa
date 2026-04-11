@@ -9,6 +9,34 @@
 
 using namespace std;
 
+
+// UI settings
+// Expression: arrInt
+//   Type: std::vector<int>
+//     Layout: Plot
+//     Points: @points
+//     Save: Object Attributes
+
+// Expression: points
+//   Type: std::vector<std::vector<int>>
+//     Layout: Plot
+//     Save: Object Attributes
+
+// Expression: points
+//   Type: std::vector<std::vector<int>>
+//     Layout: Plot
+//     Points: @lines
+//     Save: Object Attributes
+
+// Expression: lines
+//   Type: std::vector<std::vector<int>>
+//     Layout: Plot
+//     Save: Object Attributes
+
+// Note: format for plotting:
+// To plot points: [[x1,y1],[x2,y2],...]
+// To plot lines: [[x1,y1,x2,y2],[x3,y3,x4,y4],...]
+
 // register the custom attributes to extract
 // you can select these from the ui
 // instead of modifying your objects
