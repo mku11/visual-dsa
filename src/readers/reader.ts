@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { debug, DebugSession, DebugThread, DebugStackFrame } from "vscode";
+import { window, debug, DebugSession, DebugThread, DebugStackFrame } from "vscode";
 import * as fs from 'fs';
 
 export class Reader {
@@ -229,6 +229,8 @@ export class Reader {
 				return [arr];
 			return arr;
 		} catch (ex) {
+			if (ex instanceof Error)
+				window.showErrorMessage(ex.message);
 			console.error(ex);
 			return [];
 		}
@@ -331,6 +333,8 @@ export class Reader {
 			result.ranges = ranges;
 			return result;
 		} catch (error) {
+			if (error instanceof Error)
+				window.showErrorMessage(error.message);
 			console.error(error);
 		}
 	}
@@ -391,16 +395,6 @@ export class Reader {
 		}
 	}
 
-	public trackErrors(ex: Error, type: string, group: string) {
-		if (ex && ex.message && (
-			ex.message.includes("cannot be resolved to a type")
-			|| ex.message.includes("undefined for the type")
-			|| ex.message.includes("cannot be referenced using its binary name")
-		)) {
-			this.erroredTypes.add(group + ":" + type);
-		}
-	}
-
 	public async extract(variable: Variable, type: string, attr: string, root: Variable):
 		Promise<Variable[] | undefined> {
 		const attrs: Set<string> | undefined = this.registeredTypes.get(type);
@@ -446,6 +440,8 @@ export class Reader {
 			}
 			return nodes;
 		} catch (ex: Error | unknown) {
+			if (ex instanceof Error)
+				window.showErrorMessage(ex.message);
 			if (ex instanceof Error) {
 				console.error("extractor Error: " + variable.evaluateName
 					+ " " + type + " " + attr

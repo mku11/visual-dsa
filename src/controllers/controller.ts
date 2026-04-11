@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import * as vscode from 'vscode';
+import { window, ExtensionContext, commands } from 'vscode';
 import { diff, DiffEntry } from 'util';
 import { Node, Parser, VarNode } from '../parsers/parser';
 import { Reader, Variable } from '../readers/reader';
@@ -65,7 +65,7 @@ export class Controller {
 	private initialized = false;
 	private busy = false;
 
-	start(context: vscode.ExtensionContext) {
+	start(context: ExtensionContext) {
 		this.setupListeners(context);
 		Panel.initialize(context.extensionUri);
 		Panel.onOptionsChanged = async (message) => await this.onOptionsChanged(message);
@@ -162,9 +162,9 @@ export class Controller {
 		}
 	}
 
-	setupListeners(context: vscode.ExtensionContext) {
+	setupListeners(context: ExtensionContext) {
 		context.subscriptions.push(
-			vscode.commands.registerCommand('visualDSA.start', async () => {
+			commands.registerCommand('visualDSA.start', async () => {
 				if (Panel.getPanel()) {
 					return;
 				}
@@ -224,6 +224,8 @@ export class Controller {
 					variableNodes.push(node);
 				}
 			} catch (error) {
+				if (error instanceof Error)
+					window.showErrorMessage(error.message);
 				console.error(error);
 			}
 		}
@@ -239,13 +241,15 @@ export class Controller {
 			this.visData[this.idx] = data;
 			this.updatePanel();
 		} catch (error) {
+			if (error instanceof Error)
+				window.showErrorMessage(error.message);
 			console.error(error);
 		}
 	}
 
 	getDiff(data: VisData, prevData: VisData) {
 		const diffData: VisDiffData = new VisDiffData();
-		if(prevData) {
+		if (prevData) {
 			this.setDiffNodes(prevData, data, diffData);
 			this.setDiffEdges(prevData, data, diffData);
 		}
@@ -344,6 +348,8 @@ export class Controller {
 			try {
 				await this.parser.updateTypes(variable, variable, 0, visitedTypes);
 			} catch (ex) {
+				if (ex instanceof Error)
+					window.showErrorMessage(ex.message);
 				console.error(ex);
 			}
 		}
@@ -425,7 +431,7 @@ export class Controller {
 			try {
 				switch (message.command) {
 					case 'alert':
-						vscode.window.showErrorMessage(message.data[0]);
+						window.showErrorMessage(message.data[0]);
 						break;
 					case 'back':
 						if (!this.busy) {
