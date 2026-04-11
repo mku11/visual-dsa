@@ -179,7 +179,7 @@ export class CsReader extends Reader {
 			// workaround: DAP complains about types when variable is a member of 
 			// an object ie: this.arr so we box into an optional to type cast
 			let expr = `string.Join((char) 10,System.Linq.Enumerable.Select(${name}, 
-            (xRepr)=> xRepr!=null?string.Join("|-|",System.Linq.Enumerable.Select(xRepr, (yRepr)=>yRepr!=null?yRepr.ToString():"null")):new string((char) 10,1)));`;
+            (xRepr)=> xRepr!=null?string.Join("|-|",System.Linq.Enumerable.Select(xRepr, (yRepr)=>yRepr!=null?yRepr.ToString():"null")):""));`;
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const arrRepr = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
