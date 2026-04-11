@@ -170,7 +170,10 @@ export class Reader {
 			return [];
 		let markersValues: number[][] = [];
 		const variable = await this.getVariable(markers);
-		if (!variable || variable.value === 'Unable to evaluate expression') {
+		if (!variable
+			|| !variable.value
+			|| variable.value === 'Unable to evaluate expression'
+			|| variable.value.startsWith('error')) {
 			// we attempt to parse the array
 			return this.parseMarkers(markers);
 		}
