@@ -283,6 +283,9 @@ export class Controller {
 					prevNode?.labelMarkers.map(x => x.start + "," + x.end).join(':')
 					!== currNode?.labelMarkers.map(x => x.start + "," + x.end).join(':')) {
 					diffData.updateNodes.push(currNode);
+				} else if (prevNode &&
+					prevNode?.points.join(':') !== currNode?.points.join(':')) {
+					diffData.updateNodes.push(currNode);
 				}
 			}
 		}
