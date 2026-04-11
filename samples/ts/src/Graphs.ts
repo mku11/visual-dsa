@@ -1,3 +1,16 @@
+// UI settings
+// Expression: graph
+//   Type: Graphs.Graph
+//     Layout: Graph
+//     Nodes: root
+//     Save: Object Type Attributes
+//   Type: Graphs.GraphNode
+//     Layout: Graph
+//     Nodes: children[]
+//     Edges: childrenCost[]
+//     Properties: value
+//     Save: Object Type Attributes
+
 class Graphs {
 
     public static runMain() {
@@ -5,16 +18,6 @@ class Graphs {
     }
 
     public start() {
-        // nodes of a graph
-
-        // UI Settings
-
-        // Expression: gnode0
-
-        // Type: GraphNode
-        // Children Nodes: children[]
-        // Children Edges: childrenCost[]
-
         const gnode0: GraphNode<string> = new GraphNode<string>("0");
         const gnode1: GraphNode<string> = new GraphNode<string>("1");
         const gnode2: GraphNode<string> = new GraphNode<string>("2");

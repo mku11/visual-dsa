@@ -1,3 +1,13 @@
+// UI settings
+// Expression: h1
+//   Type: Map
+//     Layout: Map
+//     Save: Object Attributes
+// Expression: hs1
+//   Type: Set
+//     Layout: Set
+//     Save: Object Attributes
+// 
 class Hashes {
     public static runMain() {
         new Hashes().start();

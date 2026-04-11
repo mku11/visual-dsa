@@ -1,3 +1,31 @@
+
+// UI settings
+// Expression: arrInt
+//   Type: Array[]
+//     Layout: Plot
+//     Points: @points
+//     Save: Object Attributes
+
+// Expression: points
+//   Type: Array[][]
+//     Layout: Plot
+//     Save: Object Attributes
+
+// Expression: points
+//   Type: Array[][]
+//     Layout: Plot
+//     Points: @lines
+//     Save: Object Attributes
+
+// Expression: lines
+//   Type: Array[][]
+//     Layout: Plot
+//     Save: Object Attributes
+
+// Note: format for plotting:
+// To plot points: [[x1,y1],[x2,y2],...]
+// To plot lines: [[x1,y1,x2,y2],[x3,y3,x4,y4],...]
+
 class Plot {
     static runMain() {
         new Plot().start();
@@ -5,43 +33,25 @@ class Plot {
 
     start() {
         // 1d array
-        // to convert to points:
-
-        // User Settings
-
-        // Expression: arrInt
-
-        // Type: Array[]
-        // Layout: Plot
-        // Plot Points: @points
+        // to convert to points see Extractor
         const arrInt: number[] = new Array(5);
         arrInt[1] = 1;
         arrInt[2] = 212;
 
         // list of points
-        // to convert to lines:
-
-        // User Settings
-
-        // Expression: arrPoints
-
-        // Type: Array[][]
-        // Layout: Plot
-        // Plot Points: @lines
-        const arrPoints: number[][] = [];
-        arrPoints.push([2, 4]);
-        arrPoints.push([1, 7]);
-        arrPoints.push([5, -1]);
-        arrPoints.push([-4, -1]);
+        // to convert to lines see Extractor
+        const points: number[][] = [];
+        points.push([2, 4]);
+        points.push([1, 7]);
+        points.push([5, -1]);
+        points.push([-4, -1]);
 
         // list of lines
-
-        // Expression: arrLines
-        const arrLines: number[][] = [];
-        arrLines.push([8, 4, 1, 8]);
-        arrLines.push([5, -1, 6, 8]);
-        arrLines.push([-4, -1, 2, 3]);
-        arrLines.push([3, 4, 5, 6]);
+        const lines: number[][] = [];
+        lines.push([8, 4, 1, 8]);
+        lines.push([5, -1, 6, 8]);
+        lines.push([-4, -1, 2, 3]);
+        lines.push([3, 4, 5, 6]);
 
         console.log("done");
     }

@@ -1,3 +1,29 @@
+// UI settings
+// Expression: arrString
+//   Type: Array[]
+//     Layout: Array
+//     Save: Object Attributes
+
+// Expression: arrInt
+//   Type: Array[]
+//     Layout: Array
+//     Markers: [0,1]
+//     Save: Object Attributes
+
+// Expression: arr2D
+//   Type: Array[][]
+//     Layout: Array2D
+//     Markers: [[0,1],[1,2]]
+//     Save: Object Attributes
+
+// Expression: arr3D
+//   Type: Array[][][]
+//     Layout: Array3D
+//     Markers: [[0,1,0],[1,2,1]]
+//     Save: Object Attributes
+
+// Note: Format for markers: [[x1,y1,z1],[x2,y2,z2]...]
+// 
 class Arrays {
     arrChar2D: string[][] | undefined;
 

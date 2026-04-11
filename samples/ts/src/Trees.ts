@@ -1,3 +1,15 @@
+// UI settings
+// Expression: tree
+//   Type: Tree
+//     Layout: Tree
+//     Nodes: root
+//     Save: Object Type Attributes
+//   Type: Node
+//     Layout: Tree
+//     Nodes: children[]
+//     Properties: value
+//     Save: Object Type Attributes
+
 class Trees {
 
     public static runMain() {
@@ -6,14 +18,6 @@ class Trees {
 
     start() {
         // nodes of a tree
-
-        // User Settings
-        
-        // Expression: node1
-
-        // Type: Node
-        // Layout: Tree
-        // Children Nodes: children[]
         const root: Node<string> = new Node<string>("0");
         const node1: Node<string> = new Node<string>("1");
         const node2: Node<string> = new Node<string>("2");

@@ -1,13 +1,11 @@
+// UI settings
+// Expression: q
+//   Type: Array[]
+//     Layout: Queue
+//     Save: Object Attributes
 export class Queues {
 
     public static runMain() {
-        // User Settings
-        
-        // Expression: qo
-
-        // Type: QueueNode
-        // Layout: Tree
-        // Children Nodes: children[]
         const q: string[] = [];
         q.push("1");
         q.push("3");

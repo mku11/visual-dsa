@@ -1,3 +1,16 @@
+// UI settings
+// Expression: gmap
+//   Type: Map
+//     Layout: Graph
+//     Nodes: @mapCustomNodes
+//     Properties: @mapCustomValue (optional)
+//     Save: Object Attributes
+//   Type: GraphMapNode
+//     Layout: Graph
+//     Nodes: @nodeCustomNodes
+//     Edges: @nodeCustomEdges
+//     Properties: @nodeCustomValue (optional)
+//     Save: Object Type Attributes
 class GraphMapNodes {
 
     public static runMain() {
@@ -5,17 +18,6 @@ class GraphMapNodes {
     }
 
     public start() {
-        // graph with hashmap node
-
-        // Expression: gmap
-
-        // Type: Map
-        // Layout: Graph
-
-        // Type: GraphMapNode
-        // Layout: Graph
-        // Nodes: @customNodes
-        // Edges: @customEdges
         const gmap: Map<GraphMapNode<string>, GraphMapNode<string>[]> = new Map<GraphMapNode<string>, GraphMapNode<string>[]>();
         const gedges: Map<string, number> = new Map<string, number>(); // edges 
         Extractor.gedges = gedges;

@@ -1,18 +1,18 @@
+
+// UI settings
+// Expression: linkedList
+//   Type: LinkedListCustom
+//     Layout: Linked List
+//     Nodes: head
+//     Save: Object Type Attributes
+//   Type: LinkedListNode
+//     Layout: Linked List
+//     Nodes: next
+//     Properties: value
+//     Save: Object Type Attributes
 class LinkedLists {
 
     public static runMain() {
-        // custom linkedlist
-
-        // UI Settings
-        // expression: linkedList
-        
-        // Type: LinkedListCustom
-        // Layout: Linked List
-        
-        // Type: LinkedListNode
-        // Layout: Graph
-        // Children Nodes: next
-
         const linkedList: LinkedListCustom<string> = new LinkedListCustom<string>();
         linkedList.append("1");
         linkedList.append("2");

@@ -1,3 +1,15 @@
+// UI settings
+// Expression: linkedList
+//   Type: DoublyLinkedList
+//     Layout: Linked List
+//     Nodes: head
+//     Save: Object Type Attributes
+//   Type: Node
+//     Layout: Linked List
+//     Nodes: next,prev (ctrl+click to select mutliple)
+//     Properties: value
+//     Save: Object Type Attributes
+
 class DoublyLinkedLists {
 
     static runMain() {

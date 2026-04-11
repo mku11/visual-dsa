@@ -1,3 +1,13 @@
+// UI settings
+// Expression: arrayList
+//   Type: Array[]
+//     Layout: Array
+//     Save: Object Attributes
+
+// Expression: this.listOfLists
+//   Type: Array[][]
+//     Layout: Array2D
+//     Save: Object Attributes 
 class Lists {
     listOfLists: number[][] | undefined;
 
