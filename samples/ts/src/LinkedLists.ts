@@ -1,4 +1,3 @@
-
 // UI settings
 // Expression: linkedList
 //   Type: LinkedListCustom
