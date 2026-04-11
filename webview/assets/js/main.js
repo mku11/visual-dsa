@@ -117,6 +117,7 @@ function init() {
     this.saveName = document.getElementById("save-name");
     this.saveType = document.getElementById("save-type");
 
+    this.attributesContainer = document.getElementById("attributes-container");
     this.orientationContainer = document.getElementById("var-orientation-container");
     this.nodesContainer = document.getElementById("var-nodes-container");
     this.edgesContainer = document.getElementById("var-edges-container");
@@ -240,6 +241,8 @@ function updateVisibility() {
     edgesContainer.style.display = nodesLayouts.has(layoutSelect.value) ? "flex" : "none";
     plotContainer.style.display = plotLayouts.has(layoutSelect.value) ? "flex" : "none";
     markersContainer.style.display = markersLayouts.has(layoutSelect.value) ? "flex" : "none";
+    propertiesContainer.style.display = layoutSelect.value !== "none" ? "flex" : "none";
+    attributesContainer.style.display = selectedObject ? "block" : "none";
 }
 
 function setupVariableListeners() {
