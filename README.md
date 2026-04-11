@@ -6,7 +6,7 @@ and jGRASP: https://www.jgrasp.org/
 ![alt text](./screenshots/screenshot_graph.png)
 
 ## Features
-- Language support: Java, C#, TS/JS, Python.
+- Language support: Java, C#, TS/JS, Python, C, C++.
 - Graphical layouts supported for: Graphs, Trees, Linked Lists, Lists, Arrays (2D), Queue, Stack, Maps, Sets, Plot.
 - Layouts applied per Object Type.
 - Default (auto-suggested) layout assignments.
@@ -25,7 +25,7 @@ and jGRASP: https://www.jgrasp.org/
 - JavaScript/TypeScript
 - Python
 - C++
-- C limited support
+- C limited support (no custom attributes)
 
 ## Quickstart
 - Load your project in VS Code
@@ -57,7 +57,7 @@ and jGRASP: https://www.jgrasp.org/
 
 ## Custom attributes using Extractor
 There is limited support for extracting custom attributes via code using an Extractor class.
-- The extractor class methods are called internally for each node type you assign them using the Extractor.registerAttrs() method.
+- The extractor methods/functions are called internally for each node type you assign them using the Extractor.registerAttrs() method.
 - You can extract data by implementing the Extractor.extract() method. Return types supported are arrays of objects.
 - See samples for more details.
 
@@ -103,12 +103,24 @@ Visual DSA is Open Source Software so you're welcome to fork, modify, and redist
 Make sure you read the MIT License before doing any of the above.  
 
 ## FAQ
-Q: Array layout for c/c++ pointers doesn't display the elements
-A: Make sure you add the range for the array pointed.
-ie dispaly elements from index 0 to 5
-data,[0:5]
-for multiple dimensions arrays, specify all dimensions [x|y|z]:
+Q: Array layout for c/c++ pointers doesn't display the elements  
+A: Make sure you add the range for the array pointer.  
+ie: to display elements from index 0 to 5  
+```
+int* data; // pointer to array
+data,[0:5] // the expression with the range specified
+```
+for multiple dimensions arrays, specify all dimensions [x|y|z]:  
+```
+int*** data; // pointer to 3d array
 data,[0:5|0:4|0:2]
+```
+  
+Q: Graph nodes are not displaying for Java.  
+A: The Java debugger requires class members to have at least a "protected" modifier so it can resolve the types for the nodes children.  
+  
+Q: Array layout is not display for C# variables.  
+A: Visual DSA requires Linq to display array layouts for variables. Make sure you include at least one Linq statement in your program, see samples Program.cs  
 
 ## License:
 Visual DSA is released under MIT License.  
