@@ -122,7 +122,6 @@ export class JavaReader extends Reader {
 			return edgeValues;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
-				// this.trackErrors(ex, type, "userDefEdges");
 				console.error("getEdgeValues Error: " + variable.evaluateName + ": " + ex.message);
 			} else {
 				console.error(ex);

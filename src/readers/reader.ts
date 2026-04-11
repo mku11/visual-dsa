@@ -26,7 +26,6 @@ import { debug, DebugSession, DebugThread, DebugStackFrame } from "vscode";
 import * as fs from 'fs';
 
 export class Reader {
-	protected erroredTypes: Set<string> = new Set<string>();
 	protected registeredTypes: Map<string, Set<string>> = new Map<string, Set<string>>();
 	protected registered = false;
 	protected static instance?: Reader;
@@ -400,10 +399,6 @@ export class Reader {
 		)) {
 			this.erroredTypes.add(group + ":" + type);
 		}
-	}
-
-	hasErrored(type: string, group: string) {
-		return this.erroredTypes.has(group + ":" + type);
 	}
 
 	public async extract(variable: Variable, type: string, attr: string, root: Variable):
