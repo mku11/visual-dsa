@@ -321,6 +321,9 @@ export class Reader {
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
+			if (result.presentationHint?.attributes?.includes('failedEvaluation')) {
+				throw new Error(result.result);
+			}
 			if (!result.name) {
 				result.name = expr;
 			}
