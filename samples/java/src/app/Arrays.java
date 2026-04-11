@@ -48,7 +48,7 @@ public class Arrays {
         arrInteger[2] = 2;
 
         // // // 2d array
-        int[][] arr2D = new int[15][];
+        int[][] arr2D = new int[10][];
         arr2D[0] = new int[3];
         arr2D[1] = new int[4];
         arr2D[2] = new int[4];

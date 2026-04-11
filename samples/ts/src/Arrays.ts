@@ -46,7 +46,7 @@ class Arrays {
         arrInteger[2] = 212;
 
         // 2d array
-        const arr2D: number[][] = new Array(15);
+        const arr2D: number[][] = new Array(10);
         arr2D[0] = new Array(3);
         arr2D[1] = new Array(4);
         arr2D[2] = new Array(4);
