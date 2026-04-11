@@ -86,7 +86,7 @@ export class Extractor {
 
     public static extract_mapCustomValue(
         obj: Map<GraphMapNode<string>, GraphMapNode<string>[]>,
-        root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
+        _root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
     ): string[] {
         let sb = "";
         for (const key of obj.keys()) {
@@ -120,7 +120,7 @@ export class Extractor {
 
     public static extract_nodeCustomValue(
         obj: GraphMapNode<string>,
-        root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
+        _root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
     ): string[] {
         return [String(obj.getValue())];
     }
