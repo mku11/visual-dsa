@@ -492,29 +492,47 @@ export class Controller {
 				this.updateObjectAttributes();
 				return;
 			case 'selectedNodes':
+				this.overrideIdSelection(message.source, this.selectedNodes as Map<string, unknown>);
 				this.selectedNodes.set(message.source, new Set(message.data));
 				return;
 			case 'selectedEdges':
+				this.overrideIdSelection(message.source, this.selectedEdges as Map<string, unknown>);
 				this.selectedEdges.set(message.source, new Set(message.data));
 				return;
 			case 'selectedProperties':
+				this.overrideIdSelection(message.source, this.selectedProperties as Map<string, unknown>);
 				this.selectedProperties.set(message.source, new Set(message.data));
 				return;
 			case 'selectedPlot':
+				this.overrideIdSelection(message.source, this.selectedPlot as Map<string, unknown>);
 				this.selectedPlot.set(message.source, new Set(message.data));
 				return;
 			case 'selectedMarkers':
+				this.overrideIdSelection(message.source, this.selectedMarkers as Map<string, unknown>);
 				this.selectedMarkers.set(message.source, message.data[0]);
 				return;
 			case 'selectedLayout':
+				this.overrideIdSelection(message.source, this.selectedLayout as Map<string, unknown>);
 				this.selectedLayout.set(message.source, message.data[0]);
 				return;
 			case 'selectedOrientation':
+				this.overrideIdSelection(message.source, this.selectedOrientation as Map<string, unknown>);
 				this.selectedOrientation.set(message.source, message.data[0]);
 				return;
 			case 'delay':
 				this.autoStepDelay = parseInt(message.data[0]);
 				return;
+		}
+	}
+
+	overrideIdSelection(source: string, selection: Map<string, unknown>) {
+		if (!source.startsWith("type:"))
+			return;
+		const type = source.split(":")[1];
+		for (const [nodeId, node] of this.varNodes) {
+			if (node.type == type) {
+				selection.delete("id:" + nodeId);
+			}
 		}
 	}
 
