@@ -203,6 +203,8 @@ export class Controller {
 		const variableNodes: VarNode[] = [];
 		const visited: Map<string, Node> = new Map<string, Node>();
 		for (const variableName of this.selectedVariables) {
+			if(variableName.trim() === '')
+				continue;
 			try {
 				const variable = this.variables.get(variableName);
 				if (!variable) {
@@ -482,7 +484,10 @@ export class Controller {
 	async onOptionsChanged(message: { option: string, source: string, data: string[] }) {
 		switch (message.option) {
 			case 'selectedVariables':
-				this.selectedVariables = new Set(message.data);
+				if(message.data.length == 1 && message.data[0] == '')
+					this.selectedVariables.clear();
+				else
+					this.selectedVariables = new Set(message.data);
 				if (!this.busy) {
 					this.update();
 				}
