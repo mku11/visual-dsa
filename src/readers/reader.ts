@@ -136,35 +136,35 @@ export class Reader {
 	}
 
 	async parseRegisteredTypes(regTypes: Variable) {
-		if (regTypes.variablesReference > 0) {
-			const regTypeValues = await this.getVariables(regTypes, "indexed");
-			for (const regTypeValue of regTypeValues) {
-				if (this.filterVariable(regTypeValue))
+		if (regTypes.variablesReference == 0)
+			throw new Error("Invalid registered types");
+		const regTypeValues = await this.getVariables(regTypes, "indexed");
+		for (const regTypeValue of regTypeValues) {
+			if (this.filterVariable(regTypeValue))
+				continue;
+			const children: Variable[] = await this.getVariables(regTypeValue, "indexed");
+			const parts: Variable[] = [];
+			for (const child of children) {
+				if (this.filterVariable(child))
 					continue;
-				const children: Variable[] = await this.getVariables(regTypeValue, "indexed");
-				const parts: Variable[] = [];
-				for (const child of children) {
-					if (this.filterVariable(child))
-						continue;
-					parts.push(child);
-					if (parts.length == 2)
-						break;
-				}
-				if (parts.length != 2)
-					continue;
-				const attrs: Set<string> = new Set<string>();
-				const type = this.trimQuotes(parts[0].value);
-				const attrChildren: Variable[] = await this.getVariables(parts[1], "indexed");
-				for (const attr of attrChildren) {
-					if (this.filterVariable(attr))
-						continue;
-					if (!this.isIndexed(attr, regTypeValue))
-						continue;
-					const attrValue = this.trimQuotes(attr.value);
-					attrs.add(attrValue);
-				}
-				this.registeredTypes.set(type, attrs);
+				parts.push(child);
+				if (parts.length == 2)
+					break;
 			}
+			if (parts.length != 2)
+				continue;
+			const attrs: Set<string> = new Set<string>();
+			const type = this.trimQuotes(parts[0].value);
+			const attrChildren: Variable[] = await this.getVariables(parts[1], "indexed");
+			for (const attr of attrChildren) {
+				if (this.filterVariable(attr))
+					continue;
+				if (!this.isIndexed(attr, regTypeValue))
+					continue;
+				const attrValue = this.trimQuotes(attr.value);
+				attrs.add(attrValue);
+			}
+			this.registeredTypes.set(type, attrs);
 		}
 	}
 
