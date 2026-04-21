@@ -293,8 +293,20 @@ export class Parser {
 			}
 		}
 
+		// if this node has been visited before
+		if (visited.has(id)) {
+			const visitedNode = visited.get(id);
+			if (varNode && visitedNode instanceof Node) {
+				varNode.value = visitedNode;
+				return varNode;
+			}
+			return visitedNode;
+		}
+
 		// create a node and get the string representation
 		const node = new Node(id, type, value);
+		visited.set(node.id, node);
+
 		if (variable.ranges)
 			node.ranges = variable.ranges;
 
@@ -359,7 +371,6 @@ export class Parser {
 				node.value = arrayRepr;
 			}
 		}
-		visited.set(node.id, node);
 
 		// visit the children
 		const nodesChildren: Variable[] = [];
@@ -459,7 +470,7 @@ export class Parser {
 
 		// if this is a built-in linked list (provided by the language's standard lib)
 		// then we force-link the nodes, but not if it's a doubly linked list (has backlinks)
-		if (layout == 'linkedlist' && node.children.size > 1 
+		if (layout == 'linkedlist' && node.children.size > 1
 			&& !node.children.has(await this.reader.getNodeId(prevVariable))) {
 			let child: Node | undefined = undefined;
 			let head: Node | undefined = undefined;
