@@ -49,7 +49,7 @@ static unordered_map<string, int> *extractEdges;
 vector<pair<string, vector<string>>> extractorRegisterAttrs()
 {
     // attribute
-    auto attr1 = vector<string>({"mapCustomNodes", "mapCustomValue"});
+    auto attr1 = vector<string>({"mapCustomNodes", "mapCustomEdges", "mapCustomValue"});
     // associate with a parent type
     auto type1 = pair<string, vector<string>>(
         "std::unordered_map<std::string,std::pair<GraphMapNode<std::string> *,std::vector<GraphMapNode<std::string> *> *>> *",
@@ -73,6 +73,18 @@ vector<GraphMapNode<string> *> extract_mapCustomNodes(
     return nodes;
 }
 
+vector<void*> extract_mapCustomEdges(
+    unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *obj,
+    unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *root)
+{
+    vector<void*> nodes;
+    for (auto kv : *root)
+    { // we set all the edges to NULL to hide them
+        nodes.push_back(NULL);
+    }
+    return nodes;
+}
+
 vector<GraphMapNode<string> *> extract_nodeCustomNodes(
     GraphMapNode<string> *obj,
     unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *root)
@@ -86,11 +98,11 @@ vector<GraphMapNode<string> *> extract_nodeCustomNodes(
     return nodes;
 }
 
-vector<int> extract_nodeCustomEdges(
+vector<string> extract_nodeCustomEdges(
     GraphMapNode<string> *obj,
     unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *root)
 {
-    vector<int> edges;
+    vector<string> edges;
     if (!root->count(obj->value))
         return edges;
     // we collect all the children nodes from the map for this node
@@ -98,7 +110,7 @@ vector<int> extract_nodeCustomEdges(
     {
         string edgeKey = obj->value + "," + child->value;
         int edgeValue = extractEdges->at(edgeKey);
-        edges.push_back(edgeValue);
+        edges.push_back(to_string(edgeValue));
     }
     return edges;
 }

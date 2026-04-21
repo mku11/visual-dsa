@@ -90,12 +90,12 @@ export class CxxReader extends Reader {
 
 	public async getNodeType(variable: Variable): Promise<string> {
 		let type = variable.type;
-		if(!type)
+		if (!type)
 			return type;
 		// remove long types
 		let ridx = 0;
 		while (ridx < CxxReader.removeTypes.length) {
-			if(!type.includes(CxxReader.removeTypes[ridx])) {
+			if (!type.includes(CxxReader.removeTypes[ridx])) {
 				ridx++;
 				continue;
 			}
@@ -139,7 +139,7 @@ export class CxxReader extends Reader {
 			return result.result;
 		} catch (ex: Error | unknown) {
 			if (ex instanceof Error) {
-				console.error("getVariableStrRepr2 Error: " + variable.evaluateName + ": " + ex.message);
+				console.error("getVariableStrRepr Error: " + variable.evaluateName + ": " + ex.message);
 			} else {
 				console.error(ex);
 			}
@@ -586,5 +586,9 @@ export class CxxReader extends Reader {
 			${objRef}(${exprName}),
 			${rootRef}(${rootExprName})
 		)`;
+	}
+
+	isEdgeHidden(edgeValue: string | undefined): boolean {
+		return edgeValue === undefined || edgeValue === "0x0000000000000000";
 	}
 }

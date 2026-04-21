@@ -66,7 +66,7 @@ class Extractor:
     @staticmethod
     def register_attrs() -> list[list[str, list[str]]]:
         return [
-            ["dict", ["dictCustomNodes", "dictCustomValue"]],
+            ["dict", ["dictCustomNodes", "dictCustomEdges", "dictCustomValue"]],
             ["GraphMapNode", ["nodeCustomNodes", "nodeCustomEdges", "nodeCustomValue"]],
         ]
 
@@ -83,6 +83,19 @@ class Extractor:
         for key in root:
             nodes.append(key)
         return nodes
+
+    @staticmethod
+    def extract_dictCustomEdges(
+        obj: dict[
+            GraphMapNodes.GraphMapNode[str],
+            list[GraphMapNodes.GraphMapNode[str]],
+        ],
+        root: dict[
+            GraphMapNodes.GraphMapNode[str],
+            list[GraphMapNodes.GraphMapNode[str]],
+        ],
+    ) -> list[str] | None:
+        return None # return None to hide edges
 
     @staticmethod
     def extract_dictCustomValue(

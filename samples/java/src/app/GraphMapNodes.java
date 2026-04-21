@@ -68,7 +68,7 @@ public class GraphMapNodes {
         public static Object[] registerAttrs() {
             return new Object[] {
                     new Object[] { "HashMap",
-                            new String[] { "mapCustomNodes", "mapCustomValue" } },
+                            new String[] { "mapCustomNodes", "mapCustomEdges", "mapCustomValue" } },
                     new Object[] { "GraphMapNodes.GraphMapNode",
                             new String[] { "nodeCustomNodes", "nodeCustomEdges", "nodeCustomValue" } }
             };
@@ -81,6 +81,12 @@ public class GraphMapNodes {
             if (root.keySet().size() > 0)
                 nodes.addAll(root.keySet());
             return nodes.toArray(new GraphMapNode[0]);
+        }
+
+        public static String[] extract_mapCustomEdges(
+                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> obj,
+                HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> root) {
+            return null; // return null to hide edges
         }
 
         public static String[] extract_mapCustomValue(

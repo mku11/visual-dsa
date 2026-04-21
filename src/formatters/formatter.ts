@@ -155,6 +155,7 @@ export class Formatter {
 					if (edge) {
 						visEdge.label = this.getEdgeLabel(node, child);
 						visEdge.color = this.getEdgeColor(node, child, colors.get(edge.root)!);
+						visEdge.hidden = edge.hidden;
 					} else {
 						visEdge.color = this.getEdgeColor(node, child, colors.get(root.id) ?? "");
 					}
@@ -672,6 +673,7 @@ export class VisEdge {
 	public color: Color | undefined = undefined;
 	public arrows: Arrows | undefined = undefined;
 	public smooth: SmoothEdge | false = false;
+	public hidden = false;
 
 	constructor(id: string,
 		label: string,

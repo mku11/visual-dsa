@@ -69,7 +69,7 @@ export class Extractor {
     // instead of modifying your objects
     public static registerAttrs(): [string, string[]][] {
         return [
-            ["Map", ["mapCustomNodes", "mapCustomValue"]],
+            ["Map", ["mapCustomNodes", "mapCustomEdges", "mapCustomValue"]],
             ["GraphMapNode", ["nodeCustomNodes", "nodeCustomEdges", "nodeCustomValue"]],
         ];
     }
@@ -82,6 +82,13 @@ export class Extractor {
         for (const key of root.keys())
             nodes.push(key);
         return nodes;
+    }
+
+    public static extract_mapCustomEdges(
+        obj: Map<GraphMapNode<string>, GraphMapNode<string>[]>,
+        root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
+    ): null {
+        return null; // return null to hide edges
     }
 
     public static extract_mapCustomValue(

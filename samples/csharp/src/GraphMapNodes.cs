@@ -73,7 +73,7 @@ internal class GraphMapNodes
         {
             return [
                 new object[]{"System.Collections.Generic.Dictionary<GraphMapNodes.GraphMapNode<string>, System.Collections.Generic.List<GraphMapNodes.GraphMapNode<string>>>",
-                    new string[]{"dictCustomNodes", "dictCustomValue"}},
+                    new string[]{"dictCustomNodes", "dictCustomEdges", "dictCustomValue"}},
                 new object[] {"GraphMapNodes.GraphMapNode<string>",
                     new string[]{"nodeCustomNodes", "nodeCustomEdges", "nodeCustomValue"}}
             ];
@@ -84,11 +84,17 @@ internal class GraphMapNodes
             Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
         {
             List<GraphMapNode<string>> nodes = new List<GraphMapNode<string>>();
-            if (root.Keys.Count > 0)
-                nodes.Add(root.Keys.First());
+            foreach (GraphMapNode<string> node in root.Keys)
+                nodes.Add(node);
             return nodes;
         }
 
+        public static List<int> Extract_dictCustomEdges(
+            Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> obj,
+            Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
+        {
+            return null; // return null to hide edges
+        }
 
         public static string[] Extract_dictCustomValue(
             Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> obj,

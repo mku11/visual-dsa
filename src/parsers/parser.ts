@@ -161,9 +161,11 @@ export class Parser {
 					.extract(variable, type, attr, rootVariable);
 				if (userDefAttrs) {
 					this.addNodes(type, "@" + attr);
-					this.addEdges(type, "@" + attr);
 					this.addProperty(type, "@" + attr);
 					this.addPlot(type, "@" + attr);
+				}
+				this.addEdges(type, "@" + attr);
+				if (userDefAttrs) {
 					for (let userDefNode of userDefAttrs as Variable[]) {
 						if (this.reader.filterVariable(userDefNode)) {
 							continue;
@@ -547,7 +549,8 @@ export class Parser {
 				if (edgeValues) {
 					for (const [childId, edgeValue] of edgeValues) {
 						const edge = new Edge(node.id + "->" + childId, node.id, childId,
-							edgeValue, rootVariable.name);
+							edgeValue ?? "", rootVariable.name);
+						edge.hidden = this.reader.isEdgeHidden(edgeValue);
 						node.childrenEdgeValues.set(childId, edge);
 					}
 				}
@@ -622,7 +625,9 @@ export class Edge {
 	public to: string | undefined = undefined; // to
 	public value = ""; // string
 	public root: string; // root node
-	constructor(id: string, from: string, to: string, value: string, root: string) {
+	public hidden = false;
+	constructor(id: string, from: string, to: string,
+		value: string, root: string) {
 		this.id = id;
 		this.from = from;
 		this.to = to;

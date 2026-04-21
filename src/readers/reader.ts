@@ -388,18 +388,25 @@ export class Reader {
 		rootVariable: Variable,
 		nodes: Variable[],
 		attr: string
-	): Promise<Map<string, string> | undefined> {
+	): Promise<Map<string, string | undefined> | undefined> {
+		if (!nodes) {
+			return;
+		}
 		try {
-			const edgesValues: Map<string, string> = new Map<string, string>();
+			const edgesValues: Map<string, string | undefined> = new Map<string, string>();
 			const edges: Variable[] | undefined =
 				await this.extract(variable, type, attr, rootVariable);
-			if (!nodes || !edges) {
-				return;
-			}
-			const edgeValues = edges as Variable[];
-			for (let i = 0; i < nodes.length; i++) {
-				const nodeId = await this.getNodeId(nodes[i]);
-				edgesValues.set(nodeId, edgeValues[i].value);
+			if (!edges) {
+				for (let i = 0; i < nodes.length; i++) {
+					const nodeId = await this.getNodeId(nodes[i]);
+					edgesValues.set(nodeId, undefined);
+				}
+			} else {
+				const edgeValues = edges as Variable[];
+				for (let i = 0; i < nodes.length; i++) {
+					const nodeId = await this.getNodeId(nodes[i]);
+					edgesValues.set(nodeId, edgeValues[i].value);
+				}
 			}
 			return edgesValues;
 		} catch (ex: Error | unknown) {
@@ -637,6 +644,10 @@ export class Reader {
 			}
 		}
 		return { parsedExpr: expr, ranges: ranges };
+	}
+
+	isEdgeHidden(edgeValue: string | undefined): boolean {
+		return edgeValue === undefined;
 	}
 }
 
