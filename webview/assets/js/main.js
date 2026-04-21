@@ -1053,6 +1053,8 @@ function saveNodePositions(network) {
     for (let [nodeId, position] of Object.entries(network.getPositions())) {
         panelState.nodePositions[nodeId] = position;
         let node = panelState.networkData.nodes[nodeId];
+        if(!node)
+            continue;
         let nodePosition = getHierPosition(node);
         panelState.hierPositions[nodePosition] = position;
     }
