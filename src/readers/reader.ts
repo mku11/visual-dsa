@@ -42,24 +42,28 @@ export class Reader {
 			await onDebugSessionStarted();
 		});
 		debug.onDidChangeActiveStackItem(async (e: DebugThread | DebugStackFrame | undefined) => {
+			if (!e)
+				return;
 			if (e instanceof DebugThread) {
 				return;
 			}
-			console.log("stack item changed: " + e?.session.type);
-			console.log("threadId: " + e?.threadId);
-			let threadId = e?.threadId ?? 0;
+			console.log("stack item changed: " + e.session.type);
+			console.log("threadId: " + e.threadId);
+			let threadId = e.threadId ?? 0;
 			if (debug.activeStackItem?.threadId) {
 				threadId = debug.activeStackItem?.threadId;
 			}
 
 			const stackTrace = await Reader.instance?.getStackTrace(threadId);
+			if (!stackTrace)
+				return;
 			const sourceLines: string[] = await this.getSourceLines(stackTrace!);
 			const source: string[] = [];
 			let sourceStart = 0;
 			let sourceEnd = 0;
-			if (stackTrace?.stackFrames[0].line) {
-				let start = stackTrace?.stackFrames[0].line;
-				let end = stackTrace?.stackFrames[0].endLine ?? start;
+			if (stackTrace.stackFrames[0].line) {
+				let start = stackTrace.stackFrames[0].line;
+				let end = stackTrace.stackFrames[0].endLine ?? start;
 				start--; // lines start at 1
 				end--; // lines start at 1
 				for (let i = Math.max(0, start - 2);
@@ -117,7 +121,16 @@ export class Reader {
 			}
 			await this.parseRegisteredTypes(regTypes);
 		} catch (error) {
-			console.error(error);
+			if (error instanceof Error) {
+				if (error.message.toLowerCase().includes("extractor")
+					&& error.message.toLowerCase().includes("is not defined")
+				) {
+					window.showInformationMessage("No extractor registered types found");
+				} else {
+					window.showErrorMessage("Error while registering types for extractor: " + error.message);
+				}
+			}
+			console.error("registerTypes Error:", error);
 		}
 		this.registered = true;
 	}
@@ -337,8 +350,8 @@ export class Reader {
 			return result;
 		} catch (error) {
 			if (error instanceof Error)
-				window.showErrorMessage(error.message);
-			console.error(error);
+				window.showErrorMessage("Error evaluating expression: " + expr + ". " + error.message);
+			console.error("getVariable Error:", error);
 		}
 	}
 
@@ -443,15 +456,11 @@ export class Reader {
 			}
 			return nodes;
 		} catch (ex: Error | unknown) {
+			const msg = "Extractor Error: " + variable.evaluateName
+				+ " " + type + " " + attr;
 			if (ex instanceof Error)
-				window.showErrorMessage(ex.message);
-			if (ex instanceof Error) {
-				console.error("extractor Error: " + variable.evaluateName
-					+ " " + type + " " + attr
-					+ ": " + ex);
-			} else {
-				console.error(ex);
-			}
+				window.showErrorMessage(msg + ". " + ex.message);
+			console.error(msg, ex);
 		}
 	}
 
