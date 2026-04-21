@@ -65,6 +65,7 @@ var updateOptions;
 var selectedObject, selectedObjectType;
 var panelState = {
     nodePositions: {},
+    hierPositions: {},
     networkData: {
         nodes: {},
         edges: {},
@@ -507,6 +508,11 @@ function updateNodes(nodeObjects) {
     for (const node of nodeObjects) {
         if (node.id in panelState.nodePositions) {
             let position = panelState.nodePositions[node.id];
+            node.x = position.x;
+            node.y = position.y;
+        } else if (getHierPosition(node) in panelState.hierPositions) {
+            let nodePosition = getHierPosition(node);
+            let position = panelState.hierPositions[nodePosition];
             node.x = position.x;
             node.y = position.y;
         }
@@ -1038,10 +1044,17 @@ function saveNetwork(data, source, selectedLayout) {
     panelState.selectedLayout = selectedLayout;
 }
 
+function getHierPosition(node) {
+    return node.rootId + ":" + node.idx;
+}
+
 function saveNodePositions(network) {
     // get node positions
-    for (let [nodeId, node] of Object.entries(network.getPositions())) {
-        panelState.nodePositions[nodeId] = node;
+    for (let [nodeId, position] of Object.entries(network.getPositions())) {
+        panelState.nodePositions[nodeId] = position;
+        let node = panelState.networkData.nodes[nodeId];
+        let nodePosition = getHierPosition(node);
+        panelState.hierPositions[nodePosition] = position;
     }
 }
 

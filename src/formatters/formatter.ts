@@ -60,7 +60,7 @@ export class Formatter {
 				nodes, edges,
 				selectedLayouts,
 				selectedOrientations,
-				visited, 0, colors);
+				visited, 0, 0, colors);
 		}
 
 		const visData: VisData = new VisData(
@@ -78,6 +78,7 @@ export class Formatter {
 		orientations: Map<string, string>,
 		visited: Set<string>,
 		level = 0,
+		idx = 0,
 		colors: Map<string, string>,) {
 		if (!node) {
 			return;
@@ -91,9 +92,10 @@ export class Formatter {
 			visNode = nodes.get(node.id);
 			if (visNode && visNode.level < level) {
 				visNode.level = level;
+				visNode.idx = idx;
 			}
 		} else {
-			visNode = new VisNode(node.id, this.getLabel(node,
+			visNode = new VisNode(node.id, root.id, this.getLabel(node,
 				layout, orientation));
 			if (node.markerLabelPos) {
 				for (const [start, end] of node.markerLabelPos)
@@ -110,6 +112,7 @@ export class Formatter {
 				}
 			}
 			visNode.level = level;
+			visNode.idx = idx;
 			if (node instanceof VarNode) {
 				visNode.group = 'VarNode';
 				visNode.x = this.varNodePosX;
@@ -136,7 +139,7 @@ export class Formatter {
 				root,
 				nodes, edges,
 				layouts, orientations,
-				visited, level + 1, colors);
+				visited, level + 1, ++idx, colors);
 			const edgeId: string = node.id + "->" + child.id;
 			const revEdgeId: string = child.id + "->" + node.id;
 			if (!edges.has(edgeId)) {
@@ -623,6 +626,7 @@ export class VisDiffData {
 
 export class VisNode {
 	public id: string;
+	public rootId: string;
 	public label: string;
 	public labelDiff: Diff[] = [];
 	public labelMarkers: Diff[] = [];
@@ -632,9 +636,11 @@ export class VisNode {
 	public x: number | undefined = undefined;
 	public y: number | undefined = undefined;
 	public level = 0;
-	constructor(id: string,
+	public idx = 0;
+	constructor(id: string, rootId: string,
 		label: string, group = undefined) {
 		this.id = id;
+		this.rootId = rootId;
 		this.label = label;
 		this.group = group;
 	}
