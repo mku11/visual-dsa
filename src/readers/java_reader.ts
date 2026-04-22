@@ -226,10 +226,24 @@ export class JavaReader extends Reader {
 	public async getArr2DRepr(variable: Variable):
 		Promise<string[][] | undefined> {
 		try {
-			const name = variable.evaluateName;
+			let name = variable.evaluateName;
 			// workaround: DAP complains about types when variable is a member of 
 			// an object ie: this.arr so we box into an optional to type cast
 			const type = variable.type.replaceAll("$", ".");
+			if (name.includes(".")) {
+				const idx = name.lastIndexOf(".");
+				let index;
+				if (idx >= 0) {
+					index = parseInt(name.substring(idx + 1));
+					if (!isNaN(index)) {
+						name = name.substring(0, idx);
+					}
+				}
+				name = `((Object[]) ${name})`; // force cast the parent to array
+				if (index !== undefined && !isNaN(index)) {
+					name += "[" + index + "]";
+				}
+			}
 			let expr = `{
 				StringBuilder arr2DRepr = new StringBuilder();
 				${type} varRepr = ((${type}) new java.util.Optional(${name}).get());
@@ -275,10 +289,15 @@ export class JavaReader extends Reader {
 	public async getList2DRepr(variable: Variable):
 		Promise<string[][] | undefined> {
 		try {
-			const name = variable.evaluateName;
+			let name = variable.evaluateName;
 			// workaround: DAP complains about types when variable is a member of 
 			// an object ie: this.arr so we box into an optional to type cast
 			const type = variable.type.replaceAll("$", ".");
+			// workaround 
+			if (name.includes('.get(%s)')) {
+				const index = name.indexOf('.get(%s)');
+				name = name.substring(0, index) + ").get(" + variable.name + ")";
+			}
 			let expr = `{
 				StringBuilder arr2DRepr = new StringBuilder();
 				${type} varRepr = ((${type}) new java.util.Optional(${name}).get());

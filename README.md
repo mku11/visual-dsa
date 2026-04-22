@@ -122,6 +122,9 @@ A: The Java debugger requires class members to have at least a "protected" modif
 Q: Array layout is not display for C# variables.  
 A: Visual DSA requires Linq to display array layouts for variables. Make sure you include at least one Linq statement in your program, see samples Program.cs  
 
+Q: Java debugger is complaining about "Cannot evaluate method" when I enter a method in the expression box.
+A: If you return a multidimemsional array in your Java method try replacing it with Object[]. This will allow the debugger to call the method and internally it will resolve the correct type automatically. ie: Object[] someMethod(MyClass arg0) {...}.
+
 ## License:
 Visual DSA is released under MIT License.  
 Code includes other projects with their own license:  
