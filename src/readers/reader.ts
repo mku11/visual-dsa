@@ -116,6 +116,9 @@ export class Reader {
 			if (!regTypes) {
 				return;
 			}
+			if (regTypes.presentationHint?.attributes?.includes("failedEvaluation")) {
+				throw new Error(regTypes.result);
+			}
 			if (regTypes.type && regTypes.type.endsWith('Exception')) {
 				throw new Error(regTypes.result);
 			}
@@ -123,7 +126,11 @@ export class Reader {
 		} catch (error) {
 			if (error instanceof Error) {
 				if (error.message.toLowerCase().includes("extractor")
-					&& error.message.toLowerCase().includes("is not defined")
+					&& (error.message.includes("is not defined")
+						|| error.message.includes("is undefined")
+						|| error.message.includes("cannot be resolved")
+						|| error.message.includes("does not exist in the current context")
+					)
 				) {
 					window.showInformationMessage("No extractor registered types found");
 				} else {
