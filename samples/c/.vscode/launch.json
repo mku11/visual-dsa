@@ -9,7 +9,7 @@
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
-			"console": "externalTerminal",
+			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
 		},
 		{
@@ -20,7 +20,7 @@
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
-			"console": "externalTerminal",
+			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
 		},
 		{
@@ -31,7 +31,7 @@
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
-			"console": "externalTerminal",
+			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
 		},
 		{
@@ -42,7 +42,7 @@
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
-			"console": "externalTerminal",
+			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
 		},
 		{
@@ -53,7 +53,7 @@
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
-			"console": "externalTerminal",
+			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
 		},
 		{
@@ -64,7 +64,7 @@
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",
 			"environment": [],
-			"console": "externalTerminal",
+			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
 		}
 	]
