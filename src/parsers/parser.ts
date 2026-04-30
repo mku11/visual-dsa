@@ -29,6 +29,7 @@ export class Parser {
 
 	static MAX_LEVEL = 20;
 	static MAX_LEVEL_NODE_TYPES = 5;
+	static STR_REPR = "AsString";
 
 	private reader: Reader;
 	private nodes: Map<string, Set<string>> = new Map<string, Set<string>>();
@@ -36,6 +37,9 @@ export class Parser {
 	private edges: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private properties: Map<string, Set<string>> = new Map<string, Set<string>>();
 	private plot: Map<string, Set<string>> = new Map<string, Set<string>>();
+	private graphLayouts: Set<string> = new Set<string>(["graph"]);
+	private treeLayouts: Set<string> = new Set<string>(["tree"]);
+	private linkedListLayouts: Set<string> = new Set<string>(["linkedlist"]);
 	private arrayLayouts: Set<string> = new Set<string>(["array"]);
 	private array2DLayouts: Set<string> = new Set<string>(["array2D"]);
 	private array3DLayouts: Set<string> = new Set<string>(["array3D"]);
@@ -178,6 +182,9 @@ export class Parser {
 			}
 		}
 
+		// add string representation option
+		this.addProperty(type, Parser.STR_REPR);
+
 		for (let child of children) {
 			child = this.reader.processVariable(child);
 
@@ -317,16 +324,16 @@ export class Parser {
 		if (variable.ranges)
 			node.ranges = variable.ranges;
 
-		if (variable.variablesReference > 0 && variable.evaluateName) {
+		if ((this.graphLayouts.has(layout) || this.treeLayouts.has(layout)
+			|| this.linkedListLayouts.has(layout))
+			&& filterProperties.has(Parser.STR_REPR)
+			&& variable.variablesReference > 0 && variable.evaluateName) {
 			const nodeValue: string | undefined =
 				await this.reader.getVariableStrRepr(variable);
 			if (nodeValue) {
 				node.value = nodeValue;
 			}
-		}
-
-		// add array representation if applicable
-		if (this.arrayLayouts.has(layout) || this.stackLayouts.has(layout)
+		} else if (this.arrayLayouts.has(layout) || this.stackLayouts.has(layout)
 			|| this.setLayouts.has(layout) || this.barsLayouts.has(layout)) {
 			const arrayRepr = await this.reader.getArrayRepr(variable);
 			if (arrayRepr) {
@@ -382,7 +389,6 @@ export class Parser {
 		// visit the children
 		const nodesChildren: Variable[] = [];
 		const propertiesChildren: Variable[] = [];
-
 		// get user defined nodes
 		if (await this.reader.getRegisteredTypes().has(type)) {
 			const attrs = this.reader.getRegisteredTypes().get(type);

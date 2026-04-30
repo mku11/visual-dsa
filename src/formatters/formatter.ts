@@ -211,7 +211,6 @@ export class Formatter {
 		if (node.value && !(node.value instanceof Node)) {
 			label += "\n";
 			label += "------\n";
-			label += "Value:\n";
 			const [labelMarkers, lbl] = this.getLabelValue(node, layout, orientation);
 			if (labelMarkers) {
 				// add the markers for the label and the offset
@@ -243,7 +242,6 @@ export class Formatter {
 			if (props.length > 0) {
 				label += "\n";
 				label += "------\n";
-				label += "Properties:";
 				label += props;
 			}
 		}
