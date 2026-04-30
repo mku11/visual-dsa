@@ -99,6 +99,7 @@ function init() {
     this.addBtn = document.getElementById("add-variable");
     this.refreshBtn = document.getElementById("refresh");
     this.delay = document.getElementById("delay");
+    this.optionsContainer = document.getElementById("options-container");
     this.varsOptions = document.getElementById("vars-options");
     this.layoutSelect = document.getElementById("layout");
     this.nodesSelect = document.getElementById("nodes");
@@ -311,7 +312,10 @@ function showProgress(value) {
 }
 
 function enableVarsOptions(value) {
-    for (const varOption of varsOptions.getElementsByTagName("select")) {
+    for (const varOption of optionsContainer.getElementsByTagName("select")) {
+        varOption.disabled = !value;
+    }
+    for (const varOption of optionsContainer.getElementsByTagName("input")) {
         varOption.disabled = !value;
     }
 }
