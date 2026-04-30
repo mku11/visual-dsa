@@ -596,7 +596,13 @@ export class Reader {
 	}
 
 	public isIndexed(variable: Variable, parent: Variable): boolean {
-		return !isNaN(parseInt(variable.name));
+		const num = parseInt(variable.name);
+		return this.isArrayIndex(num);
+	}
+
+	public isArrayIndex(num: number) {
+		// check if 32bit positive integer
+		return !isNaN(num) && num > 0 &&  (num | 0) === num;
 	}
 
 	async getPlotRepr(variable: Variable, type: string, attr: string, rootVariable: Variable): Promise<number[][] | undefined> {

@@ -382,12 +382,11 @@ export class PythonReader extends Reader {
 			|| (parts[0].startsWith("'") && parts[0].endsWith("'"))) {
 			const val = parts[0].substring(1, parts[0].length - 1);
 			const valParts = val.split(":");
-			if (valParts.length == 1 && !isNaN(parseInt(valParts[0]))) {
-				// val in integral
+			if (valParts.length == 1 && this.isArrayIndex(parseInt(valParts[0]))) {
 				return true;
 			} else if (valParts.length == 2
-				&& !isNaN(parseInt(valParts[0]))
-				&& !isNaN(parseInt(valParts[1]))) {
+				&& this.isArrayIndex(parseInt(valParts[0]))
+				&& this.isArrayIndex(parseInt(valParts[1]))) {
 				// val in brackets is a range ie subarray of ndarray 
 				return true;
 			}

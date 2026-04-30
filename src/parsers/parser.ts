@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import { window } from "vscode";
 import { Range, Reader, Variable } from "../readers/reader";
 
 export class Parser {
@@ -124,7 +125,7 @@ export class Parser {
 
 		const type: string = await this.reader.getNodeType(variable);
 		const children: Variable[] = [];
-		if (variable.variablesReference > 0) {
+		if (variable.variablesReference > 0 && !this.reader.isIterable(type)) {
 			let childrenVars = await this.reader.getVariables(variable, "named");
 			// if the variable has a string representation defined it will yield one child without name and type
 			if (childrenVars.length == 1 && childrenVars[0].name === '' && childrenVars[0].type === '') {
@@ -253,6 +254,10 @@ export class Parser {
 		console.log("parse: ", variable.value, variable.type, level);
 
 		const id: string = await this.reader.getNodeId(variable);
+		if (!id) {
+			window.showErrorMessage("Could not get id for: " + variable.name);
+			return;
+		}
 		const type: string = await this.reader.getNodeType(variable);
 		const value: string = await this.reader.getNodeValue(variable);
 

@@ -396,7 +396,7 @@ export class CsReader extends Reader {
 		const parts = variable.name.split(" ");
 		if (parts.length > 0 && parts[0].startsWith("[")
 			&& parts[0].endsWith("]")) {
-			if (!isNaN(parseInt(parts[0].substring(1, parts[0].length - 1)))) {
+			if (this.isArrayIndex(parseInt(parts[0].substring(1, parts[0].length - 1)))) {
 				return true;
 			}
 		}
