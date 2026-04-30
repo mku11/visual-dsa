@@ -203,7 +203,7 @@ export class Controller {
 		const variableNodes: VarNode[] = [];
 		const visited: Map<string, Node> = new Map<string, Node>();
 		for (const variableName of this.selectedVariables) {
-			if(variableName.trim() === '')
+			if (variableName.trim() === '')
 				continue;
 			try {
 				const variable = this.variables.get(variableName);
@@ -240,8 +240,7 @@ export class Controller {
 			const data: VisData = this.formatter.convert(variableNodes,
 				this.selectedLayout, this.selectedOrientation
 			);
-			this.visData[this.idx] = data;
-			this.updatePanel();
+			this.updatePanel(data);
 		} catch (error) {
 			if (error instanceof Error)
 				window.showErrorMessage(error.message);
@@ -408,17 +407,22 @@ export class Controller {
 		);
 	}
 
-	updatePanel() {
-		if (this.idx == 0) {
+	updatePanel(newData?: VisData) {
+		if (this.visData.length == 0 && newData) {
+			this.visData[this.idx] = newData;
 			Panel.getPanel()?.createGraph(
 				this.visData[this.idx],
 				this.source[this.idx],
 				this.selectedLayout
 			);
-		} else if (this.idx > 0) {
-			const currData: VisData = this.visData[this.idx];
-			const prevData: VisData = this.visData[this.prevIdx < this.idx ? this.idx - 1 : this.idx + 1];
+		} else if (this.visData.length > 0) {
+			const currData: VisData = newData
+				? newData : this.visData[this.idx];
+			const prevData: VisData = newData && this.visData[this.idx]
+				? this.visData[this.idx]
+				: this.visData[this.prevIdx < this.idx ? this.idx - 1 : this.idx + 1];
 			const diffData = this.getDiff(currData, prevData);
+			this.visData[this.idx] = currData;
 			Panel.getPanel()?.updateGraph(
 				diffData,
 				this.source[this.idx],
@@ -484,7 +488,7 @@ export class Controller {
 	async onOptionsChanged(message: { option: string, source: string, data: string[] }) {
 		switch (message.option) {
 			case 'selectedVariables':
-				if(message.data.length == 1 && message.data[0] == '')
+				if (message.data.length == 1 && message.data[0] == '')
 					this.selectedVariables.clear();
 				else
 					this.selectedVariables = new Set(message.data);
