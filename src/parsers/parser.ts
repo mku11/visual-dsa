@@ -125,7 +125,7 @@ export class Parser {
 
 		const type: string = await this.reader.getNodeType(variable);
 		const children: Variable[] = [];
-		if (variable.variablesReference > 0 && !this.reader.isIterable(type)) {
+		if (variable.variablesReference > 0) {
 			let childrenVars = await this.reader.getVariables(variable, "named");
 			// if the variable has a string representation defined it will yield one child without name and type
 			if (childrenVars.length == 1 && childrenVars[0].name === '' && childrenVars[0].type === '') {

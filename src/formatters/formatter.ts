@@ -169,7 +169,7 @@ export class Formatter {
 
 	getEdgeLabel(node: Node, child: Node): string {
 		if (!(node instanceof VarNode) && node.type && node.type in this.getHashTypes()) {
-			return "";
+			return " ";
 		}
 		const edge: Edge | undefined = node.childrenEdgeValues.get(child.id)!;
 		let label = edge.value;
@@ -185,9 +185,9 @@ export class Formatter {
 
 	createEdge(edgeId: string, childName: string, node: VarNode | Node, child: Node): VisEdge {
 		if (!(node instanceof VarNode) && node.type && node.type in this.getHashTypes()) {
-			return new VisEdge(edgeId, "", node.id, child.id);
+			return new VisEdge(edgeId, " ", node.id, child.id);
 		}
-		return new VisEdge(edgeId, "", node.id, child.id);
+		return new VisEdge(edgeId, " ", node.id, child.id);
 	}
 
 	getEdgeColor(node: VarNode | Node, child: Node, color: string): Color | undefined {

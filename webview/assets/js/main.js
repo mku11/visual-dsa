@@ -489,8 +489,8 @@ function updateGraph(data, source, selectedLayout) {
         return;
     updateNodes(data.newNodes);
     updateNodes(data.updateNodes);
-    updateEdges(network.newEdges);
-    updateEdges(network.updateEdges);
+    updateEdges(data.newEdges);
+    updateEdges(data.updateEdges);
     updateSourceLines(source);
     updateNetworkOptions(selectedLayout);
     network.once('afterDrawing', (ctx) => {
@@ -542,6 +542,19 @@ function createNetwork(data) {
 }
 
 function updateNetwork(data) {
+    // first update the edge properties from the saved state
+    for (const [edgeId, edge] of Object.entries(panelState.networkData.edges)) {
+        if (typeof (edge.smooth) !== 'object') {
+            if (smoothEdges.checked) {
+                edge.smooth = true;
+            } else {
+                edge.smooth = false;
+            }
+            if (edges.get(edge.id))
+                edges.update(edge);
+        }
+    }
+
     for (const node of data.newNodes) {
         if (!nodes.get(node.id)) {
             nodes.add(node);
@@ -574,18 +587,6 @@ function updateNetwork(data) {
     for (const edge of data.updateEdges) {
         if (edges.get(edge.id)) {
             edges.update(edge);
-        }
-    }
-
-    for (const [edgeId, edge] of Object.entries(panelState.networkData.edges)) {
-        if (typeof (edge.smooth) !== 'object') {
-            if (smoothEdges.checked) {
-                edge.smooth = true;
-            } else {
-                edge.smooth = false;
-            }
-            if (edges.get(edge.id))
-                edges.update(edge);
         }
     }
 }

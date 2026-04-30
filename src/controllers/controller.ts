@@ -336,6 +336,8 @@ export class Controller {
 		for (const currEdge of data.edges) {
 			if (!prevEdges.has(currEdge.id)) {
 				diffData.newEdges.push(currEdge);
+			} else if (prevEdges.get(currEdge.id)?.label !== currEdge.label) {
+				diffData.updateEdges.push(currEdge);
 			}
 		}
 	}
