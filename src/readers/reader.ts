@@ -133,11 +133,16 @@ export class Reader {
 					)
 				) {
 					window.showInformationMessage("No extractor registered types found");
+					console.log("No extractor registered types found");
 				} else {
 					window.showErrorMessage("Error while registering types for extractor: " + error.message);
+					console.error("registerTypes Error msg:", error);
 				}
+
+			} else {
+				console.error("registerTypes Error:", error);
 			}
-			console.error("registerTypes Error:", error);
+
 		}
 		this.registered = true;
 	}
