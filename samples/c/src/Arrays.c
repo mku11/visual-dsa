@@ -49,6 +49,10 @@ void main(int argc, char **argv)
     arrInt2D[1][1] = 1;
     arrInt2D[2][3] = 212;
 
+    float arrFloat2D[5][4];
+    arrFloat2D[1][1] = 1.1;
+    arrFloat2D[2][3] = 212.2;
+
     // 2d array pointer
     int **arr2D = (int **)malloc(sizeof(int *) * 10);
     arr2D[0] = (int *)malloc(sizeof(int) * 3);
@@ -59,6 +63,19 @@ void main(int argc, char **argv)
     arr2D[1][1] = 122;
     arr2D[2][2] = 2;
     arr2D[2][3] = 3;
+
+    // 2d array pointer
+    float **ptrFloat2D = (float **)malloc(sizeof(float *) * 10);
+    ptrFloat2D[0] = (float *)malloc(sizeof(float) * 3);
+    ptrFloat2D[1] = (float *)malloc(sizeof(float) * 4);
+    ptrFloat2D[2] = (float *)malloc(sizeof(float) * 4);
+    ptrFloat2D[4] = (float *)malloc(sizeof(float) * 1);
+
+    ptrFloat2D[1][1] = 122.256;
+    ptrFloat2D[2][2] = 2.34;
+    ptrFloat2D[2][3] = 3.342;
+
+
 
     int ms[2] = {1, 1};
     int ms2[3] = {2, 2, 1};
