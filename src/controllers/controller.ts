@@ -248,7 +248,7 @@ export class Controller {
 		}
 	}
 
-	getDiff(data: VisData, prevData: VisData) {
+	getDiff(data: VisData, prevData: VisData): VisDiffData {
 		const diffData: VisDiffData = new VisDiffData();
 		if (prevData) {
 			this.setDiffNodes(prevData, data, diffData);
@@ -277,15 +277,28 @@ export class Controller {
 				diffData.newNodes.push(currNode);
 			} else {
 				const prevNode = prevNodes.get(currNode.id);
-				if (prevNode && prevNode.label !== currNode.label) {
-					currNode.labelDiff = this.getDiffString(currNode.label, prevNode.label);
-					diffData.updateNodes.push(currNode);
-				} else if (prevNode &&
-					prevNode?.labelMarkers.map(x => x.start + "," + x.end).join(':')
+				if (prevNode && prevNode.labelMarkers.map(x => x.start + "," + x.end).join(':')
 					!== currNode?.labelMarkers.map(x => x.start + "," + x.end).join(':')) {
 					diffData.updateNodes.push(currNode);
-				} else if (prevNode &&
-					prevNode?.points.join(':') !== currNode?.points.join(':')) {
+				} else if (prevNode && prevNode.points.join(':') !== currNode?.points.join(':')) {
+					diffData.updateNodes.push(currNode);
+				}
+			}
+		}
+	}
+
+	setDiffLabels(prevData: VisData, data: VisData, diffData: VisDiffData) {
+		const prevNodes: Map<string, VisNode> = new Map<string, VisNode>();
+		for (const prevNode of prevData?.nodes ?? []) {
+			prevNodes.set(prevNode.id, prevNode);
+		}
+		for (const currNode of data.nodes) {
+			if (!prevData || !prevNodes.has(currNode.id)) { // if there is no previous data we always update the nodes
+				diffData.updateNodes.push(currNode);
+			} else if (prevNodes.has(currNode.id)) {
+				const prevNode = prevNodes.get(currNode.id);
+				if (prevNode && prevNode.label !== currNode.label) {
+					currNode.labelDiff = this.getDiffString(currNode.label, prevNode.label);
 					diffData.updateNodes.push(currNode);
 				}
 			}
@@ -409,22 +422,25 @@ export class Controller {
 		);
 	}
 
-	updatePanel(newData?: VisData) {
-		if (this.visData.length == 0 && newData) {
-			this.visData[this.idx] = newData;
+	updatePanel(data?: VisData) {
+		if (this.visData.length == 0 && data) {
+			this.visData[this.idx] = data;
 			Panel.getPanel()?.createGraph(
 				this.visData[this.idx],
 				this.source[this.idx],
 				this.selectedLayout
 			);
 		} else if (this.visData.length > 0) {
-			const currData: VisData = newData
-				? newData : this.visData[this.idx];
-			const prevData: VisData = newData && this.visData[this.idx]
-				? this.visData[this.idx]
-				: this.visData[this.prevIdx < this.idx ? this.idx - 1 : this.idx + 1];
-			const diffData = this.getDiff(currData, prevData);
-			this.visData[this.idx] = currData;
+			const newData: VisData = data
+				? data : this.visData[this.idx];
+			// if this is an update on the current data or a new state
+			const updated = this.visData[this.idx] && data;
+			const prevDataState = this.visData[this.prevIdx < this.idx ? this.idx - 1 : this.idx + 1] ?? undefined;
+			const prevData: VisData = updated ? this.visData[this.idx] : prevDataState;
+			const diffData: VisDiffData = this.getDiff(newData, prevData);
+			// we get the diff labels from the previous state
+			this.setDiffLabels(prevDataState, newData, diffData);
+			this.visData[this.idx] = newData;
 			Panel.getPanel()?.updateGraph(
 				diffData,
 				this.source[this.idx],
