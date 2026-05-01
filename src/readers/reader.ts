@@ -408,7 +408,12 @@ export class Reader {
 			const edgesValues: Map<string, string | undefined> = new Map<string, string>();
 			const edges: Variable[] | undefined =
 				await this.extract(variable, type, attr, rootVariable);
-			if (!edges) {
+			if (edges && edges.length == 0 && nodes.length > 0) {
+				const objId = await this.getNodeId(variable);
+				const msg = `Could not extract all edges for object: ${objId}. Check your extraction methods`;
+				window.showWarningMessage(msg);
+				throw new Error(msg);
+			} else if (!edges) {
 				for (let i = 0; i < nodes.length; i++) {
 					const nodeId = await this.getNodeId(nodes[i]);
 					edgesValues.set(nodeId, undefined);
@@ -417,15 +422,18 @@ export class Reader {
 				const edgeValues = edges as Variable[];
 				for (let i = 0; i < nodes.length; i++) {
 					const nodeId = await this.getNodeId(nodes[i]);
-					edgesValues.set(nodeId, edgeValues[i].value);
+					const value = this.trimQuotes(edgeValues[i].value);
+					edgesValues.set(nodeId, value);
 				}
 			}
 			return edgesValues;
 		} catch (ex: Error | unknown) {
+			let msg = "Error while extracting edges";
 			if (ex instanceof Error) {
-				console.error("Error: getVarToVarStrRepr: " + variable.evaluateName + ": " + ex.message);
+				msg += ": " + ex.message;
+				console.error(msg);
 			} else {
-				console.error(ex);
+				console.error(msg, ex);
 			}
 		}
 	}
@@ -437,14 +445,18 @@ export class Reader {
 			return;
 		if (!attrs.has(attr))
 			return;
+		let expr;
 		try {
-			let expr: string = await this.getExtractCall(variable, type, attr, root);
+			expr = await this.getExtractCall(variable, type, attr, root);
 			expr = expr.replaceAll('\n', ' ').replaceAll('\t', ' ');
 			const result = await debug.activeDebugSession?.customRequest("evaluate", {
 				expression: expr,
 				frameId: (debug.activeStackItem as DebugStackFrame).frameId,
 				context: 'repl',
 			});
+			if (result.presentationHint?.attributes?.includes("failedEvaluation")) {
+				throw new Error(result.result);
+			}
 			if ((result.result.startsWith('error '))
 				|| (result.type && result.type.includes('Exception'))) {
 				throw new Error(result.result);
@@ -475,8 +487,7 @@ export class Reader {
 			}
 			return nodes;
 		} catch (ex: Error | unknown) {
-			const msg = "Extractor Error: " + variable.evaluateName
-				+ " " + type + " " + attr;
+			const msg = "Extractor Error: " + expr;
 			if (ex instanceof Error)
 				window.showErrorMessage(msg + ". " + ex.message);
 			console.error(msg, ex);
