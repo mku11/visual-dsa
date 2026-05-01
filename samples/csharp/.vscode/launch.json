@@ -5,7 +5,7 @@
 			"name": "Arrays",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"Arrays"
@@ -18,7 +18,7 @@
 			"name": "Lists",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"Lists"
@@ -31,7 +31,7 @@
 			"name": "Trees",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"Trees"
@@ -44,7 +44,7 @@
 			"name": "Hashes",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"Hashes"
@@ -57,7 +57,7 @@
 			"name": "LinkedLists",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"LinkedLists"
@@ -70,7 +70,7 @@
 			"name": "Primitives",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"Primitives"
@@ -83,7 +83,7 @@
 			"name": "Graphs",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"Graphs"
@@ -96,7 +96,7 @@
 			"name": "GraphMapNodes",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"GraphMapNodes"
@@ -109,7 +109,7 @@
 			"name": "GraphsPrimitivesEdges",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"GraphsPrimitivesEdges"
@@ -122,7 +122,7 @@
 			"name": "DoublyLinkedLists",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"DoublyLinkedLists"
@@ -135,7 +135,7 @@
 			"name": "Queues",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"Queues"
@@ -148,7 +148,7 @@
 			"name": "Plot",
 			"type": "coreclr",
 			"request": "launch",
-			// "preLaunchTask": "dotnet: build",
+			"preLaunchTask": "dotnet: build",
 			"program": "${workspaceFolder}/bin/Debug/net9.0/demo.exe",
 			"args": [
 				"Plot"
