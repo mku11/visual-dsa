@@ -11,7 +11,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\Arrays.ts"
+            "program": "${workspaceFolder}\\src\\Arrays.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -20,7 +21,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\DoublyLinkedLists.ts"
+            "program": "${workspaceFolder}\\src\\DoublyLinkedLists.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -29,7 +31,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\Lists.ts"
+            "program": "${workspaceFolder}\\src\\Lists.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -38,7 +41,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\Hashes.ts"
+            "program": "${workspaceFolder}\\src\\Hashes.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -47,7 +51,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\LinkedLists.ts"
+            "program": "${workspaceFolder}\\src\\LinkedLists.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -56,7 +61,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\Primitives.ts"
+            "program": "${workspaceFolder}\\src\\Primitives.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -65,7 +71,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\Queues.ts"
+            "program": "${workspaceFolder}\\src\\Queues.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -74,7 +81,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\Trees.ts"
+            "program": "${workspaceFolder}\\src\\Trees.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -83,7 +91,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\Graphs.ts"
+            "program": "${workspaceFolder}\\src\\Graphs.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -92,7 +101,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\GraphMapNodes.ts"
+            "program": "${workspaceFolder}\\src\\GraphMapNodes.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -101,7 +111,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\GraphsPrimitivesEdges.ts"
+            "program": "${workspaceFolder}\\src\\GraphsPrimitivesEdges.ts",
+            "preLaunchTask": "npm: watch"
         },
         {
             "type": "node",
@@ -110,7 +121,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\Plot.ts"
+            "program": "${workspaceFolder}\\src\\Plot.ts",
+            "preLaunchTask": "npm: watch"
         }
     ]
 }
