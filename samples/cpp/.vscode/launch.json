@@ -7,7 +7,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/arrays.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -18,7 +18,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/doublylinkedlists.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -29,7 +29,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/graphmapnodes.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -40,7 +40,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/plot.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -51,7 +51,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/graphs.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -62,7 +62,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/hashes.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -73,7 +73,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/linkedlists.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -84,7 +84,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/lists.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -95,7 +95,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/primitives.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -106,7 +106,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/queues.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
@@ -117,7 +117,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/build/Debug/trees.exe",
 			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
+			"cwd": "${workspaceFolder}/build/Debug/",
 			"environment": [],
 			"console": "internalConsole",
 			"preLaunchTask": "CMake: build"
