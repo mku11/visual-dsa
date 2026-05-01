@@ -29,7 +29,7 @@ export class Parser {
 
 	static MAX_LEVEL = 20;
 	static MAX_LEVEL_NODE_TYPES = 5;
-	static STR_REPR = "AsString";
+	static STR_REPR = "StrValue";
 
 	private reader: Reader;
 	private nodes: Map<string, Set<string>> = new Map<string, Set<string>>();
