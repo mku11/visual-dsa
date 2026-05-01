@@ -206,7 +206,7 @@ export class Formatter {
 		let label = node.id;
 		if (node.type) {
 			label += "\n";
-			label += "Type: " + this.wrapString(node.type);
+			label += "Type: " + this.truncate(node.type);
 		}
 		if (node.value && !(node.value instanceof Node)) {
 			label += "\n";
@@ -330,12 +330,16 @@ export class Formatter {
 			}
 		}
 
-		for (let line of text.split("\n")) {
+		const lines = text.split("\n");
+		for (let i = 0; i < lines.length; i++) {
+			let line = lines[i];
 			if (line.length > Formatter.MAX_STR_LEN) {
 				line = line.substring(0, Formatter.MAX_STR_LEN) + "...";
 			}
 			line = line.padEnd(pad);
-			newText += line + "\n";
+			newText += line;
+			if (i < lines.length - 1)
+				newText += "\n";
 		}
 		return newText;
 	}
@@ -560,8 +564,8 @@ export class Formatter {
 		const markerPos: [number, number][] = [];
 		for (let i = 0; i < arr3D.length; i++) {
 			// pass the indexes only if z dimension has a marker
-			const [markersPosXY, arr2DRepr] = this.formatArray2D(arr3D[i], 
-				ranges.slice(0,2),
+			const [markersPosXY, arr2DRepr] = this.formatArray2D(arr3D[i],
+				ranges.slice(0, 2),
 				indexesZ.has(startZ + i) ? indexesZ.get(startZ + i) : []);
 			if (!arr2DRepr)
 				continue;
