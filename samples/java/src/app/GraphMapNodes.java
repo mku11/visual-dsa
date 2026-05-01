@@ -113,10 +113,16 @@ public class GraphMapNodes {
                 GraphMapNode<String> obj,
                 HashMap<GraphMapNode<String>, List<GraphMapNode<String>>> root) {
             List<String> edges = new ArrayList<String>();
-            for (GraphMapNode<String> child : root.get(obj)) {
-                String edgeKey = obj.getValue() + "," + child.getValue();
-                int edgeValue = Extractor.gedges.get(edgeKey);
-                edges.add(String.valueOf(edgeValue));
+            if (root.containsKey(obj)) {
+                for (GraphMapNode<String> child : root.get(obj)) {
+                    String edgeKey = obj.getValue() + "," + child.getValue();
+                    if (Extractor.gedges.containsKey(edgeKey)) {
+                        int edgeValue = Extractor.gedges.get(edgeKey);
+                        edges.add(String.valueOf(edgeValue));
+                    } else {
+                        edges.add("");
+                    }
+                }
             }
             return edges.toArray(new String[0]);
         }

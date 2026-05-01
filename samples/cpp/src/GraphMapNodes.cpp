@@ -73,11 +73,26 @@ vector<GraphMapNode<string> *> extract_mapCustomNodes(
     return nodes;
 }
 
-vector<void*> extract_mapCustomEdges(
+vector<string> extract_mapCustomValue(
     unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *obj,
     unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *root)
 {
-    vector<void*> nodes;
+    vector<string> value;
+    string val = "";
+    for (auto kv : *root)
+    { // we collect all the node values from the map
+        val += kv.second.first->value;
+        val += ",";
+    }
+    value.push_back(val);
+    return value;
+}
+
+vector<void *> extract_mapCustomEdges(
+    unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *obj,
+    unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *root)
+{
+    vector<void *> nodes;
     for (auto kv : *root)
     { // we set all the edges to NULL to hide them
         nodes.push_back(NULL);
@@ -109,10 +124,24 @@ vector<string> extract_nodeCustomEdges(
     for (GraphMapNode<string> *child : *(root->at(obj->value).second))
     {
         string edgeKey = obj->value + "," + child->value;
-        int edgeValue = extractEdges->at(edgeKey);
-        edges.push_back(to_string(edgeValue));
+        if (extractEdges->count(edgeKey))
+        {
+            int edgeValue = extractEdges->at(edgeKey);
+            edges.push_back(to_string(edgeValue));
+        } else {
+            edges.push_back("");
+        }
     }
     return edges;
+}
+
+vector<string> extract_nodeCustomValue(
+    GraphMapNode<string> *obj,
+    unordered_map<string, pair<GraphMapNode<string> *, vector<GraphMapNode<string> *> *>> *root)
+{
+    vector<string> value;
+    value.push_back(obj->value);
+    return value;
 }
 
 class GraphMapNodes

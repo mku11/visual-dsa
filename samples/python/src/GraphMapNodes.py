@@ -36,6 +36,7 @@ class GraphMapNodes:
         node2 = GraphMapNodes.GraphMapNode[str]("2")
         node3 = GraphMapNodes.GraphMapNode[str]("3")
         node4 = GraphMapNodes.GraphMapNode[str]("4")
+        
         gmap[node1] = [node2, node3]
         gmap[node2] = [node3, node4]
         gmap[node3] = []
@@ -134,8 +135,10 @@ class Extractor:
         for child in root.get(obj, []):
             edgeKey = (obj, child)
             edgeValue: int | None = Extractor.gedges.get(edgeKey)
-            if edgeValue:
+            if edgeValue is not None:
                 edges.append(edgeValue)
+            else:
+                edges.append("")
         return edges
 
     @staticmethod

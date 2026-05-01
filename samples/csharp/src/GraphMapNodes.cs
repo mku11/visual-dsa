@@ -120,16 +120,26 @@ internal class GraphMapNodes
             return nodes;
         }
 
-        public static List<int> Extract_nodeCustomEdges(
+        public static List<string> Extract_nodeCustomEdges(
             GraphMapNode<string> obj,
             Dictionary<GraphMapNode<string>, List<GraphMapNode<string>>> root)
         {
-            List<int> edges = new List<int>();
-            foreach (GraphMapNode<string> child in root[obj])
+            List<string> edges = new List<string>();
+            if (root.ContainsKey(obj))
             {
-                string edgeKey = obj.Value + "," + child.Value;
-                int edgeValue = gedges[edgeKey];
-                edges.Add(edgeValue);
+                foreach (GraphMapNode<string> child in root[obj])
+                {
+                    string edgeKey = obj.Value + "," + child.Value;
+                    if (gedges.ContainsKey(edgeKey))
+                    {
+                        int edgeValue = gedges[edgeKey];
+                        edges.Add(edgeValue.ToString());
+                    }
+                    else
+                    {
+                        edges.Add("");
+                    }
+                }
             }
             return edges;
         }

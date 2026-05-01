@@ -27,6 +27,7 @@ class GraphMapNodes {
         const node2: GraphMapNode<string> = new GraphMapNode<string>("2");
         const node3: GraphMapNode<string> = new GraphMapNode<string>("3");
         const node4: GraphMapNode<string> = new GraphMapNode<string>("4");
+        
         gmap.set(node1, [node2, node3]);
         gmap.set(node2, [node3, node4]);
         gmap.set(node3, []);
@@ -114,13 +115,15 @@ export class Extractor {
     public static extract_nodeCustomEdges(
         obj: GraphMapNode<string>,
         root: Map<GraphMapNode<string>, GraphMapNode<string>[]>
-    ): number[] {
-        const edges: number[] = [];
+    ): string[] {
+        const edges: string[] = [];
         for (const child of root.get(obj) || []) {
             const edgeKey = obj.getValue() + "," + child.getValue();
             const edgeValue: number | undefined = Extractor.gedges.get(edgeKey);
             if (edgeValue)
-                edges?.push(edgeValue);
+                edges.push(String(edgeValue));
+            else
+                edges.push("");
         }
         return edges;
     }
