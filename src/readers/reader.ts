@@ -597,7 +597,7 @@ export class Reader {
 
 	public isIndexed(variable: Variable, parent: Variable): boolean {
 		const num = parseInt(variable.name);
-		return this.isArrayIndex(num);
+		return !isNaN(num);
 	}
 
 	public isArrayIndex(num: number) {
