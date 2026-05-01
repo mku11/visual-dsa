@@ -768,7 +768,7 @@ function formatBarsLayout(ctx, selectedLayout) {
             ctx.fillStyle = '#4f7894';
             ctx.fillRect(
                 position.x + offset,
-                position.y - totalHeight / 2 + vertMargin + 4 * height
+                position.y - totalHeight / 2 + vertMargin + 3 * height
                 + 9 * height * (1 - bar / maxBar),
                 barWidth,
                 9 * height * bar / maxBar
@@ -804,7 +804,7 @@ function formatPlotLayout(ctx, selectedLayout) {
         const lines = node.label.split("\n");
         const totalHeight = height * lines.length + vertMargin;
         const gridMargin = 6;
-        const gridHeight = totalHeight - (4 * height + vertMargin) - 2 * gridMargin;
+        const gridHeight = totalHeight - (3 * height + vertMargin) - 2 * gridMargin;
         let gridWidth = 0;
         for (const line of lines) {
             gridWidth = Math.max(gridWidth, ctx.measureText(line).width);
@@ -831,7 +831,7 @@ function formatPlotLayout(ctx, selectedLayout) {
         let trpx = (x) => position.x + trdx(x); // translate x position
         let trdy = (y) => y * yunit; // translate y dist
         let trpy = (y, scale = false) => position.y
-            + (4 * height + vertMargin) / 2
+            + (3 * height + vertMargin) / 2
             - trdy(y); // translate y position
 
         // draw x axis
