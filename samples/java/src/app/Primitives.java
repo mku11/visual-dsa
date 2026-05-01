@@ -17,9 +17,9 @@ public class Primitives {
         x = 2;
         x = 3;
 
-        Float x1 = 1.1;
-        x1 = 2.2;
-        x1 = 3.3;
+        Float x1 = 1.1f;
+        x1 = 2.2f;
+        x1 = 3.3f;
 
         System.out.println("x: " + x + ", x1: " + x1);
 
