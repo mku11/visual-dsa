@@ -5,67 +5,78 @@
 			"type": "java",
 			"name": "LinkedLists",
 			"request": "launch",
-			"mainClass": "app.LinkedLists"
+			"mainClass": "app.LinkedLists",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "DoublyLinkedLists",
 			"request": "launch",
-			"mainClass": "app.DoublyLinkedLists"
+			"mainClass": "app.DoublyLinkedLists",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "Graphs",
 			"request": "launch",
-			"mainClass": "app.Graphs"
+			"mainClass": "app.Graphs",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "GraphMapNodes",
 			"request": "launch",
-			"mainClass": "app.GraphMapNodes"
+			"mainClass": "app.GraphMapNodes",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "Arrays",
 			"request": "launch",
-			"mainClass": "app.Arrays"
+			"mainClass": "app.Arrays",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "Lists",
 			"request": "launch",
-			"mainClass": "app.Lists"
+			"mainClass": "app.Lists",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "Hashes",
 			"request": "launch",
-			"mainClass": "app.Hashes"
+			"mainClass": "app.Hashes",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "Primitives",
 			"request": "launch",
-			"mainClass": "app.Primitives"
+			"mainClass": "app.Primitives",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "Queues",
 			"request": "launch",
-			"mainClass": "app.Queues"
+			"mainClass": "app.Queues",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "Trees",
 			"request": "launch",
-			"mainClass": "app.Trees"
+			"mainClass": "app.Trees",
+			"preLaunchTask": "java (build): Build Workspace"
 		},
 		{
 			"type": "java",
 			"name": "Plot",
 			"request": "launch",
-			"mainClass": "app.Plot"
+			"mainClass": "app.Plot",
+			"preLaunchTask": "java (build): Build Workspace"
 		}
 	]
 }
