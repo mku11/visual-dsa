@@ -318,6 +318,9 @@ function enableVarsOptions(value) {
     for (const varOption of optionsContainer.getElementsByTagName("input")) {
         varOption.disabled = !value;
     }
+    for (const varOption of optionsContainer.getElementsByTagName("button")) {
+        varOption.disabled = !value;
+    }
 }
 
 function addVarOptions() {
