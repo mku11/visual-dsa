@@ -258,8 +258,14 @@ function setupVariableListeners() {
             markers.value.split(","));
     });
 
-    markersOptions.addEventListener("change", (e) => {
-        markers.value = markersOptions.value;
+    markers.addEventListener("change", (e) => {
+        const val = markers.value;
+        if (!hasValue(markersOptions, val)) {
+            var option = document.createElement('option');
+            option.value = val;
+            option.innerHTML = val;
+            markersOptions.appendChild(option);
+        }
     });
 
     removeNodes.addEventListener("click", (e) => {
@@ -644,8 +650,8 @@ function setupNetworkListeners(selectedLayout) {
     });
 
     network.on('afterDrawing', (ctx) => {
-        formatLabels(ctx, "labelDiffs", '#ec63cf');
-        formatLabels(ctx, "labelMarkers", '#f12d58');
+        formatLabels(ctx, "labelDiffs", '#df26a1');
+        formatLabels(ctx, "labelMarkers", '#e93f39');
         formatBarsLayout(ctx, selectedLayout);
         formatPlotLayout(ctx, selectedLayout);
     });
@@ -1061,7 +1067,7 @@ function saveNodePositions(network) {
     for (let [nodeId, position] of Object.entries(network.getPositions())) {
         panelState.nodePositions[nodeId] = position;
         let node = panelState.networkData.nodes[nodeId];
-        if(!node)
+        if (!node)
             continue;
         let nodePosition = getHierPosition(node);
         panelState.hierPositions[nodePosition] = position;
