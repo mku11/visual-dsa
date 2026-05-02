@@ -193,14 +193,23 @@ export class Reader {
 		if (markers.length == 0)
 			return [];
 		let markersValues: number[][] = [];
-		const variable = await this.getVariable(markers);
-		if (!variable
-			|| !variable.value
-			|| variable.value === 'Unable to evaluate expression'
-			|| variable.value.startsWith('error')) {
+		let variable;
+		try {
 			// we attempt to parse the array
 			return this.parseMarkers(markers);
+		} catch (ex) {
+			console.error("getMarkersValues: ", ex);
+			// not a valid array of constant values 
+			// we try evaluating as an expression instead
+			variable = await this.getVariable(markers);
+			if (!variable
+				|| !variable.value
+				|| variable.value === 'Unable to evaluate expression'
+				|| variable.value.startsWith('error')) {
+				return [];
+			}
 		}
+
 		// seems to be a valid expression
 		if (variable?.variablesReference == 0) {
 			if (!isNaN(parseInt(variable.value)))
@@ -248,17 +257,10 @@ export class Reader {
 	parseMarkers(markers: string): number[][] {
 		if (markers.length == 0)
 			return [];
-		try {
-			const arr = JSON.parse(markers);
-			if (typeof (arr[0]) === 'number')
-				return [arr];
-			return arr;
-		} catch (ex) {
-			if (ex instanceof Error)
-				window.showErrorMessage(ex.message);
-			console.error(ex);
-			return [];
-		}
+		const arr = JSON.parse(markers);
+		if (typeof (arr[0]) === 'number')
+			return [arr];
+		return arr;
 	}
 
 	getRegisteredTypes() {

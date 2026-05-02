@@ -303,21 +303,29 @@ export class Formatter {
 			return this.formatArray(value as string[], node.ranges[0],
 				"vertical", markers ? markers[0] : undefined, true);
 		} else if (layout === 'bars') {
-			return [[], this.formatBars(value as string[], node.ranges[0],
-				markers ? markers[0] : undefined)];
+			return this.formatBars(value as string[], node.ranges[0],
+				markers ? markers[0] : undefined);
 		} else if (layout && Formatter.plotLayouts.has(layout)) {
 			return [[], this.formatPlot()];
 		}
 		return [[], ""];
 	}
 
-	formatBars(value: string[], range: Range, markers?: number[]): string {
+	formatBars(value: string[], range: Range, markers?: number[])
+		: [[number, number][], string] {
 		let barsRepr = "";
 		for (let i = 0; i < Formatter.BARS_ROWS; i++) {
 			barsRepr += "\n";
 		}
-		const arrRepr = this.formatArray(value, range, "horizontal", markers);
-		return barsRepr += arrRepr;
+		const [labelMarkers, arrRepr] = this.formatArray(value, range, "horizontal", markers);
+		if (labelMarkers) {
+			// add the markers for the label and the offset
+			for (const pos of labelMarkers) {
+				pos[0] += barsRepr.length;
+				pos[1] += barsRepr.length;
+			}
+		}
+		return [labelMarkers, barsRepr + arrRepr];
 	}
 
 	formatPlot(): string {
@@ -335,12 +343,20 @@ export class Formatter {
 		return text;
 	}
 
+	trimQuotes(value: string) {
+		if (value.startsWith("\"") && value.endsWith("\"")) {
+			value = value.substring(1, value.length - 1);
+		} else if (value.startsWith("'") && value.endsWith("'")) {
+			value = value.substring(1, value.length - 1);
+		}
+		return value;
+	}
+
 	formatString(text: string): string {
 		let newText = "";
 		let pad = 0;
 		let formattedText = JSON.parse(`"${text}"`); // translate the escape chars
-		if (formattedText.startsWith("'") && formattedText.endsWith("'"))
-			formattedText = formattedText.substring(1, formattedText.length - 1);
+		formattedText = this.trimQuotes(formattedText);
 		const lines = formattedText.split(new RegExp("\\r\\n|\\n"));
 		for (const line of lines) {
 			if (line.length > Formatter.MAX_STR_LEN) {
