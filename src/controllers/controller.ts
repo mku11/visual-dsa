@@ -301,6 +301,8 @@ export class Controller {
 					currNode.labelDiff = this.getValueDiffs(currNode, prevNode);
 					currNode.labelDiff.push(...this.getPropertyDiffs(currNode, prevNode));
 					diffData.updateNodes.push(currNode);
+				} else if (prevNode && prevNode.labelDiff.length > 0) {
+					diffData.updateNodes.push(currNode);
 				}
 			}
 		}

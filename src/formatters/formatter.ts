@@ -338,15 +338,17 @@ export class Formatter {
 	formatString(text: string): string {
 		let newText = "";
 		let pad = 0;
-		for (const line of text.split("\n")) {
+		let formattedText = JSON.parse(`"${text}"`); // translate the escape chars
+		if (formattedText.startsWith("'") && formattedText.endsWith("'"))
+			formattedText = formattedText.substring(1, formattedText.length - 1);
+		const lines = formattedText.split(new RegExp("\\r\\n|\\n"));
+		for (const line of lines) {
 			if (line.length > Formatter.MAX_STR_LEN) {
 				pad = Formatter.MAX_STR_LEN + 3;
 			} else {
 				pad = Math.max(line.length, pad);
 			}
 		}
-
-		const lines = text.split("\n");
 		for (let i = 0; i < lines.length; i++) {
 			let line = lines[i];
 			if (line.length > Formatter.MAX_STR_LEN) {
