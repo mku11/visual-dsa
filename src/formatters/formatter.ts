@@ -120,7 +120,7 @@ export class Formatter {
 			if (node instanceof VarNode) {
 				visNode.group = 'VarNode';
 				visNode.x = this.varNodePosX;
-				this.varNodePosX += 100;
+				this.varNodePosX += 200;
 				visNode.y = 0;
 			} else if (node instanceof Node) {
 				visNode.group = 'Node';
