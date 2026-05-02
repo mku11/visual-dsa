@@ -95,8 +95,12 @@ export class Formatter {
 				visNode.idx = idx;
 			}
 		} else {
-			visNode = new VisNode(node.id, root.id, this.getLabel(node,
-				layout, orientation));
+			const labelHeader = this.getLabelHeader(node);
+			const labelValue = this.getLabelValue(node, layout, orientation, labelHeader.length);
+			const labelProperties = this.getLabelProperties(node);
+			const label = labelHeader + labelValue + labelProperties;
+			visNode = new VisNode(node.id, root.id, label, layout);
+			visNode.valuePos = [labelHeader.length, labelHeader.length + labelValue.length];
 			if (node.markerLabelPos) {
 				for (const [start, end] of node.markerLabelPos)
 					visNode.labelMarkers.push(new Diff(start, end));
@@ -200,26 +204,38 @@ export class Formatter {
 		return colorObj;
 	}
 
-	getLabel(node: VarNode | Node,
-		layout: string | undefined,
-		orientation: string | undefined): string {
-		let label = node.id;
+	getLabelHeader(node: VarNode | Node): string {
+		let labelHeader = node.id;
 		if (node.type) {
-			label += "\n";
-			label += "Type: " + this.truncate(node.type);
+			labelHeader += "\n";
+			labelHeader += "Type: " + this.truncate(node.type);
 		}
+		return labelHeader;
+	}
+
+	getLabelValue(node: VarNode | Node,
+		layout: string | undefined,
+		orientation: string | undefined,
+		start: number
+	): string {
+		let labelValue = "";
 		if (node.value && !(node.value instanceof Node)) {
-			label += "\n";
-			label += "------\n";
-			const [labelMarkers, lbl] = this.getLabelValue(node, layout, orientation);
+			labelValue += "\n";
+			labelValue += "------\n";
+			const [labelMarkers, lbl] = this.getLabelFormattedValue(node, layout, orientation);
 			if (labelMarkers) {
 				// add the markers for the label and the offset
 				for (const [x, y] of labelMarkers)
-					node.markerLabelPos.push([x + label.length, y + label.length]);
+					node.markerLabelPos.push([x + start + labelValue.length,
+					y + start + labelValue.length]);
 			}
-			label += lbl;
+			labelValue += lbl;
 		}
+		return labelValue;
+	}
 
+	getLabelProperties(node: VarNode | Node): string {
+		let labelProperties = "";
 		if (node instanceof Node) {
 			// child property values
 			let props = "";
@@ -240,12 +256,12 @@ export class Formatter {
 			}
 
 			if (props.length > 0) {
-				label += "\n";
-				label += "------\n";
-				label += props;
+				labelProperties += "\n";
+				labelProperties += "------\n";
+				labelProperties += props;
 			}
 		}
-		return label;
+		return labelProperties;
 	}
 
 	wrapString(text: string): string {
@@ -259,7 +275,7 @@ export class Formatter {
 		return newText;
 	}
 
-	getLabelValue(node: VarNode | Node,
+	getLabelFormattedValue(node: VarNode | Node,
 		layout?: string, orientation?: string): [[number, number][], string] {
 		const value: string | object = node.value;
 		const markers = node.markers;
@@ -640,11 +656,14 @@ export class VisNode {
 	public y: number | undefined = undefined;
 	public level = 0;
 	public idx = 0;
+	public layout: string;
+	public valuePos: number[] = [];
 	constructor(id: string, rootId: string,
-		label: string, group = undefined) {
+		label: string, layout: string, group = undefined) {
 		this.id = id;
 		this.rootId = rootId;
 		this.label = label;
+		this.layout = layout;
 		this.group = group;
 	}
 }

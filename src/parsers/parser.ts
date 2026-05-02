@@ -26,7 +26,6 @@ import { window } from "vscode";
 import { Range, Reader, Variable } from "../readers/reader";
 
 export class Parser {
-
 	static MAX_LEVEL = 20;
 	static MAX_LEVEL_NODE_TYPES = 5;
 	static STR_REPR = "StrValue";
@@ -599,6 +598,12 @@ export class Parser {
 		}
 		return node;
 	}
+
+	isStructuredLayout(layout: string) {
+		return !this.graphLayouts.has(layout) && !this.treeLayouts.has(layout)
+			&& !this.linkedListLayouts.has(layout);
+	}
+
 }
 
 export class Property {

@@ -298,22 +298,44 @@ export class Controller {
 			} else if (prevNodes.has(currNode.id)) {
 				const prevNode = prevNodes.get(currNode.id);
 				if (prevNode && prevNode.label !== currNode.label) {
-					currNode.labelDiff = this.getDiffString(currNode.label, prevNode.label);
+					currNode.labelDiff = this.getValueDiffs(currNode, prevNode);
+					currNode.labelDiff.push(...this.getPropertyDiffs(currNode, prevNode));
 					diffData.updateNodes.push(currNode);
 				}
 			}
 		}
 	}
 
-	getDiffString(currText: string, prevText: string): Diff[] {
+	getValueDiffs(curr: VisNode, prev: VisNode): Diff[] {
+		const isStructured = this.parser.isStructuredLayout(curr.layout);
+		const currText = curr.label.substring(curr.valuePos[0], curr.valuePos[1]);
+		const prevText = prev.label.substring(prev.valuePos[0], prev.valuePos[1]);
+		return this.getDiffString(currText, prevText, curr.valuePos[0], isStructured);
+	}
+
+	getPropertyDiffs(curr: VisNode, prev: VisNode): Diff[] {
+		const currText = curr.label.substring(curr.valuePos[1]);
+		const prevText = prev.label.substring(prev.valuePos[1]);
+		return this.getDiffString(currText, prevText, curr.valuePos[1], false);
+	}
+
+	getDiffString(currText: string, prevText: string,
+		offset: number, isStructured: boolean): Diff[] {
 		const diffs: Diff[] = [];
 		const diffEntries: DiffEntry[] = diff(currText, prevText);
 		let start = -1;
 		let idx = 0;
+		let last = 0;
 		for (const entry of diffEntries) {
 			if (entry[0] == 0) {
-				if (start != -1) {
-					diffs.push(new Diff(start, idx));
+				if (start != -1 && start > last) {
+					const df = this.createDiff(currText, start, idx, isStructured);
+					if (df) {
+						last = df.end;
+						df.start += offset;
+						df.end += offset;
+						diffs.push(df);
+					}
 				}
 				start = -1;
 			} else if (entry[0] == 1) {
@@ -325,10 +347,29 @@ export class Controller {
 				idx++;
 			}
 		}
-		if (start != -1) {
-			diffs.push(new Diff(start, idx));
+		if (start != -1 && start > last) {
+			const df = this.createDiff(currText, start, idx, isStructured);
+			if (df) {
+				df.start += offset;
+				df.end += offset;
+				diffs.push(df);
+			}
 		}
 		return diffs;
+	}
+
+	createDiff(text: string, start: number, end: number, isStructured: boolean): Diff | undefined {
+		if (!text.substring(start, end).trim())
+			return;
+
+		const delims = isStructured ? [" ", "|", "\n"] : ["\n"];
+		while (start > 0 && !(delims.includes(text[start - 1]))) {
+			start--;
+		}
+		while (end < text.length && !(delims.includes(text[end]))) {
+			end++;
+		}
+		return new Diff(start, end);
 	}
 
 	setDiffEdges(prevData: VisData, data: VisData, diffData: VisDiffData) {
@@ -431,8 +472,7 @@ export class Controller {
 				this.selectedLayout
 			);
 		} else if (this.visData.length > 0) {
-			const newData: VisData = data
-				? data : this.visData[this.idx];
+			const newData: VisData = data ? data : this.visData[this.idx];
 			// if this is an update on the current data or a new state
 			const updated = this.visData[this.idx] && data;
 			const prevDataState = this.visData[this.prevIdx < this.idx ? this.idx - 1 : this.idx + 1] ?? undefined;
