@@ -650,8 +650,8 @@ function setupNetworkListeners(selectedLayout) {
     });
 
     network.on('afterDrawing', (ctx) => {
-        formatLabels(ctx, "labelDiffs", '#df26a1');
-        formatLabels(ctx, "labelMarkers", '#e93f39');
+        formatLabels(ctx, "labelDiffs", '#00ff22');
+        formatLabels(ctx, "labelMarkers", '#df2b2b');
         formatBarsLayout(ctx, selectedLayout);
         formatPlotLayout(ctx, selectedLayout);
     });
