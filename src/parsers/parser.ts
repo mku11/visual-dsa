@@ -118,13 +118,14 @@ export class Parser {
 		}
 
 		variable = this.reader.processVariable(variable);
+		const id: string = await this.reader.getNodeId(variable);
 
 		// node already visited
-		if (level > 0 && visited.has(variable.value) && visited.get(variable.value)) {
+		if (level > 0 && visited.has(id) && visited.get(id)) {
 			return;
 		}
 
-		visited.set(variable.value, variable);
+		visited.set(id, variable);
 
 		const type: string = await this.reader.getNodeType(variable);
 		const children: Variable[] = [];
