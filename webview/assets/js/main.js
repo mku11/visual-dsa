@@ -353,6 +353,11 @@ function setupVarOptions(varOptions) {
     let removeVariable = varOptions.getElementsByClassName("remove-variable")[0];
 
     // variable listeners
+    variableInput.addEventListener("focus", (e) => {
+        network.unselectAll();
+        network.selectNodes([variableInput.value]);
+        onSelectedNode(variableInput.value);
+    });
     variableInput.addEventListener("change", (e) => {
         sendOptionChanged('selectedVariables', '',
             Array.from(varsOptions.getElementsByClassName("variable-input")).map((x) => x.value));
@@ -617,7 +622,7 @@ function setupNetworkListeners(selectedLayout) {
         }
         panelState.position = network.getViewPosition();
         panelState.scale = network.getScale();
-        onSelectedNode(e);
+        onSelectedNode(e.nodes[0]);
         setTimeout(() => {
             saveNodePositions(network);
             saveState();
@@ -625,7 +630,7 @@ function setupNetworkListeners(selectedLayout) {
     });
 
     network.on('dragStart', function (e) {
-        onSelectedNode(e);
+        onSelectedNode(e.nodes[0]);
     });
 
     network.once('beforeDrawing', (ctx) => {
@@ -663,11 +668,11 @@ function setupNetworkListeners(selectedLayout) {
     });
 
     network.on('selectNode', function (e) {
-        onSelectedNode(e);
+        onSelectedNode(e.nodes[0]);
     });
 
     network.on('deselectNode', function (e) {
-        onSelectedNode(e);
+        onSelectedNode(e.nodes[0]);
     });
 }
 
@@ -1074,8 +1079,7 @@ function saveNodePositions(network) {
     }
 }
 
-function onSelectedNode(e) {
-    let nodeName = e.nodes[0];
+function onSelectedNode(nodeName) {
     sendOptionChanged('selectedObject', nodeName, [nodeName]);
 }
 
