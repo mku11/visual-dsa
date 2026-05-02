@@ -258,15 +258,8 @@ export class Parser {
 		}
 
 		console.log("parse: ", variable.value, variable.type, level);
-
-		const id: string = await this.reader.getNodeId(variable);
-		if (!id) {
-			window.showErrorMessage("Could not get id for: " + variable.name);
-			return;
-		}
 		const type: string = await this.reader.getNodeType(variable);
 		const value: string = await this.reader.getNodeValue(variable);
-
 		if (!this.nodeTypeLayouts.has(type)) {
 			const layout = this.reader.getDefaultLayout(type, value);
 			if (layout) {
@@ -277,25 +270,20 @@ export class Parser {
 			}
 		}
 
-		const filterNodes = filtersNodes.get("id:" + id) ?? filtersNodes.get("type:" + type) ?? new Set();
-		const filterEdges = filtersEdges.get("id:" + id) ?? filtersEdges.get("type:" + type) ?? new Set();
-		const filterProperties = filtersProperties.get("id:" + id) ?? filtersProperties.get("type:" + type) ?? new Set();
-		const filterPlot = filtersPlot.get("id:" + id) ?? filtersPlot.get("type:" + type) ?? new Set();
-		const useMarkers = markers.get("id:" + id) ?? markers.get("type:" + type) ?? "";
-		const layout = layouts.get("id:" + id) ?? layouts.get("type:" + type) ?? "none";
-
 		// check if this is the variable node
 		let varNode: VarNode | Node | undefined;
 		if (level == 0) {
 			const varNodeId = this.reader.getVarNodeId(variable);
 			varNode = new VarNode(varNodeId, type, value);
-			if (this.arrayLayouts.has(layout) || this.stackLayouts.has(layout)
-				|| this.setLayouts.has(layout)) {
+			const varUseMarkers = markers.get("id:" + varNodeId) ?? markers.get("type:" + type) ?? "";
+			const varLayout = layouts.get("id:" + varNodeId) ?? layouts.get("type:" + type) ?? "none";
+			if (this.arrayLayouts.has(varLayout) || this.stackLayouts.has(varLayout)
+				|| this.setLayouts.has(varLayout)) {
 				const arrayRepr = await this.reader.getArrayRepr(variable);
 				if (arrayRepr) {
 					varNode.value = arrayRepr;
 				}
-				const markers = await this.reader.getMarkersValues(useMarkers, layout);
+				const markers = await this.reader.getMarkersValues(varUseMarkers, varLayout);
 				if (markers) {
 					varNode.markers = markers;
 				}
@@ -305,6 +293,19 @@ export class Parser {
 				return varNode;
 			}
 		}
+
+		// process the node
+		const id: string = await this.reader.getNodeId(variable);
+		if (!id) {
+			window.showErrorMessage("Could not get id for: " + variable.name);
+			return;
+		}
+		const filterNodes = filtersNodes.get("id:" + id) ?? filtersNodes.get("type:" + type) ?? new Set();
+		const filterEdges = filtersEdges.get("id:" + id) ?? filtersEdges.get("type:" + type) ?? new Set();
+		const filterProperties = filtersProperties.get("id:" + id) ?? filtersProperties.get("type:" + type) ?? new Set();
+		const filterPlot = filtersPlot.get("id:" + id) ?? filtersPlot.get("type:" + type) ?? new Set();
+		const useMarkers = markers.get("id:" + id) ?? markers.get("type:" + type) ?? "";
+		const layout = layouts.get("id:" + id) ?? layouts.get("type:" + type) ?? "none";
 
 		// if this node has been visited before
 		if (visited.has(id)) {
