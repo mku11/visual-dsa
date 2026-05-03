@@ -3,7 +3,10 @@ Extension for Visualing Data Structures and Algorithms.
 Inspired by VS Code Debug Visualizer: https://github.com/hediet/vscode-debug-visualizer  
 and jGRASP: https://www.jgrasp.org/  
 
+![alt text](./screenshots/screenshot_sorting.png)
 ![alt text](./screenshots/screenshot_graph.png)
+![alt text](./screenshots/screenshot_maze3d.png)
+![alt text](./screenshots/screenshot_convexhull.png)
 
 ## Features
 - Language support: Java, C#, TS/JS, Python, C, C++.
